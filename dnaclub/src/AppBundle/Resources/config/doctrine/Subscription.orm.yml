@@ -1,0 +1,56 @@
+AppBundle\Entity\Subscription:
+    type: entity
+    table: subscription
+    repositoryClass: AppBundle\Entity\Repository\SubscriptionRepository
+    indexes:
+        contract_client:
+            columns:
+                - client_id
+    id:
+        subscriptionId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: true
+            id: true
+            column: subscription_id
+            generator:
+                strategy: IDENTITY
+    fields:
+        date:
+            type: date
+            nullable: false
+            gedmo:
+                timestampable:
+                    on: create
+        type:
+            type: boolean
+            nullable: false
+        count:
+            type: integer
+            nullable: false
+            options:
+                unsigned: false
+        sum:
+            type: decimal
+            nullable: false
+            precision: 10
+            scale: 2
+        isDeleted:
+            type: boolean
+            nullable: false
+            options:
+                default: '0'
+            column: is_deleted
+    manyToOne:
+        client:
+            targetEntity: Client
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: subscriptions
+            joinColumns:
+                client_id:
+                    referencedColumnName: client_id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

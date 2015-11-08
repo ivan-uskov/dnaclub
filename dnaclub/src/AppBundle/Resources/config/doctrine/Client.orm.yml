@@ -1,0 +1,151 @@
+AppBundle\Entity\Client:
+    type: entity
+    table: client
+    repositoryClass: AppBundle\Entity\Repository\ClientRepository
+    id:
+        clientId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: true
+            id: true
+            column: client_id
+            generator:
+                strategy: IDENTITY
+    fields:
+        firstName:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+            column: first_name
+        lastName:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+            column: last_name
+        middleName:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+            column: middle_name
+        city:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+        birthday:
+            type: date
+            nullable: true
+        phone:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+        email:
+            type: string
+            nullable: true
+            length: 255
+            options:
+                fixed: false
+        subscriptionDate:
+            type: date
+            nullable: true
+            column: subscription_date
+        isSchoolLearner:
+            type: boolean
+            nullable: false
+            options:
+                default: '0'
+            column: is_school_learner
+        isOnlineLearner:
+            type: boolean
+            nullable: false
+            options:
+                default: '0'
+            column: is_online_learner
+        isSubscribed:
+            type: boolean
+            nullable: false
+            options:
+                default: '0'
+            column: is_subscribed
+        createdAt:
+            type: datetime
+            nullable: true
+            column: created_at
+            gedmo:
+                timestampable:
+                    on: create
+        updatedAt:
+            type: datetime
+            nullable: true
+            column: updated_at
+            gedmo:
+                timestampable:
+                    on: update
+        isDeleted:
+            type: boolean
+            nullable: false
+            options:
+                default: '0'
+            column: is_deleted
+    oneToMany:
+        notes:
+            targetEntity: ClientNote
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: client
+            inversedBy: null
+            joinColumns:
+                client_id:
+                    referencedColumnName: client_id
+            orphanRemoval: false
+        diseaseHistories:
+            targetEntity: DiseaseHistory
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: client
+            inversedBy: null
+            joinColumns:
+                client_id:
+                    referencedColumnName: client_id
+            orphanRemoval: false
+        orders:
+            targetEntity: Order
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: client
+            inversedBy: null
+            joinColumns:
+                client_id:
+                    referencedColumnName: client_id
+            orphanRemoval: false
+        rewards:
+            targetEntity: Reward
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: client
+            inversedBy: null
+            joinColumns:
+                client_id:
+                    referencedColumnName: client_id
+            orphanRemoval: false
+        subscriptions:
+            targetEntity: Subscription
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: client
+            inversedBy: null
+            joinColumns:
+                client_id:
+                    referencedColumnName: client_id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }
