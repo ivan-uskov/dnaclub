@@ -21,26 +21,26 @@ AppBundle\Entity\Order:
             type: boolean
             nullable: false
             options:
-                default: '0'
+                default: 0
         sum:
             type: decimal
             nullable: false
             precision: 10
             scale: 2
             options:
-                default: '0.00'
+                default: 0.00
         debt:
             type: decimal
             nullable: false
             precision: 10
             scale: 2
             options:
-                default: '0.00'
+                default: 0.00
         isPreOrder:
             type: boolean
             nullable: false
             options:
-                default: '0'
+                default: 0
             column: is_pre_order
         plannedProductDate:
             type: date

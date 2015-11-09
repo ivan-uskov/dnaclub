@@ -20,20 +20,20 @@ class OrderItem
     /**
      * @var string
      */
-    private $cost = '0.00';
+    private $cost = 0.00;
 
     /**
      * @var boolean
      */
-    private $state = '0';
+    private $state = 0;
 
     /**
-     * @var \AppBundle\Entity\Product
+     * @var Product
      */
     private $product;
 
     /**
-     * @var \AppBundle\Entity\Order
+     * @var Order
      */
     private $order;
 
@@ -123,11 +123,11 @@ class OrderItem
     /**
      * Set product
      *
-     * @param \AppBundle\Entity\Product $product
+     * @param Product $product
      *
      * @return OrderItem
      */
-    public function setProduct(\AppBundle\Entity\Product $product = null)
+    public function setProduct(Product $product = null)
     {
         $this->product = $product;
 
@@ -137,7 +137,7 @@ class OrderItem
     /**
      * Get product
      *
-     * @return \AppBundle\Entity\Product
+     * @return Product
      */
     public function getProduct()
     {
@@ -147,11 +147,11 @@ class OrderItem
     /**
      * Set order
      *
-     * @param \AppBundle\Entity\Order $order
+     * @param Order $order
      *
      * @return OrderItem
      */
-    public function setOrder(\AppBundle\Entity\Order $order = null)
+    public function setOrder(Order $order = null)
     {
         $this->order = $order;
 
@@ -161,7 +161,7 @@ class OrderItem
     /**
      * Get order
      *
-     * @return \AppBundle\Entity\Order
+     * @return Order
      */
     public function getOrder()
     {

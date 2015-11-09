@@ -28,12 +28,12 @@ class OrderPayment
     private $sum;
 
     /**
-     * @var \AppBundle\Entity\Order
+     * @var Order
      */
     private $order;
 
     /**
-     * @var \AppBundle\Entity\Reward
+     * @var Reward
      */
     private $reward;
 
@@ -123,11 +123,11 @@ class OrderPayment
     /**
      * Set order
      *
-     * @param \AppBundle\Entity\Order $order
+     * @param Order $order
      *
      * @return OrderPayment
      */
-    public function setOrder(\AppBundle\Entity\Order $order = null)
+    public function setOrder(Order $order = null)
     {
         $this->order = $order;
 
@@ -137,7 +137,7 @@ class OrderPayment
     /**
      * Get order
      *
-     * @return \AppBundle\Entity\Order
+     * @return Order
      */
     public function getOrder()
     {
@@ -147,11 +147,11 @@ class OrderPayment
     /**
      * Set reward
      *
-     * @param \AppBundle\Entity\Reward $reward
+     * @param Reward $reward
      *
      * @return OrderPayment
      */
-    public function setReward(\AppBundle\Entity\Reward $reward = null)
+    public function setReward(Reward $reward = null)
     {
         $this->reward = $reward;
 
@@ -161,7 +161,7 @@ class OrderPayment
     /**
      * Get reward
      *
-     * @return \AppBundle\Entity\Reward
+     * @return Reward
      */
     public function getReward()
     {

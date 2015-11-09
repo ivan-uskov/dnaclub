@@ -30,10 +30,10 @@ class Product
     /**
      * @var boolean
      */
-    private $isDeleted = '0';
+    private $isDeleted = 0;
 
     /**
-     * @var \AppBundle\Entity\ProductGroup
+     * @var ProductGroup
      */
     private $productGroup;
 
@@ -147,11 +147,11 @@ class Product
     /**
      * Set productGroup
      *
-     * @param \AppBundle\Entity\ProductGroup $productGroup
+     * @param ProductGroup $productGroup
      *
      * @return Product
      */
-    public function setProductGroup(\AppBundle\Entity\ProductGroup $productGroup = null)
+    public function setProductGroup(ProductGroup $productGroup = null)
     {
         $this->productGroup = $productGroup;
 
@@ -161,7 +161,7 @@ class Product
     /**
      * Get productGroup
      *
-     * @return \AppBundle\Entity\ProductGroup
+     * @return ProductGroup
      */
     public function getProductGroup()
     {

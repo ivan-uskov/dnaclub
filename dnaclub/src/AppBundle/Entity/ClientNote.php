@@ -28,7 +28,7 @@ class ClientNote
     private $updatedAt;
 
     /**
-     * @var \AppBundle\Entity\Client
+     * @var Client
      */
     private $client;
 
@@ -118,11 +118,11 @@ class ClientNote
     /**
      * Set client
      *
-     * @param \AppBundle\Entity\Client $client
+     * @param Client $client
      *
      * @return ClientNote
      */
-    public function setClient(\AppBundle\Entity\Client $client = null)
+    public function setClient(Client $client = null)
     {
         $this->client = $client;
 
@@ -132,7 +132,7 @@ class ClientNote
     /**
      * Get client
      *
-     * @return \AppBundle\Entity\Client
+     * @return Client
      */
     public function getClient()
     {

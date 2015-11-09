@@ -35,10 +35,10 @@ class Subscription
     /**
      * @var boolean
      */
-    private $isDeleted = '0';
+    private $isDeleted = 0;
 
     /**
-     * @var \AppBundle\Entity\Client
+     * @var Client
      */
     private $client;
 
@@ -176,11 +176,11 @@ class Subscription
     /**
      * Set client
      *
-     * @param \AppBundle\Entity\Client $client
+     * @param Client $client
      *
      * @return Subscription
      */
-    public function setClient(\AppBundle\Entity\Client $client = null)
+    public function setClient(Client $client = null)
     {
         $this->client = $client;
 
@@ -190,7 +190,7 @@ class Subscription
     /**
      * Get client
      *
-     * @return \AppBundle\Entity\Client
+     * @return Client
      */
     public function getClient()
     {

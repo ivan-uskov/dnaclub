@@ -63,19 +63,19 @@ AppBundle\Entity\Client:
             type: boolean
             nullable: false
             options:
-                default: '0'
+                default: 0
             column: is_school_learner
         isOnlineLearner:
             type: boolean
             nullable: false
             options:
-                default: '0'
+                default: 0
             column: is_online_learner
         isSubscribed:
             type: boolean
             nullable: false
             options:
-                default: '0'
+                default: 0
             column: is_subscribed
         createdAt:
             type: datetime
@@ -95,7 +95,7 @@ AppBundle\Entity\Client:
             type: boolean
             nullable: false
             options:
-                default: '0'
+                default: 0
             column: is_deleted
     oneToMany:
         notes:

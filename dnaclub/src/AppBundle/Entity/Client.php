@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 /**
  * Client
  */
@@ -55,17 +57,17 @@ class Client
     /**
      * @var boolean
      */
-    private $isSchoolLearner = '0';
+    private $isSchoolLearner = 0;
 
     /**
      * @var boolean
      */
-    private $isOnlineLearner = '0';
+    private $isOnlineLearner = 0;
 
     /**
      * @var boolean
      */
-    private $isSubscribed = '0';
+    private $isSubscribed = 0;
 
     /**
      * @var \DateTime
@@ -80,30 +82,30 @@ class Client
     /**
      * @var boolean
      */
-    private $isDeleted = '0';
+    private $isDeleted = 0;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var ArrayCollection
      */
     private $notes;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var ArrayCollection
      */
     private $diseaseHistories;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var ArrayCollection
      */
     private $orders;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var ArrayCollection
      */
     private $rewards;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var ArrayCollection
      */
     private $subscriptions;
 
@@ -112,11 +114,11 @@ class Client
      */
     public function __construct()
     {
-        $this->notes = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->diseaseHistories = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->orders = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->rewards = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->subscriptions = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->notes = new ArrayCollection();
+        $this->diseaseHistories = new ArrayCollection();
+        $this->orders = new ArrayCollection();
+        $this->rewards = new ArrayCollection();
+        $this->subscriptions = new ArrayCollection();
     }
 
     /**
@@ -468,11 +470,11 @@ class Client
     /**
      * Add note
      *
-     * @param \AppBundle\Entity\ClientNote $note
+     * @param ClientNote $note
      *
      * @return Client
      */
-    public function addNote(\AppBundle\Entity\ClientNote $note)
+    public function addNote(ClientNote $note)
     {
         $this->notes[] = $note;
 
@@ -482,9 +484,9 @@ class Client
     /**
      * Remove note
      *
-     * @param \AppBundle\Entity\ClientNote $note
+     * @param ClientNote $note
      */
-    public function removeNote(\AppBundle\Entity\ClientNote $note)
+    public function removeNote(ClientNote $note)
     {
         $this->notes->removeElement($note);
     }
@@ -492,7 +494,7 @@ class Client
     /**
      * Get notes
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return ArrayCollection
      */
     public function getNotes()
     {
@@ -502,11 +504,11 @@ class Client
     /**
      * Add diseaseHistory
      *
-     * @param \AppBundle\Entity\DiseaseHistory $diseaseHistory
+     * @param DiseaseHistory $diseaseHistory
      *
      * @return Client
      */
-    public function addDiseaseHistory(\AppBundle\Entity\DiseaseHistory $diseaseHistory)
+    public function addDiseaseHistory(DiseaseHistory $diseaseHistory)
     {
         $this->diseaseHistories[] = $diseaseHistory;
 
@@ -516,9 +518,9 @@ class Client
     /**
      * Remove diseaseHistory
      *
-     * @param \AppBundle\Entity\DiseaseHistory $diseaseHistory
+     * @param DiseaseHistory $diseaseHistory
      */
-    public function removeDiseaseHistory(\AppBundle\Entity\DiseaseHistory $diseaseHistory)
+    public function removeDiseaseHistory(DiseaseHistory $diseaseHistory)
     {
         $this->diseaseHistories->removeElement($diseaseHistory);
     }
@@ -526,7 +528,7 @@ class Client
     /**
      * Get diseaseHistories
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return ArrayCollection
      */
     public function getDiseaseHistories()
     {
@@ -536,11 +538,11 @@ class Client
     /**
      * Add order
      *
-     * @param \AppBundle\Entity\Order $order
+     * @param Order $order
      *
      * @return Client
      */
-    public function addOrder(\AppBundle\Entity\Order $order)
+    public function addOrder(Order $order)
     {
         $this->orders[] = $order;
 
@@ -550,9 +552,9 @@ class Client
     /**
      * Remove order
      *
-     * @param \AppBundle\Entity\Order $order
+     * @param Order $order
      */
-    public function removeOrder(\AppBundle\Entity\Order $order)
+    public function removeOrder(Order $order)
     {
         $this->orders->removeElement($order);
     }
@@ -560,7 +562,7 @@ class Client
     /**
      * Get orders
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return ArrayCollection
      */
     public function getOrders()
     {
@@ -570,11 +572,11 @@ class Client
     /**
      * Add reward
      *
-     * @param \AppBundle\Entity\Reward $reward
+     * @param Reward $reward
      *
      * @return Client
      */
-    public function addReward(\AppBundle\Entity\Reward $reward)
+    public function addReward(Reward $reward)
     {
         $this->rewards[] = $reward;
 
@@ -584,9 +586,9 @@ class Client
     /**
      * Remove reward
      *
-     * @param \AppBundle\Entity\Reward $reward
+     * @param Reward $reward
      */
-    public function removeReward(\AppBundle\Entity\Reward $reward)
+    public function removeReward(Reward $reward)
     {
         $this->rewards->removeElement($reward);
     }
@@ -594,7 +596,7 @@ class Client
     /**
      * Get rewards
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return ArrayCollection
      */
     public function getRewards()
     {
@@ -604,11 +606,11 @@ class Client
     /**
      * Add subscription
      *
-     * @param \AppBundle\Entity\Subscription $subscription
+     * @param Subscription $subscription
      *
      * @return Client
      */
-    public function addSubscription(\AppBundle\Entity\Subscription $subscription)
+    public function addSubscription(Subscription $subscription)
     {
         $this->subscriptions[] = $subscription;
 
@@ -618,9 +620,9 @@ class Client
     /**
      * Remove subscription
      *
-     * @param \AppBundle\Entity\Subscription $subscription
+     * @param Subscription $subscription
      */
-    public function removeSubscription(\AppBundle\Entity\Subscription $subscription)
+    public function removeSubscription(Subscription $subscription)
     {
         $this->subscriptions->removeElement($subscription);
     }
@@ -628,7 +630,7 @@ class Client
     /**
      * Get subscriptions
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return ArrayCollection
      */
     public function getSubscriptions()
     {

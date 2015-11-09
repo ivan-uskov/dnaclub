@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 /**
  * Reward
  */
@@ -25,15 +27,15 @@ class Reward
     /**
      * @var boolean
      */
-    private $isDeleted = '0';
+    private $isDeleted = 0;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var ArrayCollection
      */
     private $payments;
 
     /**
-     * @var \AppBundle\Entity\Client
+     * @var Client
      */
     private $client;
 
@@ -42,7 +44,7 @@ class Reward
      */
     public function __construct()
     {
-        $this->payments = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->payments = new ArrayCollection();
     }
 
     /**
@@ -130,11 +132,11 @@ class Reward
     /**
      * Add payment
      *
-     * @param \AppBundle\Entity\OrderPayment $payment
+     * @param OrderPayment $payment
      *
      * @return Reward
      */
-    public function addPayment(\AppBundle\Entity\OrderPayment $payment)
+    public function addPayment(OrderPayment $payment)
     {
         $this->payments[] = $payment;
 
@@ -144,9 +146,9 @@ class Reward
     /**
      * Remove payment
      *
-     * @param \AppBundle\Entity\OrderPayment $payment
+     * @param OrderPayment $payment
      */
-    public function removePayment(\AppBundle\Entity\OrderPayment $payment)
+    public function removePayment(OrderPayment $payment)
     {
         $this->payments->removeElement($payment);
     }
@@ -154,7 +156,7 @@ class Reward
     /**
      * Get payments
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return ArrayCollection
      */
     public function getPayments()
     {
@@ -164,11 +166,11 @@ class Reward
     /**
      * Set client
      *
-     * @param \AppBundle\Entity\Client $client
+     * @param Client $client
      *
      * @return Reward
      */
-    public function setClient(\AppBundle\Entity\Client $client = null)
+    public function setClient(Client $client = null)
     {
         $this->client = $client;
 
@@ -178,7 +180,7 @@ class Reward
     /**
      * Get client
      *
-     * @return \AppBundle\Entity\Client
+     * @return Client
      */
     public function getClient()
     {

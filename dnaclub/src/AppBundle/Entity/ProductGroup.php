@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 /**
  * ProductGroup
  */
@@ -18,7 +20,7 @@ class ProductGroup
     private $name;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var ArrayCollection
      */
     private $products;
 
@@ -27,7 +29,7 @@ class ProductGroup
      */
     public function __construct()
     {
-        $this->products = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->products = new ArrayCollection();
     }
 
     /**
@@ -67,11 +69,11 @@ class ProductGroup
     /**
      * Add product
      *
-     * @param \AppBundle\Entity\Product $product
+     * @param Product $product
      *
      * @return ProductGroup
      */
-    public function addProduct(\AppBundle\Entity\Product $product)
+    public function addProduct(Product $product)
     {
         $this->products[] = $product;
 
@@ -81,9 +83,9 @@ class ProductGroup
     /**
      * Remove product
      *
-     * @param \AppBundle\Entity\Product $product
+     * @param Product $product
      */
-    public function removeProduct(\AppBundle\Entity\Product $product)
+    public function removeProduct(Product $product)
     {
         $this->products->removeElement($product);
     }
@@ -91,7 +93,7 @@ class ProductGroup
     /**
      * Get products
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return ArrayCollection
      */
     public function getProducts()
     {

@@ -39,7 +39,7 @@ AppBundle\Entity\Product:
             type: boolean
             nullable: false
             options:
-                default: '0'
+                default: 0
             column: is_deleted
     manyToOne:
         productGroup:

@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 /**
  * Order
  */
@@ -15,22 +17,22 @@ class Order
     /**
      * @var boolean
      */
-    private $status = '0';
+    private $status = 0;
 
     /**
      * @var string
      */
-    private $sum = '0.00';
+    private $sum = 0.00;
 
     /**
      * @var string
      */
-    private $debt = '0.00';
+    private $debt = 0.00;
 
     /**
      * @var boolean
      */
-    private $isPreOrder = '0';
+    private $isPreOrder = 0;
 
     /**
      * @var \DateTime
@@ -53,17 +55,17 @@ class Order
     private $updatedAt;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var ArrayCollection
      */
     private $items;
 
     /**
-     * @var \Doctrine\Common\Collections\Collection
+     * @var ArrayCollection
      */
     private $payments;
 
     /**
-     * @var \AppBundle\Entity\Client
+     * @var Client
      */
     private $client;
 
@@ -72,8 +74,8 @@ class Order
      */
     public function __construct()
     {
-        $this->items = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->payments = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->items = new ArrayCollectionArrayCollection();
+        $this->payments = new ArrayCollectionArrayCollection();
     }
 
     /**
@@ -281,11 +283,11 @@ class Order
     /**
      * Add item
      *
-     * @param \AppBundle\Entity\OrderItem $item
+     * @param OrderItem $item
      *
      * @return Order
      */
-    public function addItem(\AppBundle\Entity\OrderItem $item)
+    public function addItem(OrderItem $item)
     {
         $this->items[] = $item;
 
@@ -295,9 +297,9 @@ class Order
     /**
      * Remove item
      *
-     * @param \AppBundle\Entity\OrderItem $item
+     * @param OrderItem $item
      */
-    public function removeItem(\AppBundle\Entity\OrderItem $item)
+    public function removeItem(OrderItem $item)
     {
         $this->items->removeElement($item);
     }
@@ -305,7 +307,7 @@ class Order
     /**
      * Get items
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return ArrayCollection
      */
     public function getItems()
     {
@@ -315,11 +317,11 @@ class Order
     /**
      * Add payment
      *
-     * @param \AppBundle\Entity\OrderPayment $payment
+     * @param OrderPayment $payment
      *
      * @return Order
      */
-    public function addPayment(\AppBundle\Entity\OrderPayment $payment)
+    public function addPayment(OrderPayment $payment)
     {
         $this->payments[] = $payment;
 
@@ -329,9 +331,9 @@ class Order
     /**
      * Remove payment
      *
-     * @param \AppBundle\Entity\OrderPayment $payment
+     * @param OrderPayment $payment
      */
-    public function removePayment(\AppBundle\Entity\OrderPayment $payment)
+    public function removePayment(OrderPayment $payment)
     {
         $this->payments->removeElement($payment);
     }
@@ -339,7 +341,7 @@ class Order
     /**
      * Get payments
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return ArrayCollection
      */
     public function getPayments()
     {
@@ -349,11 +351,11 @@ class Order
     /**
      * Set client
      *
-     * @param \AppBundle\Entity\Client $client
+     * @param Client $client
      *
      * @return Order
      */
-    public function setClient(\AppBundle\Entity\Client $client = null)
+    public function setClient(Client $client = null)
     {
         $this->client = $client;
 
@@ -363,7 +365,7 @@ class Order
     /**
      * Get client
      *
-     * @return \AppBundle\Entity\Client
+     * @return Client
      */
     public function getClient()
     {
