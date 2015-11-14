@@ -22,6 +22,11 @@ class Order
     /**
      * @var string
      */
+    private $discount = 0.00;
+
+    /**
+     * @var string
+     */
     private $sum = 0.00;
 
     /**
@@ -74,8 +79,8 @@ class Order
      */
     public function __construct()
     {
-        $this->items = new ArrayCollectionArrayCollection();
-        $this->payments = new ArrayCollectionArrayCollection();
+        $this->items = new ArrayCollection();
+        $this->payments = new ArrayCollection();
     }
 
     /**
@@ -371,5 +376,28 @@ class Order
     {
         return $this->client;
     }
-}
 
+    /**
+     * Set discount
+     *
+     * @param string $discount
+     *
+     * @return Order
+     */
+    public function setDiscount($discount)
+    {
+        $this->discount = $discount;
+
+        return $this;
+    }
+
+    /**
+     * Get discount
+     *
+     * @return string
+     */
+    public function getDiscount()
+    {
+        return $this->discount;
+    }
+}

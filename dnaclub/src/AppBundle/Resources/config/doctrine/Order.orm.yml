@@ -22,6 +22,13 @@ AppBundle\Entity\Order:
             nullable: false
             options:
                 default: 0
+        discount:
+            type: decimal
+            nullable: false
+            precision: 10
+            scale: 2
+            options:
+                default: 0.00
         sum:
             type: decimal
             nullable: false
@@ -40,7 +47,7 @@ AppBundle\Entity\Order:
             type: boolean
             nullable: false
             options:
-                default: 0
+                default: 0.00
             column: is_pre_order
         plannedProductDate:
             type: date
