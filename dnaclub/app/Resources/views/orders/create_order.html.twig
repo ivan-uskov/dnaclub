@@ -1,0 +1,38 @@
+{% extends 'layout.html.twig' %}
+{% block pageH1 %}Добавление продажи{% endblock %}
+{% block content %}
+  <form action="{{ path('createOrderAjax') }}" method="post">
+    <div class="form-group">
+      <label for="userName">ФИО</label>
+      <input class="form-control" type="text" name="user_name" id="userName" />
+    </div>
+    <div class="form-group">
+      <label for="products">Товары</label>
+      <textarea id="products" name="products" class="form-control" rows="3"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="discount">Скидка</label>
+      <input class="form-control" type="text" name="discount" id="discount" />
+    </div>
+    <div class="form-group">
+      <label for="cost">Стоимость</label>
+      <input class="form-control" type="text" name="cost" id="cost" />
+    </div>
+    <div class="form-group">
+      <label for="paidByCash">Оплачено начилными</label>
+      <input class="form-control" type="text" name="paidByCash" id="paidByCash" />
+    </div>
+    <div class="form-group">
+      <div class="form-group">
+      <label for="paidByReward">Оплачено вознаграждением</label>
+      <button type="reset" class="btn btn-default">Добавить оплату вознаграждением</button>
+      </div>
+      <textarea id="paidByCash" name="paidByReward" class="form-control" rows="3"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="debt">Долг</label>
+      <input class="form-control" type="text" name="debt" id="debt" />
+    </div>
+    <button type="submit" id="submit" class="btn btn-default">Добавить</button>
+  </form>
+{% endblock %}

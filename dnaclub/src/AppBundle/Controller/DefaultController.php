@@ -29,4 +29,12 @@ class DefaultController extends Controller
             'base_dir' => realpath($this->container->getParameter('kernel.root_dir').'/..'),
         ));
     }
+
+    /**
+     * @Route("/logoff", name="logoff")
+     */
+    public function logoffAction(Request $request)
+    {
+        return $this->redirectToRoute('login');
+    }
 }

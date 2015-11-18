@@ -8,10 +8,10 @@ class OrderStatus
     const CANCELED   = 3;
 
     private static $names = array(
-        self::OPEN       => 'ÕÓ‚˚È',
-        self::PROCESSING => '◊‡ÒÚË˜ÌÓ ÓÔÎ‡˜ÂÌ',
-        self::PAID       => 'ŒÔÎ‡˜ÂÌ',
-        self::CANCELED   => 'ŒÚÏÂÌÂÌ'
+        self::OPEN       => '–û—Ç–∫—Ä—ã—Ç',
+        self::PROCESSING => '–û–±—Ä–∞–±–∞—Ç—ã–≤–∞—é—Ç—Å—è',
+        self::PAID       => '–û–ø–ª–∞—á–µ–Ω—ã',
+        self::CANCELED   => '–û—Ç–º–µ–Ω–µ–Ω—ã'
     );
 
     public static function getNames()

@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Order
+ * @Table(name="`order`")
  */
 class Order
 {
