@@ -1,0 +1,33 @@
+AppBundle\Entity\ProductGroup:
+    type: entity
+    table: product_group
+    repositoryClass: AppBundle\Entity\Repository\ProductGroupRepository
+    id:
+        productGroupId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: true
+            id: true
+            column: product_group_id
+            generator:
+                strategy: IDENTITY
+    fields:
+        name:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+    oneToMany:
+        products:
+            targetEntity: Product
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: productGroup
+            inversedBy: null
+            joinColumns:
+                client_id:
+                    referencedColumnName: product_group_id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

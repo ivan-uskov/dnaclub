@@ -1,0 +1,106 @@
+AppBundle\Entity\Order:
+    type: entity
+    table: order
+    repositoryClass: AppBundle\Entity\Repository\OrderRepository
+    indexes:
+        fk_order_client_id:
+            columns:
+                - client_id
+    id:
+        orderId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: true
+            id: true
+            column: order_id
+            generator:
+                strategy: IDENTITY
+    fields:
+        status:
+            type: boolean
+            nullable: false
+            options:
+                default: 0
+        discount:
+            type: decimal
+            nullable: false
+            precision: 10
+            scale: 2
+            options:
+                default: 0.00
+        sum:
+            type: decimal
+            nullable: false
+            precision: 10
+            scale: 2
+            options:
+                default: 0.00
+        debt:
+            type: decimal
+            nullable: false
+            precision: 10
+            scale: 2
+            options:
+                default: 0.00
+        isPreOrder:
+            type: boolean
+            nullable: false
+            options:
+                default: 0.00
+            column: is_pre_order
+        plannedProductDate:
+            type: date
+            nullable: true
+            column: planned_product_date
+        actualProductDate:
+            type: date
+            nullable: true
+            column: actual_product_date
+        createdAt:
+            type: datetime
+            nullable: false
+            column: created_at
+            gedmo:
+                timestampable:
+                    on: create
+        updatedAt:
+            type: datetime
+            nullable: true
+            column: updated_at
+            gedmo:
+                timestampable:
+                    on: update
+    manyToOne:
+        client:
+            targetEntity: Client
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: orders
+            joinColumns:
+                client_id:
+                    referencedColumnName: client_id
+            orphanRemoval: false
+    oneToMany:
+        items:
+            targetEntity: OrderItem
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: order
+            inversedBy: null
+            joinColumns:
+                client_id:
+                    referencedColumnName: order_id
+            orphanRemoval: false
+        payments:
+            targetEntity: OrderPayment
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: order
+            inversedBy: null
+            joinColumns:
+                client_id:
+                    referencedColumnName: order_id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }
