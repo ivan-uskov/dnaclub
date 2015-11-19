@@ -1,0 +1,51 @@
+AppBundle\Entity\ClientNote:
+    type: entity
+    table: client_note
+    repositoryClass: AppBundle\Entity\Repository\ClientNoteRepository
+    indexes:
+        fk_client_note:
+            columns:
+                - client_id
+    id:
+        clientNoteId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: true
+            id: true
+            column: client_note_id
+            generator:
+                strategy: IDENTITY
+    fields:
+        text:
+            type: blob
+            nullable: true
+            length: 65535
+            options:
+                fixed: false
+        createdAt:
+            type: datetime
+            nullable: true
+            column: created_at
+            gedmo:
+                timestampable:
+                    on: create
+        updatedAt:
+            type: datetime
+            nullable: true
+            column: updated_at
+            gedmo:
+                timestampable:
+                    on: update
+    manyToOne:
+        client:
+            targetEntity: Client
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: notes
+            joinColumns:
+                client_id:
+                    referencedColumnName: client_id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }
