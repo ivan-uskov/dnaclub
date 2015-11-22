@@ -18,7 +18,7 @@ AppBundle\Entity\Order:
                 strategy: IDENTITY
     fields:
         status:
-            type: boolean
+            type: integer
             nullable: false
             options:
                 default: 0

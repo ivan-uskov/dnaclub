@@ -7,20 +7,20 @@ class OrderStatus
     const PAID       = 2;
     const CANCELED   = 3;
 
-    private static $names = array(
-        self::OPEN       => 'Открыт',
-        self::PROCESSING => 'Обрабатываются',
-        self::PAID       => 'Оплачены',
-        self::CANCELED   => 'Отменены'
-    );
+    private static $names = [
+        self::OPEN       => 'Новый',
+        self::PROCESSING => 'Частично оплачен',
+        self::PAID       => 'Оплачен',
+        self::CANCELED   => 'Отменен'
+    ];
 
     public static function getNames()
     {
         return self::$names;
     }
 
-    public static function getName($status)
+    public static function getName($status, $default = null)
     {
-        return isset(self::$names[$status]) ? self::$names[$status] : null;
+        return ArrayUtils::getParameter(self::$names, $status, $default);
     }
 }

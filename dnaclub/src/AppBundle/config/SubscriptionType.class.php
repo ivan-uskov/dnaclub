@@ -5,10 +5,10 @@ class SubscriptionType
     const CONTRACT    = 0;
     const MAINTENANCE = 1;
 
-    private static $names = array(
+    private static $names = [
         self::CONTRACT    => 'Контракт',
         self::MAINTENANCE => 'Лидерская'
-    );
+    ];
 
     private static $shortNames = [
         self::CONTRACT    => 'К',
@@ -27,16 +27,16 @@ class SubscriptionType
 
     public static function getName($type, $default = null)
     {
-        return isset(self::$names[$type]) ? self::$names[$type] : $default;
+        return ArrayUtils::getParameter(self::$names, $type, $default);
     }
 
     public static function getShortName($type, $default = null)
     {
-        return isset(self::$shortNames[$type]) ? self::$shortNames[$type] : $default;
+        return ArrayUtils::getParameter(self::$shortNames, $type, $default);
     }
 
     public static function getPrice($type, $default = null)
     {
-        return isset(self::$prices[$type]) ? self::$prices[$type] : $default;
+        return ArrayUtils::getParameter(self::$prices, $type, $default);
     }
 }

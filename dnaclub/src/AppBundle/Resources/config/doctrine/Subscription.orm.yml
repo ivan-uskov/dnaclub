@@ -24,7 +24,7 @@ AppBundle\Entity\Subscription:
                 timestampable:
                     on: create
         type:
-            type: boolean
+            type: integer
             nullable: false
         count:
             type: integer

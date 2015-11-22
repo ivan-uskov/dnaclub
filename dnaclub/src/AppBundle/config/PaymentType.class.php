@@ -5,15 +5,15 @@ class PaymentType
     const CASH   = 0;
     const REWARD = 1;
 
-    private static $names = array(
-        self::CASH   => 'Наличные',
-        self::REWARD => 'Вознаграждение',
-    );
+    private static $names = [
+        self::CASH   => 'Наличными',
+        self::REWARD => 'Вознаграждением',
+    ];
 
-    private static $shortNames = array(
-        self::CASH   => 'руб.',
-        self::REWARD => 'нагр.',
-    );
+    private static $shortNames = [
+        self::CASH   => 'нал.',
+        self::REWARD => 'возн.',
+    ];
 
     public static function getNames()
     {
@@ -22,11 +22,11 @@ class PaymentType
 
     public static function getName($status, $default = null)
     {
-        return isset(self::$names[$status]) ? self::$names[$status] : $default;
+        return ArrayUtils::getParameter(self::$names, $status, $default);
     }
 
     public static function getShortName($status, $default = null)
     {
-        return isset(self::$shortNames[$status]) ? self::$shortNames[$status] : $default;
+        return ArrayUtils::getParameter(self::$shortNames, $status, $default);
     }
 }

@@ -18,7 +18,7 @@ class Subscription
     private $date;
 
     /**
-     * @var boolean
+     * @var integer
      */
     private $type;
 
@@ -80,7 +80,7 @@ class Subscription
     /**
      * Set type
      *
-     * @param boolean $type
+     * @param integer $type
      *
      * @return Subscription
      */
@@ -94,7 +94,7 @@ class Subscription
     /**
      * Get type
      *
-     * @return boolean
+     * @return integer
      */
     public function getType()
     {

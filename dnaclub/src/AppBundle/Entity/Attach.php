@@ -1,5 +1,6 @@
 <?php
 
+
 namespace AppBundle\Entity;
 
 /**
@@ -16,6 +17,16 @@ class Attach
      * @var string
      */
     private $name;
+
+    /**
+     * @var integer
+     */
+    private $type = 0;
+
+    /**
+     * @var string
+     */
+    private $location;
 
     /**
      * @var string
@@ -65,6 +76,54 @@ class Attach
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set type
+     *
+     * @param integer $type
+     *
+     * @return Attach
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return integer
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Set location
+     *
+     * @param string $location
+     *
+     * @return Attach
+     */
+    public function setLocation($location)
+    {
+        $this->location = $location;
+
+        return $this;
+    }
+
+    /**
+     * Get location
+     *
+     * @return string
+     */
+    public function getLocation()
+    {
+        return $this->location;
     }
 
     /**
@@ -139,4 +198,3 @@ class Attach
         return $this->client;
     }
 }
-
