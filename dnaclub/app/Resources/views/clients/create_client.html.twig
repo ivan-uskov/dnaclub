@@ -1,0 +1,55 @@
+{% extends 'layout.html.twig' %}
+{% block pageH1 %}Добавление клиента{% endblock %}
+{% block content %}
+  <form action="{{ path('createClient') }}" method="post">
+    <div class="form-group">
+      <label for="lastName">Фамилия</label>
+      <input class="form-control" type="text" name="last_name" id="lastName" />
+    </div>
+    <div class="form-group">
+      <label for="firstName">Имя</label>
+      <input class="form-control" type="text" name="first_name" id="firstName" />
+    </div>
+    <div class="form-group">
+      <label for="middleName">Отчество</label>
+      <input class="form-control" type="text" name="middle_name" id="middleName" />
+    </div>
+    <div class="form-group">
+      <label for="birthday">Дата рождения</label>
+      <input class="form-control" type="text" name="birthday" id="birthday" />
+    </div>
+    <div class="form-group">
+      <label for="city">Город</label>
+      <input class="form-control" type="text" name="city" id="city" value="Йошкар-Ола" />
+    </div>
+    <div class="form-group">
+      <input type="checkbox" name="is_subscribed" id="isSubscribed" />
+      <label for="isSubscribed">Участвует в маркетинге</label>
+    </div>
+    <div class="form-group">
+      <input type="checkbox" name="is_school_learner" id="isSchoolLearner" />
+      <label for="isSchoolLearner">Обучается в школе</label>
+    </div>
+    <div class="form-group">
+      <input type="checkbox" name="is_online_learner" id="isOnlineLearner" />
+      <label for="isOnlineLearner">Обучается онлайн</label>
+    </div>
+    <div class="form-group">
+      <label for="phone">Телефон</label>
+      <input class="form-control" type="text" name="phone" id="phone" />
+    </div>
+    <div class="form-group">
+      <label for="email">E-mail</label>
+      <input class="form-control" type="text" name="email" id="email" />
+    </div>
+    <div class="form-group">
+      <label for="subscriptionDate">Дата подписки</label>
+      <input class="form-control" type="text" name="subscription_date" id="subscriptionDate" />
+    </div>
+      <div class="form-group">
+          <label for="notes">Заметки</label>
+          <textarea id="notes" name="notes" class="form-control" rows="3"></textarea>
+      </div>
+    <button type="submit" id="submit" class="btn btn-default">Добавить</button>
+  </form>
+{% endblock %}

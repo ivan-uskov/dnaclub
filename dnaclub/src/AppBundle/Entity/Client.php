@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
 
 /**
  * Client
@@ -568,6 +569,18 @@ class Client
     {
         return $this->orders;
     }
+
+	public function getLastOrder()
+	{
+		$sortCriteria = Criteria::create()->orderBy(['createdAt' => Criteria::DESC]);
+		return $this->getOrders()->matching($sortCriteria)->first();
+	}
+
+	public function getLastOrderDateStr()
+	{
+		$lastOrder = $this->getLastOrder();
+		return $lastOrder ? $lastOrder->getCreatedAt()->format("Y-m-d H:i:s") : "";
+	}
 
     /**
      * Add reward

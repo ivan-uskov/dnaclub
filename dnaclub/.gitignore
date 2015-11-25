@@ -9,3 +9,7 @@
 /composer.phar
 /vendor/
 /web/bundles/
+
+# PhpStorm files
+*.iml
+.idea/
