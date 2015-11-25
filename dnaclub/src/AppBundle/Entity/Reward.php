@@ -20,6 +20,11 @@ class Reward
     private $sum;
 
     /**
+     * @var string
+     */
+    private $remaining_sum;
+
+    /**
      * @var \DateTime
      */
     private $date;
@@ -79,6 +84,30 @@ class Reward
     public function getSum()
     {
         return $this->sum;
+    }
+
+    /**
+     * Set remainingSum
+     *
+     * @param string $remainingSum
+     *
+     * @return Reward
+     */
+    public function setRemainingSum($remainingSum)
+    {
+        $this->remaining_sum = $remainingSum;
+
+        return $this;
+    }
+
+    /**
+     * Get remainingSum
+     *
+     * @return string
+     */
+    public function getRemainingSum()
+    {
+        return $this->remaining_sum;
     }
 
     /**
@@ -187,4 +216,3 @@ class Reward
         return $this->client;
     }
 }
-

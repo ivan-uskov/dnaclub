@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * Order
+ * @Table(name="`order`")
  */
 class Order
 {
@@ -15,7 +16,7 @@ class Order
     private $orderId;
 
     /**
-     * @var boolean
+     * @var integer
      */
     private $status = 0;
 
@@ -96,7 +97,7 @@ class Order
     /**
      * Set status
      *
-     * @param boolean $status
+     * @param integer $status
      *
      * @return Order
      */
@@ -110,7 +111,7 @@ class Order
     /**
      * Get status
      *
-     * @return boolean
+     * @return integer
      */
     public function getStatus()
     {

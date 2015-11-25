@@ -21,7 +21,7 @@ AppBundle\Entity\OrderPayment:
                 strategy: IDENTITY
     fields:
         paymentType:
-            type: boolean
+            type: integer
             nullable: false
             column: payment_type
         createdAt:

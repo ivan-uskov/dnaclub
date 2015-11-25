@@ -1,6 +1,6 @@
 AppBundle\Entity\Order:
     type: entity
-    table: order
+    table: `order`
     repositoryClass: AppBundle\Entity\Repository\OrderRepository
     indexes:
         fk_order_client_id:
@@ -18,7 +18,7 @@ AppBundle\Entity\Order:
                 strategy: IDENTITY
     fields:
         status:
-            type: boolean
+            type: integer
             nullable: false
             options:
                 default: 0

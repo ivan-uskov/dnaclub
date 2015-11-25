@@ -23,6 +23,17 @@ AppBundle\Entity\Attach:
             length: 255
             options:
                 fixed: false
+        type:
+            type: integer
+            nullable: false
+            options:
+                default: 0
+        location:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
         link:
             type: string
             nullable: false

@@ -13,7 +13,7 @@ class OrderPayment
     private $orderPaymentId;
 
     /**
-     * @var boolean
+     * @var integer
      */
     private $paymentType;
 
@@ -51,7 +51,7 @@ class OrderPayment
     /**
      * Set paymentType
      *
-     * @param boolean $paymentType
+     * @param integer $paymentType
      *
      * @return OrderPayment
      */
@@ -65,7 +65,7 @@ class OrderPayment
     /**
      * Get paymentType
      *
-     * @return boolean
+     * @return integer
      */
     public function getPaymentType()
     {
@@ -168,4 +168,3 @@ class OrderPayment
         return $this->reward;
     }
 }
-
