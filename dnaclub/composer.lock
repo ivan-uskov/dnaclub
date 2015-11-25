@@ -5,7 +5,6 @@
         "This file is @generated automatically"
     ],
     "hash": "a7cc560f6e69655b234951da7e4b7392",
-    "content-hash": "ea5445a197d9d14da579145eda7ff4ab",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -815,12 +814,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Atlantic18/DoctrineExtensions.git",
-                "reference": "51360a4c289045a2713b68d0b97fb19a4a8dd2c7"
+                "reference": "f40f71fb62230a1de2c92c16acb14e38950b6464"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Atlantic18/DoctrineExtensions/zipball/51360a4c289045a2713b68d0b97fb19a4a8dd2c7",
-                "reference": "51360a4c289045a2713b68d0b97fb19a4a8dd2c7",
+                "url": "https://api.github.com/repos/Atlantic18/DoctrineExtensions/zipball/f40f71fb62230a1de2c92c16acb14e38950b6464",
+                "reference": "f40f71fb62230a1de2c92c16acb14e38950b6464",
                 "shasum": ""
             },
             "require": {
@@ -886,7 +885,7 @@
                 "tree",
                 "uploadable"
             ],
-            "time": "2015-11-06 08:54:35"
+            "time": "2015-11-17 17:17:21"
         },
         {
             "name": "incenteev/composer-parameter-handler",

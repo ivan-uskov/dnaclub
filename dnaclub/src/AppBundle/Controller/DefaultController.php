@@ -30,6 +30,21 @@ class DefaultController extends Controller
         ));
     }
 
+	public function clientAction(Request $request)
+	{
+		$client = new Client();
+
+		$form = $this->createFormBuilder($cilent)
+			-> add("name", "text")
+			-> add("save", "submit")
+			-> add("cancel", "submit")
+			-> getForm();
+
+		return $this->render("default/addClient.html.twig", array(
+			"form" => $form->createView()
+		));
+	}
+
     /**
      * @Route("/logoff", name="logoff")
      */
