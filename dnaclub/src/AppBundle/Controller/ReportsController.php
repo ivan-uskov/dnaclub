@@ -14,6 +14,12 @@ class ReportsController extends Controller
      */
     public function marketingReportAction(Request $request)
     {
-        return $this->render('reports/marketing_report.html.twig');
+        $post = $request->request;
+        $date = $post->get('month') ?: '2015-12-01';
+
+        $em = $this->getDoctrine()->getManager();
+        $reportRows = $em->getRepository('AppBundle:MarketingReport')->findByDate($date);
+
+        return $this->render('reports/marketing_report.html.twig', ['reportRows' => $reportRows]);
     }
 }

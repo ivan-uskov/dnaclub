@@ -111,6 +111,11 @@ class Client
     private $subscriptions;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $marketingReport;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -649,5 +654,38 @@ class Client
     {
         return $this->subscriptions;
     }
-}
 
+    /**
+     * Add marketingReport
+     *
+     * @param \AppBundle\Entity\MarketingReport $marketingReport
+     *
+     * @return Client
+     */
+    public function addMarketingReport(\AppBundle\Entity\MarketingReport $marketingReport)
+    {
+        $this->marketingReport[] = $marketingReport;
+
+        return $this;
+    }
+
+    /**
+     * Remove marketingReport
+     *
+     * @param \AppBundle\Entity\MarketingReport $marketingReport
+     */
+    public function removeMarketingReport(\AppBundle\Entity\MarketingReport $marketingReport)
+    {
+        $this->marketingReport->removeElement($marketingReport);
+    }
+
+    /**
+     * Get marketingReport
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getMarketingReport()
+    {
+        return $this->marketingReport;
+    }
+}
