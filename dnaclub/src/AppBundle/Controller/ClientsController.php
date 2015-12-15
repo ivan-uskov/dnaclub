@@ -3,9 +3,11 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\ClientNote;
+use Iterator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Client;
 
@@ -16,7 +18,7 @@ class ClientsController extends Controller
      */
     public function clientsListAction(Request $request)
     {
-		$clients = $this->getDoctrine()->getRepository('AppBundle:Client')->findAll();
+		$clients = $this->getDoctrine()->getRepository('AppBundle:Client')->findBy(['isDeleted' => 0]);
         return $this->render('clients/clients_list.html.twig', ['clients' => $clients]);
     }
 
@@ -25,44 +27,58 @@ class ClientsController extends Controller
 	 */
 	public function createClientAction(Request $request)
 	{
+		if ($request->isMethod(Request::METHOD_POST))
+		{
+			$this->handlePost($request->request);
+			return $this->redirectToRoute('clientsList');
+		}
+		else
+		{
+			return $this->render('clients/client_form.html.twig', ['isNew' => true]);
+		}
+	}
+
+	/**
+	 * @Route("/edit-client/{clientId}", name="editClient")
+	 */
+	public function editClientAction(Request $request, $clientId)
+	{
 		if ($request->isMethod(Request::METHOD_GET))
 		{
-			return $this->render('clients/create_client.html.twig');
+			$client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
+			$notes = $client->getNotes()->toArray();
+			$clientNotes = [];
+			foreach ($notes as $note)
+			{
+				array_push($clientNotes, stream_get_contents($note->getText()));
+			}
+			return $this->render('clients/client_form.html.twig', ['isNew' => false, 'client' => $client, 'clientNotes' => $clientNotes]);
 		}
-		else if ($request->isMethod(Request::METHOD_POST))
+		else
 		{
-			$post = $request->request;
-			$this->handlePost($post);
+			$this->handlePost($request->request, false, $clientId);
 			return $this->redirectToRoute('clientsList');
 		}
 	}
 
-	private function handlePost($post)
+	/**
+	 * @Route("/delete-client/{clientId}", name="deleteClient")
+	 */
+	public function deleteClientAction(Request $request, $clientId)
 	{
 		$em = $this->getDoctrine()->getManager();
-		$client = new Client();
-		$client->setLastName($post->get('last_name'));
-		$client->setFirstName($post->get('first_name'));
-		$client->setMiddleName($post->get('middle_name'));
-		$client->setBirthday(new \DateTime($post->get('birthday')));
-		$client->setCity($post->get('city'));
-		$client->setIsSubscribed($post->get('isSubscribed') === "on" ? 1 : 0);
-		$client->setIsSchoolLearner($post->get('isSchoolLearner') === "on" ? 1 : 0);
-		$client->setIsOnlineLearner($post->get('isOnlineLearner') === "on" ? 1 : 0);
-		$client->setPhone($post->get('phone'));
-		$client->setEmail($post->get('email'));
-		$client->setSubscriptionDate($post->get('subscriptionDate'));
-		$noteStr = $post->get('notes');
-		if ($noteStr !== "")
-		{
-			$note = new ClientNote();
-			$note->setText($noteStr);
-			$note->setClient($client);
-			$em->persist($note);
-			$client->addNote($note);
-		}
-
+		$client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
+		$client->setIsDeleted(true);
 		$em->persist($client);
 		$em->flush();
+		return $this->redirectToRoute('clientsList');
+	}
+
+	private function handlePost(ParameterBag $post, $isNew = true, $clientId = null)
+	{
+		$client = $isNew
+			? new Client()
+			: $client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
+		$client->saveFromPost($post, $this->getDoctrine()->getManager());
 	}
 }

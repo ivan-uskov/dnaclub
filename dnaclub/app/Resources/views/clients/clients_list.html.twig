@@ -18,11 +18,15 @@
                 {% for client in clients %}
                     <tr>
                         <td>{{ client.getClientId() }}</td>
-                        <td>{{ client.getLastName() }} {{ client.getFirstName() }} {{ client.getMiddleName() }}</td>
+                        <td>
+                            <a href="{{ path('editClient', {'clientId': client.getClientId()}) }}">
+                                {{ client.getLastName() }} {{ client.getFirstName() }} {{ client.getMiddleName() }}
+                            </a>
+                        </td>
                         <td>{{ client.getCity() }}</td>
                         <td>{{ client.getEmail() }}</td>
                         <td>{{ client.getLastOrderDateStr() }}</td>
-                        <td><a href="javascript:void(0);" class="glyphicon glyphicon-remove"></a></td>
+                        <td><a href="{{ path('deleteClient', {'clientId': client.getClientId()}) }}" class="glyphicon glyphicon-remove"></a></td>
                     </tr>
                 {% endfor %}
                 </tbody>
