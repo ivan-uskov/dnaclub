@@ -1,0 +1,119 @@
+{% extends 'layout.html.twig' %}
+{% block pageH1 %}
+    {% if isNew %}
+        Добавление клиента
+    {% else %}
+        Редактирование клиента
+    {% endif %}
+{% endblock %}
+{% block content %}
+    <form action="" method="post">
+        <div class="form-group">
+            <label for="lastName">Фамилия</label>
+            <input class="form-control" type="text" name="last_name" id="lastName"
+                    {% if not isNew %}
+                        value="{{ client.lastName }}"
+                    {% endif %}
+                    />
+        </div>
+        <div class="form-group">
+            <label for="firstName">Имя</label>
+            <input class="form-control" type="text" name="first_name" id="firstName"
+                    {% if not isNew %}
+                        value="{{ client.firstName }}"
+                    {% endif %}
+                    />
+        </div>
+        <div class="form-group">
+            <label for="middleName">Отчество</label>
+            <input class="form-control" type="text" name="middle_name" id="middleName"
+                    {% if not isNew %}
+                        value="{{ client.middleName }}"
+                    {% endif %}
+                    />
+        </div>
+        <div class="form-group">
+            <label for="birthday">Дата рождения</label>
+            <input class="form-control" type="text" name="birthday" id="birthday"
+                    {% if not isNew and (not client.birthday == null) %}
+                        value="{{ client.birthday.format("Y-m-d H:i:s") }}"
+                    {% endif %}
+                    />
+        </div>
+        <div class="form-group">
+            <label for="city">Город</label>
+            <input class="form-control" type="text" name="city" id="city"
+                    {% if not isNew %}
+                        value="{{ client.city}}"
+                    {% else %}
+                        value="Йошкар-Ола"
+                    {% endif %}
+                    />
+        </div>
+        <div class="form-group">
+            <input type="checkbox" name="is_subscribed" id="isSubscribed"
+                    {% if not isNew and client.isSubscribed %}
+                        checked="checked"
+                    {% endif %}
+                    />
+            <label for="isSubscribed">Участвует в маркетинге</label>
+        </div>
+        <div class="form-group">
+            <input type="checkbox" name="is_school_learner" id="isSchoolLearner"
+                    {% if not isNew and client.isSchoolLearner %}
+                        checked="checked"
+                    {% endif %}
+                    />
+            <label for="isSchoolLearner">Обучается в школе</label>
+        </div>
+        <div class="form-group">
+            <input type="checkbox" name="is_online_learner" id="isOnlineLearner"
+                    {% if not isNew and client.isOnlineLearner %}
+                        checked="checked"
+                    {% endif %}
+                    />
+            <label for="isOnlineLearner">Обучается онлайн</label>
+        </div>
+        <div class="form-group">
+            <label for="phone">Телефон</label>
+            <input class="form-control" type="text" name="phone" id="phone"
+                    {% if not isNew %}
+                        value="{{ client.phone }}"
+                    {% endif %}
+                    />
+        </div>
+        <div class="form-group">
+            <label for="email">E-mail</label>
+            <input class="form-control" type="text" name="email" id="email"
+                    {% if not isNew %}
+                        value="{{ client.email }}"
+                    {% endif %}
+                    />
+        </div>
+        <div class="form-group">
+            <label for="subscriptionDate">Дата подписки</label>
+            <input class="form-control" type="text" name="subscription_date" id="subscriptionDate"
+                    {% if not isNew and (not client.subscriptionDate == null) %}
+                        value="{{ client.subscriptionDate.format("Y-m-d H:i:s") }}"
+                    {% endif %}
+                    />
+        </div>
+        <div class="form-group">
+            <label for="notes">Заметки</label>
+            <textarea id="notes" name="notes" class="form-control" rows="3">{#
+                #}{% if not isNew %}{#
+                    #}{% for note in clientNotes %}{#
+                        #}{{ note }}{#
+                    #}{% endfor %}{#
+                #}{% endif %}{#
+            #}</textarea>
+        </div>
+        <button type="submit" id="submit" class="btn btn-default">
+            {% if isNew %}
+                Добавить
+            {% else %}
+                Сохранить
+            {% endif %}
+        </button>
+    </form>
+{% endblock %}

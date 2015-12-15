@@ -4,6 +4,8 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * Client
@@ -649,5 +651,39 @@ class Client
     {
         return $this->subscriptions;
     }
+
+	public function saveFromPost(ParameterBag $post, ObjectManager $em)
+	{
+		$this->setLastName($post->get('last_name'));
+		$this->setFirstName($post->get('first_name'));
+		$this->setMiddleName($post->get('middle_name'));
+		$this->setBirthday(new \DateTime($post->get('birthday')));
+		$this->setCity($post->get('city'));
+		$this->setIsSubscribed($post->get('isSubscribed') === 'on');
+		$this->setIsSchoolLearner($post->get('isSchoolLearner') === 'on');
+		$this->setIsOnlineLearner($post->get('isOnlineLearner') === 'on');
+		$this->setPhone($post->get('phone'));
+		$this->setEmail($post->get('email'));
+		$this->setSubscriptionDate($post->get('subscriptionDate'));
+
+		$oldNotes = $this->getNotes();
+		$itNotes = $oldNotes->getIterator();
+		foreach ($itNotes as $note)
+		{
+			$em->remove($note);
+		}
+		$noteStr = $post->get('notes');
+		if ($noteStr !== '')
+		{
+			$note = new ClientNote();
+			$note->setText($noteStr);
+			$note->setClient($this);
+			$em->persist($note);
+			$this->addNote($note);
+		}
+
+		$em->persist($this);
+		$em->flush();
+	}
 }
 
