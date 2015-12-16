@@ -7,12 +7,17 @@
     {% endif %}
 {% endblock %}
 {% block content %}
+    {% if not isNew %}
+        <h3>
+            <a href="{{ path('diseaseHistory', {'clientId': client.getClientId()}) }}">Перейти к истории болезни</a>
+        </h3>
+    {% endif %}
     <form action="" method="post">
         <div class="form-group">
             <label for="lastName">Фамилия</label>
             <input class="form-control" type="text" name="last_name" id="lastName"
                     {% if not isNew %}
-                        value="{{ client.lastName }}"
+                        value="{{ client.getLastName() }}"
                     {% endif %}
                     />
         </div>
@@ -20,7 +25,7 @@
             <label for="firstName">Имя</label>
             <input class="form-control" type="text" name="first_name" id="firstName"
                     {% if not isNew %}
-                        value="{{ client.firstName }}"
+                        value="{{ client.getFirstName() }}"
                     {% endif %}
                     />
         </div>
@@ -28,15 +33,15 @@
             <label for="middleName">Отчество</label>
             <input class="form-control" type="text" name="middle_name" id="middleName"
                     {% if not isNew %}
-                        value="{{ client.middleName }}"
+                        value="{{ client.getMiddleName() }}"
                     {% endif %}
                     />
         </div>
         <div class="form-group">
             <label for="birthday">Дата рождения</label>
             <input class="form-control" type="text" name="birthday" id="birthday"
-                    {% if not isNew and (not client.birthday == null) %}
-                        value="{{ client.birthday.format("Y-m-d H:i:s") }}"
+                    {% if not isNew and (not client.getBirthday() == null) %}
+                        value="{{ client.getBirthday().format("Y-m-d H:i:s") }}"
                     {% endif %}
                     />
         </div>
@@ -44,7 +49,7 @@
             <label for="city">Город</label>
             <input class="form-control" type="text" name="city" id="city"
                     {% if not isNew %}
-                        value="{{ client.city}}"
+                        value="{{ client.getCity() }}"
                     {% else %}
                         value="Йошкар-Ола"
                     {% endif %}
@@ -52,7 +57,7 @@
         </div>
         <div class="form-group">
             <input type="checkbox" name="is_subscribed" id="isSubscribed"
-                    {% if not isNew and client.isSubscribed %}
+                    {% if not isNew and client.getIsSubscribed() %}
                         checked="checked"
                     {% endif %}
                     />
@@ -60,7 +65,7 @@
         </div>
         <div class="form-group">
             <input type="checkbox" name="is_school_learner" id="isSchoolLearner"
-                    {% if not isNew and client.isSchoolLearner %}
+                    {% if not isNew and client.getIsSchoolLearner() %}
                         checked="checked"
                     {% endif %}
                     />
@@ -68,7 +73,7 @@
         </div>
         <div class="form-group">
             <input type="checkbox" name="is_online_learner" id="isOnlineLearner"
-                    {% if not isNew and client.isOnlineLearner %}
+                    {% if not isNew and client.getIsOnlineLearner() %}
                         checked="checked"
                     {% endif %}
                     />
@@ -78,7 +83,7 @@
             <label for="phone">Телефон</label>
             <input class="form-control" type="text" name="phone" id="phone"
                     {% if not isNew %}
-                        value="{{ client.phone }}"
+                        value="{{ client.getPhone() }}"
                     {% endif %}
                     />
         </div>
@@ -86,15 +91,15 @@
             <label for="email">E-mail</label>
             <input class="form-control" type="text" name="email" id="email"
                     {% if not isNew %}
-                        value="{{ client.email }}"
+                        value="{{ client.getEmail() }}"
                     {% endif %}
                     />
         </div>
         <div class="form-group">
             <label for="subscriptionDate">Дата подписки</label>
             <input class="form-control" type="text" name="subscription_date" id="subscriptionDate"
-                    {% if not isNew and (not client.subscriptionDate == null) %}
-                        value="{{ client.subscriptionDate.format("Y-m-d H:i:s") }}"
+                    {% if not isNew and (not client.getSubscriptionDate() == null) %}
+                        value="{{ client.getSubscriptionDate().format("Y-m-d H:i:s") }}"
                     {% endif %}
                     />
         </div>
