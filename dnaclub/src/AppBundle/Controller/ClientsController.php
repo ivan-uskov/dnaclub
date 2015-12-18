@@ -3,6 +3,7 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\ClientNote;
+use AppBundle\Entity\DiseaseHistory;
 use Iterator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Monolog\Logger;
@@ -29,7 +30,7 @@ class ClientsController extends Controller
 	{
 		if ($request->isMethod(Request::METHOD_POST))
 		{
-			$this->handlePost($request->request);
+			$this->handleClientPost($request->request);
 			return $this->redirectToRoute('clientsList');
 		}
 		else
@@ -56,7 +57,7 @@ class ClientsController extends Controller
 		}
 		else
 		{
-			$this->handlePost($request->request, false, $clientId);
+			$this->handleClientPost($request->request, false, $clientId);
 			return $this->redirectToRoute('clientsList');
 		}
 	}
@@ -74,11 +75,48 @@ class ClientsController extends Controller
 		return $this->redirectToRoute('clientsList');
 	}
 
-	private function handlePost(ParameterBag $post, $isNew = true, $clientId = null)
+	/**
+	 * @Route("/disease-history/{clientId}", name="diseaseHistory")
+	 */
+	public function diseaseHistoryAction(Request $request, $clientId)
+	{
+		$client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
+		$diseaseHistories = $this->getDoctrine()->getRepository("AppBundle:DiseaseHistory")->findBy(['client' => $client]);
+		if ($request->isMethod(Request::METHOD_POST))
+		{
+			$this->handleDiseaseHistoryPost($request->request, $clientId);
+			$diseaseHistories = $this->getDoctrine()->getRepository("AppBundle:DiseaseHistory")->findBy(['client' => $client]);
+		}
+		return $this->render('clients/disease_history.html.twig', ['client' => $client, 'diseaseHistories' => $diseaseHistories]);
+	}
+
+	/**
+	 * @Route("/delete-disease-history/{diseaseHistoryId}", name="deleteDiseaseHistory")
+	 */
+	public function deleteDiseaseHistoryAction(Request $request, $diseaseHistoryId)
+	{
+		$diseaseHistory = $this->getDoctrine()->getRepository("AppBundle:DiseaseHistory")->find($diseaseHistoryId);
+		$clientId = $diseaseHistory->getClient()->getClientId();
+		$em = $this->getDoctrine()->getManager();
+		$em->remove($diseaseHistory);
+		$em->flush();
+		return $this->redirectToRoute('diseaseHistory', ['clientId' => $clientId]);
+	}
+
+	private function handleClientPost(ParameterBag $post, $isNew = true, $clientId = null)
 	{
 		$client = $isNew
 			? new Client()
-			: $client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
+			: $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
 		$client->saveFromPost($post, $this->getDoctrine()->getManager());
+	}
+
+	private function handleDiseaseHistoryPost(ParameterBag $post, $clientId = null)
+	{
+		$client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
+		$em = $this->getDoctrine()->getManager();
+		$diseaseHistory = new DiseaseHistory();
+		$diseaseHistory->saveFromPost($post, $em, $client);
+		return $this->redirectToRoute('editClient', ['clientId' => $clientId]);
 	}
 }

@@ -659,9 +659,9 @@ class Client
 		$this->setMiddleName($post->get('middle_name'));
 		$this->setBirthday(new \DateTime($post->get('birthday')));
 		$this->setCity($post->get('city'));
-		$this->setIsSubscribed($post->get('isSubscribed') === 'on');
-		$this->setIsSchoolLearner($post->get('isSchoolLearner') === 'on');
-		$this->setIsOnlineLearner($post->get('isOnlineLearner') === 'on');
+		$this->setIsSubscribed(($post->get('is_subscribed') === 'on') ? 1 : 0);
+		$this->setIsSchoolLearner(($post->get('is_school_learner') === 'on') ? 1 : 0);
+		$this->setIsOnlineLearner(($post->get('is_online_learner') === 'on') ? 1 : 0);
 		$this->setPhone($post->get('phone'));
 		$this->setEmail($post->get('email'));
 		$this->setSubscriptionDate($post->get('subscriptionDate'));
@@ -672,6 +672,7 @@ class Client
 		{
 			$em->remove($note);
 		}
+		$em->flush();
 		$noteStr = $post->get('notes');
 		if ($noteStr !== '')
 		{
