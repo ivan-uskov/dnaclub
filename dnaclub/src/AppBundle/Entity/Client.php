@@ -685,5 +685,10 @@ class Client
 		$em->persist($this);
 		$em->flush();
 	}
+
+    public function getName()
+    {
+        return $this->getFirstName() . ' ' . $this->getLastName();
+    }
 }
 
