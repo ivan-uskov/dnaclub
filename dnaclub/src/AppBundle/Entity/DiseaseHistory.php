@@ -142,14 +142,21 @@ class DiseaseHistory
         return $this->client;
     }
 
-	public function saveFromPost(ParameterBag $post, ObjectManager $em, Client $client)
+    /**
+     * @param ParameterBag $post
+     * @param ObjectManager $em
+     * @param Client $client
+     */
+    public function saveFromPost(ParameterBag $post, ObjectManager $em, Client $client, $isNew = true)
 	{
-		$diseaseHistory = new DiseaseHistory();
-		$diseaseHistory->setClient($client);
-		$diseaseHistory->setDate(new \DateTime($post->get('date')));
-		$diseaseHistory->setHealthState($post->get('health_state'));
-		$diseaseHistory->setTreatment($post->get('treatment'));
-		$em->persist($diseaseHistory);
+		$this->setClient($client);
+        if ($isNew)
+        {
+            $this->setDate(new \DateTime($post->get('date')));
+        }
+		$this->setHealthState($post->get('health_state'));
+		$this->setTreatment($post->get('treatment'));
+		$em->persist($this);
 		$em->flush();
 	}
 }

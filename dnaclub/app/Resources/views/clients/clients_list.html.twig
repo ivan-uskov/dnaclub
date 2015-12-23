@@ -1,4 +1,9 @@
 {% extends 'layout.html.twig' %}
+{% block javascripts %}
+    {% javascripts '@AppBundle/Resources/public/js/*' %}
+        <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
 {% block pageH1 %}Список клиентов{% endblock %}
 {% block content %}
     <div class="panel-body">
@@ -14,7 +19,7 @@
                     <th></th>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody id="table_body">
                 {% for client in clients %}
                     <tr>
                         <td>{{ client.getClientId() }}</td>
