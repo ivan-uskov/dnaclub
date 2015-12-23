@@ -1,5 +1,9 @@
 <?php
 
+namespace AppBundle\config;
+
+use AppBundle\utils\ArrayUtils;
+
 class SubscriptionType
 {
     const CONTRACT    = 0;

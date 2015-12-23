@@ -10,4 +10,19 @@ namespace AppBundle\Entity\Repository;
  */
 class SubscriptionRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findByMonth($date)
+    {
+        $startDate = (new \DateTime($date))->modify('first day of this month');
+        $endDate = (new \DateTime($date))->modify('first day of next month');
+        return $this->getEntityManager()
+            ->createQueryBuilder()
+            ->select('s')
+            ->from('AppBundle\Entity\Subscription', 's')
+            ->where('s.date >= :start_date')
+            ->andWhere('s.date < :end_date')
+            ->setParameter('start_date', $startDate)
+            ->setParameter('end_date', $endDate)
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -24,4 +24,28 @@ class MarketingReportRepository extends EntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function getMonthsForSelect()
+    {
+        $dates = $this->getEntityManager()
+            ->createQueryBuilder()
+            ->select('DISTINCT r.date')
+            ->from('AppBundle\Entity\MarketingReport', 'r')
+            ->orderBy('r.date', 'desc')
+            ->getQuery()
+            ->getResult();
+
+        $formatter = new \IntlDateFormatter(\Locale::getDefault(), \IntlDateFormatter::NONE, \IntlDateFormatter::NONE);
+        $formatter->setPattern('LLLL Y');
+
+        $months = array();
+        foreach ($dates as $date)
+        {
+
+
+            $dateObj = $date['date'];
+            $months[$dateObj->format('Y-m-d')] = $formatter->format($dateObj);
+        }
+        return $months;
+    }
 }

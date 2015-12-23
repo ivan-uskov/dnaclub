@@ -210,6 +210,14 @@ class Client
     }
 
     /**
+     * @return string
+     */
+    public function getFullName()
+    {
+        return implode(" ", array($this->getLastName(), $this->getFirstName(), $this->getMiddleName()));
+    }
+
+    /**
      * Set city
      *
      * @param string $city

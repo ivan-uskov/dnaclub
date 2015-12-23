@@ -1,5 +1,7 @@
 <?
 
+namespace AppBundle\utils;
+
 class ArrayUtils
 {
     public static function getParameter($array, $parameterName, $default = null)

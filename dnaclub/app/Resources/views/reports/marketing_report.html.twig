@@ -2,17 +2,12 @@
 {% block pageH1 %}Маркетинговый отчет{% endblock %}
 {% block content %}
   <div class="panel-body">
-    <form action="{{ path('marketingReport') }}" method="post">
-      <select name="month" class="form-control input-sm" style="width:200px; margin-bottom: 10px;">
-        <option value="2015-12-01">Декабрь 2015></option>
-        <option value="2015-11-01">Ноябрь 2015></option>
-        <option value="2015-10-01">Октябрь 2015></option>
-        <option value="2015-09-01">Сентябрь 2015></option>
-      </select>
-      <button type="submit" id="submit" class="btn btn-default">Обновить</button>
-    </form>
+    {{ form_start(form) }}
+    {{ form_widget(form.months, {'attr': {'class': 'form-control input-sm', 'style': 'width:200px; margin-bottom: 10px;', 'onchange': "this.form.submit()"}}) }}
+    {{ form_end(form) }}
+
     <div class="table-responsive">
-      <table class="table table-hover" id="marketing_report">
+      <table class="table table-striped table-bordered table-hover" id="marketing_report">
         <thead>
         <tr>
           <th>Фио клиента</th>
@@ -28,12 +23,12 @@
         {% for reportRow in reportRows %}
           <tr>
             <td>{{ reportRow.getClient().getLastName() }} {{ reportRow.getClient().getFirstName() }} {{ reportRow.getClient().getMiddleName() }}</td>
-            <td>{{ reportRow.getStartSum() }}</td>
-            <td>{{ reportRow.getOrderSum() }}</td>
-            <td>{{ reportRow.getStartSum() + reportRow.getOrderSum() }}</td>
-            <td>{{ reportRow.getContract() }}</td>
-            <td>{{ reportRow.getMaintenance() }}</td>
-            <td>{{ reportRow.getStartSum() + reportRow.getOrderSum() - reportRow.getContractSum() - reportRow.getMaintenanceSum }}</td>
+            <td class="text-right">{{ reportRow.getStartSum()|localizedcurrency('RUB') }}</td>
+            <td class="text-right">{{ reportRow.getOrderSum()|localizedcurrency('RUB') }}</td>
+            <td class="text-right">{{ (reportRow.getStartSum() + reportRow.getOrderSum())|localizedcurrency('RUB') }}</td>
+            <td class="text-right">{{ reportRow.getContract() }}</td>
+            <td class="text-right">{{ reportRow.getMaintenance() }}</td>
+            <td class="text-right">{{ (reportRow.getStartSum() + reportRow.getOrderSum() - reportRow.getContractSum() - reportRow.getMaintenanceSum)|localizedcurrency('RUB') }}</td>
           </tr>
         {% endfor %}
         </tbody>
@@ -44,7 +39,7 @@
 {% endblock %}
 {% block javascripts %}
   <script>
-    $(document).ready( function () {
+    $(document).ready(function() {
       $('#marketing_report').DataTable({
         pageLength: 25
       });

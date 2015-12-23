@@ -1,5 +1,58 @@
+{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
 {% extends 'layout.html.twig' %}
-{% block pageH1 %}Список лидерских и контрактов{% endblock %}
+{% block pageH1 %}Лидерские и контракты{% endblock %}
 {% block content %}
-  here subscriptions list
+  <div class="panel-body">
+    {{ form_start(form) }}
+      <div class="row">
+        <div class="col-md-6">
+          {{ form_row(form.client) }}
+          {{ form_row(form.type) }}
+          {{ form_row(form.count)  }}
+          {{ form_row(form.date) }}
+          {{ form_row(form.save) }}
+        </div>
+      </div>
+    {{ form_end(form) }}
+  </div>
+  <div class="panel-body">
+    {{ form_start(searchForm) }}
+      {{ form_widget(searchForm.months, {'attr': {'style': 'width:200px; margin-bottom: 10px;', 'onchange': "this.form.submit()"}}) }}
+    {{ form_end(searchForm) }}
+
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered table-hover" id="subscription_list">
+        <thead>
+        <tr>
+          <th>Фио клиента</th>
+          <th>Дата</th>
+          <th>Тип подписки</th>
+          <th>Количество</th>
+          <th>Сумма</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for subscription in subscriptions %}
+          <tr>
+            <td>{{ subscription.getClient().getLastName() }} {{ subscription.getClient().getFirstName() }} {{ subscription.getClient().getMiddleName() }}</td>
+            <td>{{ subscription.getDate()|localizeddate('long', 'none', null, null, 'dd LLLL yyyy') }}</td>
+            <td>{{ subscription.getTypeName() }}</td>
+            <td class="text-right">{{ subscription.getCount() }}</td>
+            <td class="text-right">{{ subscription.getSum()|localizedcurrency('RUB') }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+{% endblock %}
+{% block javascripts %}
+  <script>
+    $(document).ready(function() {
+      $('#subscription_list').DataTable({
+        pageLength: 25
+      });
+    });
+  </script>
 {% endblock %}
