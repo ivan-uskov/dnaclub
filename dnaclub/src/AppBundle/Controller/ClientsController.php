@@ -2,15 +2,12 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\ClientNote;
+use AppBundle\Entity\Client;
 use AppBundle\Entity\DiseaseHistory;
-use Iterator;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
-use AppBundle\Entity\Client;
 
 class ClientsController extends Controller
 {
@@ -21,6 +18,39 @@ class ClientsController extends Controller
     {
 		$clients = $this->getDoctrine()->getRepository('AppBundle:Client')->findBy(['isDeleted' => 0]);
         return $this->render('clients/clients_list.html.twig', ['clients' => $clients]);
+    }
+
+    /**
+     * @Route("/clients-search-ajax", name="clientsListSearchAjax")
+     */
+    public function clientsListSearchAjaxAction(Request $request)
+    {
+		if (!$request->isXmlHttpRequest())
+		{
+			return $this->redirectToRoute('clientsList');
+		}
+		$queryStr = trim($request->get('query'));
+		if (!$queryStr)
+		{
+			die();
+		}
+
+		$clientsRepository = $this->getDoctrine()->getRepository('AppBundle:Client');
+		$queryBuilder = $clientsRepository
+				->createQueryBuilder('AppBundle:Client')
+				->from('AppBundle:Client', 'c');
+		$queryBuilder
+				->where(
+					$queryBuilder->expr()->orX(
+						$queryBuilder->expr()->like('c.firstName', ':query'),
+						$queryBuilder->expr()->like('c.middleName', ':query'),
+						$queryBuilder->expr()->like('c.lastName', ':query')
+					)
+				)
+				->setParameter('query', '%' . $queryStr . '%');
+		$query = $queryBuilder->getQuery();
+		$clients = $query->getResult();
+        return $this->render('clients/clients_list_ajax.html.twig', ['clients' => $clients]);
     }
 
 	/**
