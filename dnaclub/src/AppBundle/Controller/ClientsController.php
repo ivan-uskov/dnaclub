@@ -2,15 +2,12 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Entity\ClientNote;
+use AppBundle\Entity\Client;
 use AppBundle\Entity\DiseaseHistory;
-use Iterator;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
-use AppBundle\Entity\Client;
 
 class ClientsController extends Controller
 {
@@ -21,6 +18,39 @@ class ClientsController extends Controller
     {
 		$clients = $this->getDoctrine()->getRepository('AppBundle:Client')->findBy(['isDeleted' => 0]);
         return $this->render('clients/clients_list.html.twig', ['clients' => $clients]);
+    }
+
+    /**
+     * @Route("/clients-search-ajax", name="clientsListSearchAjax")
+     */
+    public function clientsListSearchAjaxAction(Request $request)
+    {
+		if (!$request->isXmlHttpRequest())
+		{
+			return $this->redirectToRoute('clientsList');
+		}
+		$queryStr = trim($request->get('query'));
+		if (!$queryStr)
+		{
+			die();
+		}
+
+		$clientsRepository = $this->getDoctrine()->getRepository('AppBundle:Client');
+		$queryBuilder = $clientsRepository
+				->createQueryBuilder('AppBundle:Client')
+				->from('AppBundle:Client', 'c');
+		$queryBuilder
+				->where(
+					$queryBuilder->expr()->orX(
+						$queryBuilder->expr()->like('c.firstName', ':query'),
+						$queryBuilder->expr()->like('c.middleName', ':query'),
+						$queryBuilder->expr()->like('c.lastName', ':query')
+					)
+				)
+				->setParameter('query', '%' . $queryStr . '%');
+		$query = $queryBuilder->getQuery();
+		$clients = $query->getResult();
+        return $this->render('clients/clients_list_ajax.html.twig', ['clients' => $clients]);
     }
 
 	/**
@@ -87,7 +117,32 @@ class ClientsController extends Controller
 			$this->handleDiseaseHistoryPost($request->request, $clientId);
 			$diseaseHistories = $this->getDoctrine()->getRepository("AppBundle:DiseaseHistory")->findBy(['client' => $client]);
 		}
-		return $this->render('clients/disease_history.html.twig', ['client' => $client, 'diseaseHistories' => $diseaseHistories]);
+		return $this->render('clients/disease_history.html.twig', [
+				'client' => $client,
+				'diseaseHistories' => $diseaseHistories,
+				'isNew' => true
+		]);
+	}
+
+	/**
+	 * @Route("/disease-history/{clientId}/edit/{diseaseHistoryId}", name="editDiseaseHistory")
+	 */
+	public function editDiseaseHistoryAction(Request $request, $clientId, $diseaseHistoryId)
+	{
+		$client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
+		$diseaseHistories = $this->getDoctrine()->getRepository("AppBundle:DiseaseHistory")->findBy(['client' => $client]);
+		$currentDiseaseHistory = $this->getDoctrine()->getRepository("AppBundle:DiseaseHistory")->find($diseaseHistoryId);
+		if ($request->isMethod(Request::METHOD_POST))
+		{
+			$this->handleDiseaseHistoryPost($request->request, $clientId, $diseaseHistoryId);
+			$diseaseHistories = $this->getDoctrine()->getRepository("AppBundle:DiseaseHistory")->findBy(['client' => $client]);
+		}
+		return $this->render('clients/disease_history.html.twig', [
+				'client' => $client,
+				'diseaseHistories' => $diseaseHistories,
+				'currentDiseaseHistory' => $currentDiseaseHistory,
+				'isNew' => false
+		]);
 	}
 
 	/**
@@ -111,12 +166,20 @@ class ClientsController extends Controller
 		$client->saveFromPost($post, $this->getDoctrine()->getManager());
 	}
 
-	private function handleDiseaseHistoryPost(ParameterBag $post, $clientId = null)
+	private function handleDiseaseHistoryPost(ParameterBag $post, $clientId = null, $diseaseHistoryId = null)
 	{
 		$client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
 		$em = $this->getDoctrine()->getManager();
-		$diseaseHistory = new DiseaseHistory();
-		$diseaseHistory->saveFromPost($post, $em, $client);
+		$isNew = $diseaseHistoryId === null;
+		if ($isNew)
+		{
+			$diseaseHistory = new DiseaseHistory();
+		}
+		else
+		{
+			$diseaseHistory = $this->getDoctrine()->getRepository("AppBundle:DiseaseHistory")->find($diseaseHistoryId);
+		}
+		$diseaseHistory->saveFromPost($post, $em, $client, $isNew);
 		return $this->redirectToRoute('editClient', ['clientId' => $clientId]);
 	}
 }
