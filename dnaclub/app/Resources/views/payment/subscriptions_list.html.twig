@@ -1,6 +1,10 @@
-{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
 {% extends 'layout.html.twig' %}
+{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
 {% block pageH1 %}Лидерские и контракты{% endblock %}
+{% block stylesheets %}
+  {{ parent() }}
+  <link href="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css') }}" type="text/css" rel="stylesheet" />
+{% endblock %}
 {% block content %}
   <div class="panel-body">
     {{ form_start(form) }}
@@ -47,7 +51,21 @@
   </div>
 
 {% endblock %}
+
 {% block javascripts %}
+  {{ parent() }}
+  <script src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
+  <script src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js') }}"></script>
+
+  <script>
+    $('.datepicker').datepicker({
+    format: 'dd-mm-yyyy',
+    weekStart: 1,
+    autoclose: true,
+    language: 'ru'
+    });
+  </script>
+
   <script>
     $(document).ready(function() {
       $('#subscription_list').DataTable({

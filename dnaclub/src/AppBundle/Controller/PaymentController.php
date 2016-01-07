@@ -42,7 +42,10 @@ class PaymentController extends Controller
 
         $types = SubscriptionType::getNames();
         $form = $this->createFormBuilder($subscription)
-            ->add('date', 'date', array('label' => 'Дата'))
+            ->add('date', 'date', array('label' => 'Дата', 'widget' => 'single_text', 'format' => 'dd-MM-yyyy', 'attr' => array(
+                'class' => 'form-control input-inline datepicker',
+                'data-provide' => 'datepicker'
+            )))
             ->add('type', 'choice', array('choices' => $types, 'choices_as_values' => false, 'label' => 'Тип подписки'))
             ->add('count', 'number', array('label' => 'Количество'))
             ->add('client', 'entity', array('label' => 'Клиент', 'class' => 'AppBundle:Client','choice_label' => 'fullName', 'query_builder' => function (EntityRepository $er) {
