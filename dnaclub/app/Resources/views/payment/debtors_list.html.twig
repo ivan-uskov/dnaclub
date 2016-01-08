@@ -1,5 +1,47 @@
 {% extends 'layout.html.twig' %}
-{% block pageH1 %}Список должников{% endblock %}
+{% block pageH1 %}Должники{% endblock %}
 {% block content %}
-  here debtors list
+  <div class="panel-body">
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered table-hover" id="debtors_list">
+        <thead>
+          <tr>
+            <th>Клиент</th>
+            <th>Сумма долга</th>
+            <th>Дата покупки</th>
+            <th>Срок задолженности</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for debtor in debtors %}
+          <tr>
+            <td>
+              <a href="{{ path('editClient', {'clientId': debtor.getClient().getClientId()}) }}">
+                {{ debtor.getClient().getFullName() }}
+              </a>
+            </td>
+            <td class="text-right">{{ debtor.getDebt()|localizedcurrency('RUB') }}</td>
+            <td>{{ debtor.getCreatedAt()|localizeddate('long', 'none', null, null, 'dd LLLL yyyy') }}</td>
+            <td>{{ debtor.getDebtDuration('%a дн.') }}</td>
+            <td>
+              <a href="{{ path('editOrder', {'orderId': debtor.getOrderId()}) }}" class="glyphicon glyphicon-pencil"></a>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script>
+    $(document).ready(function() {
+      $('#debtors_list').DataTable({
+        pageLength: 25
+      });
+    } );
+  </script>
 {% endblock %}

@@ -23,7 +23,7 @@
         <tbody>
         {% for reportRow in reportRows %}
           <tr>
-            <td>{{ reportRow.getClient().getLastName() }} {{ reportRow.getClient().getFirstName() }} {{ reportRow.getClient().getMiddleName() }}</td>
+            <td>{{ reportRow.getClient().getFullName() }}</td>
             <td class="text-right">{{ reportRow.getStartSum()|localizedcurrency('RUB') }}</td>
             <td class="text-right">{{ reportRow.getOrderSum()|localizedcurrency('RUB') }}</td>
             <td class="text-right">{{ (reportRow.getStartSum() + reportRow.getOrderSum())|localizedcurrency('RUB') }}</td>

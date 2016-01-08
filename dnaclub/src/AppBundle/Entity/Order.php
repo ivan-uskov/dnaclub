@@ -401,4 +401,19 @@ class Order
     {
         return $this->discount;
     }
+
+    /**
+     * @param string $format
+     * @return string
+     */
+    public function getDebtDuration($format = '%a')
+    {
+        $debtDuration = '';
+        if ($this->getDebt() > 0)
+        {
+            $now = new \DateTime();
+            $debtDuration = $now->diff($this->getCreatedAt())->format($format);
+        }
+        return $debtDuration;
+    }
 }
