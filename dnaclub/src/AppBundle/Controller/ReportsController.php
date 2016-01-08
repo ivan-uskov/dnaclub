@@ -8,7 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Client;
 use AppBundle\Entity\MarketingReport;
-
+use AppBundle\Form\MonthSearchForm;
 
 class ReportsController extends Controller
 {
@@ -20,13 +20,7 @@ class ReportsController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $dates = $em->getRepository('AppBundle:MarketingReport')->getMonthsForSelect();
-        $form = $this->createFormBuilder()
-            ->add('months', 'choice',
-                array('choices' => $dates,
-                'choices_as_values' => false
-                ))
-            ->getForm()
-        ;
+        $form = $this->createForm(new MonthSearchForm(), array('months' => ''), array('dates' => $dates));
 
         $form->handleRequest($request);
 

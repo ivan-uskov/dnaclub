@@ -4,7 +4,8 @@ namespace AppBundle\Controller;
 
 use AppBundle\config\SubscriptionType;
 use AppBundle\Entity\Subscription;
-use AppBundle\Entity\Client;
+use AppBundle\Form\MonthSearchForm;
+use AppBundle\Form\NewSubscriptionForm;
 use Doctrine\ORM\EntityRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Monolog\Logger;
@@ -39,49 +40,28 @@ class PaymentController extends Controller
         $subscription = new Subscription();
         $subscription->setCount(1);
         $subscription->setDate(new \DateTime());
-
-        $types = SubscriptionType::getNames();
-        $form = $this->createFormBuilder($subscription)
-            ->add('date', 'date', array('label' => 'Дата', 'widget' => 'single_text', 'format' => 'dd-MM-yyyy', 'attr' => array(
-                'class' => 'form-control input-inline datepicker',
-                'data-provide' => 'datepicker'
-            )))
-            ->add('type', 'choice', array('choices' => $types, 'choices_as_values' => false, 'label' => 'Тип подписки'))
-            ->add('count', 'number', array('label' => 'Количество'))
-            ->add('client', 'entity', array('label' => 'Клиент', 'class' => 'AppBundle:Client','choice_label' => 'fullName', 'query_builder' => function (EntityRepository $er) {
-                return $er->createQueryBuilder('c')
-                    ->orderBy('c.lastName, c.firstName, c.middleName','asc');
-            }))
-            ->add('save', 'submit', array('label' => 'Добавить подписку'))
-            ->getForm();
+        $newSubscriptionForm = $this->createForm(new NewSubscriptionForm(), $subscription, array('em' => $em));
 
         $dates = $em->getRepository('AppBundle:MarketingReport')->getMonthsForSelect();
-        $searchForm = $this->createFormBuilder()
-            ->add('months', 'choice',
-                array('choices' => $dates,
-                    'choices_as_values' => false
-                ))
-            ->getForm()
-        ;
+        $searchForm = $this->createForm(new MonthSearchForm(), array('months' => ''), array('dates' => $dates));
 
         $searchForm->handleRequest($request);
 
-        $form->handleRequest($request);
-        if ($form->isValid())
+        $newSubscriptionForm->handleRequest($request);
+        if ($newSubscriptionForm->isSubmitted() && $newSubscriptionForm->isValid())
         {
-            $type = $form->getData()->getType();
-            $count = $form->getData()->getCount();
+            $type = $newSubscriptionForm->getData()->getType();
+            $count = $newSubscriptionForm->getData()->getCount();
             $sum = $count * SubscriptionType::getPrice($type);
             $subscription->setSum($sum);
-            $em = $this->getDoctrine()->getManager();
             $em->persist($subscription);
             $em->flush();
         }
-        $data = $searchForm->getData();
 
+        $data = $searchForm->getData();
         $date = $data["months"] ?: key($dates);
         $subscriptions = $em->getRepository('AppBundle:Subscription')->findByMonth($date);
 
-        return $this->render('payment/subscriptions_list.html.twig', ['searchForm' => $searchForm->createView(), 'form' => $form->createView(), 'subscriptions' => $subscriptions]);
+        return $this->render('payment/subscriptions_list.html.twig', ['searchForm' => $searchForm->createView(), 'form' => $newSubscriptionForm->createView(), 'subscriptions' => $subscriptions]);
     }
 }
