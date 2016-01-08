@@ -22,4 +22,15 @@ class OrderRepository extends EntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function getPreOrders()
+    {
+        return $this->getEntityManager()
+            ->createQueryBuilder()
+            ->select('o')
+            ->from('AppBundle\Entity\Order', 'o')
+            ->where('o.isPreOrder = 1')
+            ->getQuery()
+            ->getResult();
+    }
 }

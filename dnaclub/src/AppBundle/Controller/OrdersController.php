@@ -120,6 +120,9 @@ class OrdersController extends Controller
      */
     public function preOrdersListAction(Request $request)
     {
-        return $this->render('orders/pre_orders_list.html.twig');
+        $em = $this->getDoctrine()->getManager();
+        $preOrders = $em->getRepository('AppBundle:Order')->getPreOrders();
+
+        return $this->render('orders/pre_orders_list.html.twig', ['pre_orders' => $preOrders]);
     }
 }
