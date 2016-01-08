@@ -23,11 +23,11 @@ class PaymentController extends Controller
     }
 
     /**
-     * @Route("/rewords", name="rewordsList")
+     * @Route("/rewards", name="rewardsList")
      */
-    public function rewordsListAction(Request $request)
+    public function rewardsListAction(Request $request)
     {
-        return $this->render('payment/rewords_list.html.twig');
+        return $this->render('payment/rewards_list.html.twig');
     }
 
     /**
