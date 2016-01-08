@@ -10,4 +10,15 @@ namespace AppBundle\Entity\Repository;
  */
 class ClientRepository extends \Doctrine\ORM\EntityRepository
 {
+    function getSortedClients()
+    {
+        return $this->getEntityManager()
+            ->createQueryBuilder()
+            ->select('c')
+            ->from('AppBundle\Entity\Client', 'c')
+            ->where('c.isDeleted = 0')
+            ->orderBy('c.lastName, c.firstName, c.middleName','asc')
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -113,6 +113,11 @@ class Client
     private $subscriptions;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $marketingReport;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -204,6 +209,14 @@ class Client
     public function getMiddleName()
     {
         return $this->middleName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullName()
+    {
+        return implode(" ", array($this->getLastName(), $this->getFirstName(), $this->getMiddleName()));
     }
 
     /**
@@ -691,5 +704,38 @@ class Client
     {
         return $this->getFirstName() . ' ' . $this->getLastName();
     }
-}
 
+    /**
+     * Add marketingReport
+     *
+     * @param \AppBundle\Entity\MarketingReport $marketingReport
+     *
+     * @return Client
+     */
+    public function addMarketingReport(\AppBundle\Entity\MarketingReport $marketingReport)
+    {
+        $this->marketingReport[] = $marketingReport;
+
+        return $this;
+    }
+
+    /**
+     * Remove marketingReport
+     *
+     * @param \AppBundle\Entity\MarketingReport $marketingReport
+     */
+    public function removeMarketingReport(\AppBundle\Entity\MarketingReport $marketingReport)
+    {
+        $this->marketingReport->removeElement($marketingReport);
+    }
+
+    /**
+     * Get marketingReport
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getMarketingReport()
+    {
+        return $this->marketingReport;
+    }
+}

@@ -10987,7 +10987,7 @@
 				 *      } );
 				 *    } );
 				 */
-				"sFirst": "First",
+				"sFirst": "Первая",
 	
 	
 				/**
@@ -11010,7 +11010,7 @@
 				 *      } );
 				 *    } );
 				 */
-				"sLast": "Last",
+				"sLast": "Последняя",
 	
 	
 				/**
@@ -11033,7 +11033,7 @@
 				 *      } );
 				 *    } );
 				 */
-				"sNext": "Next",
+				"sNext": "Следующая",
 	
 	
 				/**
@@ -11056,7 +11056,7 @@
 				 *      } );
 				 *    } );
 				 */
-				"sPrevious": "Previous"
+				"sPrevious": "Предыдущая"
 			},
 	
 			/**
@@ -11079,7 +11079,7 @@
 			 *      } );
 			 *    } );
 			 */
-			"sEmptyTable": "No data available in table",
+			"sEmptyTable": "Нет данных",
 	
 	
 			/**
@@ -11111,7 +11111,7 @@
 			 *      } );
 			 *    } );
 			 */
-			"sInfo": "Showing _START_ to _END_ of _TOTAL_ entries",
+			"sInfo": "Показано с _START_ по _END_ из _TOTAL_ записей",
 	
 	
 			/**
@@ -11132,7 +11132,7 @@
 			 *      } );
 			 *    } );
 			 */
-			"sInfoEmpty": "Showing 0 to 0 of 0 entries",
+			"sInfoEmpty": "Показано с 0 по 0 из 0 записей",
 	
 	
 			/**
@@ -11154,7 +11154,7 @@
 			 *      } );
 			 *    } );
 			 */
-			"sInfoFiltered": "(filtered from _MAX_ total entries)",
+			"sInfoFiltered": "(найдено из _MAX_ записей)",
 	
 	
 			/**
@@ -11272,7 +11272,7 @@
 			 *      } );
 			 *    } );
 			 */
-			"sLengthMenu": "Show _MENU_ entries",
+			"sLengthMenu": "Показывать по _MENU_ записей",
 	
 	
 			/**
@@ -11296,7 +11296,7 @@
 			 *      } );
 			 *    } );
 			 */
-			"sLoadingRecords": "Loading...",
+			"sLoadingRecords": "Загрузка...",
 	
 	
 			/**
@@ -11317,7 +11317,7 @@
 			 *      } );
 			 *    } );
 			 */
-			"sProcessing": "Processing...",
+			"sProcessing": "Обработка...",
 	
 	
 			/**
@@ -11352,7 +11352,7 @@
 			 *      } );
 			 *    } );
 			 */
-			"sSearch": "Search:",
+			"sSearch": "Поиск:",
 	
 	
 			/**
@@ -11410,7 +11410,7 @@
 			 *      } );
 			 *    } );
 			 */
-			"sZeroRecords": "No matching records found"
+			"sZeroRecords": "Данных не найдено"
 		},
 	
 	
