@@ -2,7 +2,7 @@
 
 namespace AppBundle\Controller;
 
-use AppBundle\Lib\OrderItemPeer;
+use AppBundle\lib\OrderItemPeer;
 use AppBundle\Entity\OrderItem;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Monolog\Logger;
