@@ -20,6 +20,7 @@ class SubscriptionRepository extends \Doctrine\ORM\EntityRepository
             ->from('AppBundle\Entity\Subscription', 's')
             ->where('s.date >= :start_date')
             ->andWhere('s.date < :end_date')
+            ->andWhere('s.isDeleted = 0')
             ->setParameter('start_date', $startDate)
             ->setParameter('end_date', $endDate)
             ->getQuery()

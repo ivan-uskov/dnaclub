@@ -1,9 +1,10 @@
+{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
 {% extends 'layout.html.twig' %}
 {% block pageH1 %}Маркетинговый отчет{% endblock %}
 {% block content %}
   <div class="panel-body">
     {{ form_start(form) }}
-    {{ form_widget(form.months, {'attr': {'class': 'form-control input-sm', 'style': 'width:200px; margin-bottom: 10px;', 'onchange': "this.form.submit()"}}) }}
+    {{ form_widget(form.months, {'attr': {'style': 'width:200px; margin-bottom: 10px;', 'onchange': "this.form.submit()"}}) }}
     {{ form_end(form) }}
 
     <div class="table-responsive">

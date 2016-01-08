@@ -64,4 +64,23 @@ class PaymentController extends Controller
 
         return $this->render('payment/subscriptions_list.html.twig', ['searchForm' => $searchForm->createView(), 'form' => $newSubscriptionForm->createView(), 'subscriptions' => $subscriptions]);
     }
+
+    /**
+     * @Route("/subscription/delete/{subscriptionId}", name="deleteSubscription")
+     */
+    public function deleteSubscriptionAction(Request $request, $subscriptionId)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $subscription = $em->getRepository('AppBundle:Subscription')->find($subscriptionId);
+
+        if ($subscription)
+        {
+            $subscription->setIsDeleted(true);
+            $em->merge($subscription);
+            $em->flush();
+        }
+
+        return $this->redirectToRoute('subscriptionsList');
+    }
 }

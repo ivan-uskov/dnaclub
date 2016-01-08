@@ -33,6 +33,7 @@
           <th>Тип подписки</th>
           <th>Количество</th>
           <th>Сумма</th>
+          <th></th>
         </tr>
         </thead>
         <tbody>
@@ -43,6 +44,7 @@
             <td>{{ subscription.getTypeName() }}</td>
             <td class="text-right">{{ subscription.getCount() }}</td>
             <td class="text-right">{{ subscription.getSum()|localizedcurrency('RUB') }}</td>
+            <td><a href="{{ path('deleteSubscription', {'subscriptionId': subscription.getSubscriptionId()}) }}" class="glyphicon glyphicon-remove" onclick="return confirm('Вы уверены, что хотите удалить запись?')"></a></td>
           </tr>
         {% endfor %}
         </tbody>
