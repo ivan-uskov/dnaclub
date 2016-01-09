@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\lib\OrderItemPeer;
 use AppBundle\Entity\OrderItem;
+use AppBundle\Form\PreOrderSearchForm;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -121,9 +122,17 @@ class OrdersController extends Controller
     public function preOrdersListAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
-        $preOrders = $em->getRepository('AppBundle:Order')->getPreOrders();
 
-        return $this->render('orders/pre_orders_list.html.twig', ['pre_orders' => $preOrders]);
+        $searchForm = $this->createForm(new PreOrderSearchForm(), array(
+            PreOrderSearchForm::IS_RELEASED_SEARCH_FIELD     => false,
+            PreOrderSearchForm::IS_NOT_RELEASED_SEARCH_FIELD => true
+        ));
+
+        $searchForm->handleRequest($request);
+
+        $preOrders = $em->getRepository('AppBundle:Order')->getPreOrders($searchForm->getData());
+
+        return $this->render('orders/pre_orders_list.html.twig', ['preOrders' => $preOrders, 'searchForm' => $searchForm->createView()]);
     }
 
     /**

@@ -1,9 +1,14 @@
 {% extends 'layout.html.twig' %}
 {% block pageH1 %}Предзаказы{% endblock %}
 {% block content %}
+  {% form_theme searchForm 'bootstrap_3_horizontal_layout.html.twig' %}
+  {{ form_start(searchForm) }}
+      {{ form_widget(searchForm.isReleased,    {'attr': {'onchange': "this.form.submit()"}}) }}
+      {{ form_widget(searchForm.isNotReleased, {'attr': {'onchange': "this.form.submit()"}}) }}
+  {{ form_end(searchForm) }}
   <div class="panel-body">
     <div class="table-responsive">
-      <table class="table table-striped table-bordered table-hover" id="pre_orders_list">
+      <table class="table table-striped table-bordered table-hover" id="preOrders_list">
         <thead>
         <tr>
           <th>Клиент</th>
@@ -16,32 +21,32 @@
         </tr>
         </thead>
         <tbody>
-        {% for pre_order in pre_orders %}
+        {% for preOrder in preOrders %}
           <tr>
-            <td>
-              <a href="{{ path('editClient', {'clientId': pre_order.getClient().getClientId()}) }}">
-                {{ pre_order.getClient().getFullName() }}
+            <td width="150">
+              <a href="{{ path('editClient', {'clientId': preOrder.getClient().getClientId()}) }}">
+                {{ preOrder.getClient().getFullName() }}
               </a>
-            <td>{{ pre_order.getPlannedProductDate()|localizeddate('long', 'none', null, null, 'dd LLL yyyy') }}</td>
             </td>
-            <td class="text-right">{{ pre_order.getSum()|localizedcurrency('RUB') }}</td>
-            <td>{{ pre_order.getStatusName() }}</td>
+            <td>{{ preOrder.getPlannedProductDate()|localizeddate('long', 'none', null, null, 'dd LLL yyyy') }}</td>
+            <td class="text-right">{{ preOrder.getSum()|localizedcurrency('RUB') }}</td>
+            <td>{{ preOrder.getStatusName() }}</td>
             <td>
-              {% for orderItem in pre_order.getItems() %}
+              {% for orderItem in preOrder.getItems() %}
                 {{ orderItem.getProduct().getName() }},
                 {{ orderItem.getCount() }} {{ orderItem.getProduct.getPieceName() }}
                 <br>
               {% endfor %}
             </td>
             <td>
-              {% if pre_order.getActualProductDate() == null %}
-                <a href="{{ path('completePreOrder', {'orderId': pre_order.getOrderId()}) }}">Выдать</a>
+              {% if preOrder.getActualProductDate() == null %}
+                <a href="{{ path('completePreOrder', {'orderId': preOrder.getOrderId()}) }}">Выдать</a>
               {% else %}
-                {{ pre_order.getActualProductDate()|localizeddate('long', 'none', null, null, 'dd LLL yyyy') }}
+                {{ preOrder.getActualProductDate()|localizeddate('long', 'none', null, null, 'dd LLL yyyy') }}
               {% endif %}
             </td>
             <td>
-              <a href="{{ path('editOrder', {'orderId': pre_order.getOrderId()}) }}" class="glyphicon glyphicon-pencil"></a>
+              <a href="{{ path('editOrder', {'orderId': preOrder.getOrderId()}) }}" class="glyphicon glyphicon-pencil"></a>
             </td>
           </tr>
         {% endfor %}
@@ -55,8 +60,10 @@
   {{ parent() }}
   <script>
     $(document).ready(function() {
-      $('#pre_orders_list').DataTable({
-        pageLength: 25
+      $('#preOrders_list').DataTable({
+        pageLength: 25,
+        order: [[ 1, "asc" ]],
+        columnDefs: [{ orderable: false, targets: 6 }]
       });
     } );
   </script>

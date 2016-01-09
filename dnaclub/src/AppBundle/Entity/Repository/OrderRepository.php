@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use AppBundle\Form\PreOrderSearchForm;
 
 /**
  * OrderRepository
@@ -23,14 +24,27 @@ class OrderRepository extends EntityRepository
             ->getResult();
     }
 
-    public function getPreOrders()
+    public function getPreOrders($searchForm)
     {
-        return $this->getEntityManager()
+        $qb = $this->getEntityManager()
             ->createQueryBuilder()
             ->select('o')
             ->from('AppBundle\Entity\Order', 'o')
-            ->where('o.isPreOrder = 1')
-            ->getQuery()
-            ->getResult();
+            ->where('o.isPreOrder = 1');
+
+        $isReleased    = $searchForm[PreOrderSearchForm::IS_RELEASED_SEARCH_FIELD];
+        $isNotReleased = $searchForm[PreOrderSearchForm::IS_NOT_RELEASED_SEARCH_FIELD];
+
+        if ($isReleased && !$isNotReleased)
+        {
+            $qb->andWhere('o.actualProductDate IS NOT NULL');
+        }
+
+        if ($isNotReleased && !$isReleased)
+        {
+            $qb->andWhere('o.actualProductDate IS NULL');
+        }
+
+        return $qb->getQuery()->getResult();
     }
 }
