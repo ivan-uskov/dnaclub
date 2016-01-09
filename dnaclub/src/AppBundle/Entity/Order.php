@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use AppBundle\config\OrderStatus;
 
 /**
  * Order
@@ -116,6 +117,14 @@ class Order
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatusName()
+    {
+        return OrderStatus::getName($this->getStatus());
     }
 
     /**

@@ -9,6 +9,7 @@
           <th>Клиент</th>
           <th>Планируемая<br>дата выдачи</th>
           <th>Сумма заказа</th>
+          <th>Статус</th>
           <th>Товары</th>
           <th>Выдано</th>
           <th></th>
@@ -21,9 +22,10 @@
               <a href="{{ path('editClient', {'clientId': pre_order.getClient().getClientId()}) }}">
                 {{ pre_order.getClient().getFullName() }}
               </a>
-            <td>{{ pre_order.getPlannedProductDate()|localizeddate('long', 'none', null, null, 'dd LLLL yyyy') }}</td>
+            <td>{{ pre_order.getPlannedProductDate()|localizeddate('long', 'none', null, null, 'dd LLL yyyy') }}</td>
             </td>
             <td class="text-right">{{ pre_order.getSum()|localizedcurrency('RUB') }}</td>
+            <td>{{ pre_order.getStatusName() }}</td>
             <td>
               {% for orderItem in pre_order.getItems() %}
                 {{ orderItem.getProduct().getName() }},
@@ -31,7 +33,13 @@
                 <br>
               {% endfor %}
             </td>
-            <td></td>
+            <td>
+              {% if pre_order.getActualProductDate() == null %}
+                <a href="{{ path('completePreOrder', {'orderId': pre_order.getOrderId()}) }}">Выдать</a>
+              {% else %}
+                {{ pre_order.getActualProductDate()|localizeddate('long', 'none', null, null, 'dd LLL yyyy') }}
+              {% endif %}
+            </td>
             <td>
               <a href="{{ path('editOrder', {'orderId': pre_order.getOrderId()}) }}" class="glyphicon glyphicon-pencil"></a>
             </td>

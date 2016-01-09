@@ -125,4 +125,20 @@ class OrdersController extends Controller
 
         return $this->render('orders/pre_orders_list.html.twig', ['pre_orders' => $preOrders]);
     }
+
+    /**
+     * @Route("/pre-order/complete/{orderId}", name="completePreOrder")
+     */
+    public function completePreOrder(Request $request, $orderId)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $order = $em->getRepository("AppBundle:Order")->find($orderId);
+        if ($order)
+        {
+            $order->setActualProductDate(new \DateTime());
+            $em->merge($order);
+            $em->flush();
+        }
+        return $this->redirectToRoute('preOrdersList');
+    }
 }
