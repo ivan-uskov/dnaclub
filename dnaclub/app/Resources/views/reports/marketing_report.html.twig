@@ -1,12 +1,11 @@
-{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
 {% extends 'layout.html.twig' %}
 {% block pageH1 %}Маркетинговый отчет{% endblock %}
 {% block content %}
+  {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+  {{ form_start(form) }}
+    {{ form_widget(form.months, {'attr': {'style': 'width: 200px', 'onchange': "this.form.submit()"}}) }}
+  {{ form_end(form) }}
   <div class="panel-body">
-    {{ form_start(form) }}
-    {{ form_widget(form.months, {'attr': {'style': 'width:200px; margin-bottom: 10px;', 'onchange': "this.form.submit()"}}) }}
-    {{ form_end(form) }}
-
     <div class="table-responsive">
       <table class="table table-striped table-bordered table-hover" id="marketing_report">
         <thead>
@@ -23,7 +22,7 @@
         <tbody>
         {% for reportRow in reportRows %}
           <tr>
-            <td>{{ reportRow.getClient().getLastName() }} {{ reportRow.getClient().getFirstName() }} {{ reportRow.getClient().getMiddleName() }}</td>
+            <td>{{ reportRow.getClient().getFullName() }}</td>
             <td class="text-right">{{ reportRow.getStartSum()|localizedcurrency('RUB') }}</td>
             <td class="text-right">{{ reportRow.getOrderSum()|localizedcurrency('RUB') }}</td>
             <td class="text-right">{{ (reportRow.getStartSum() + reportRow.getOrderSum())|localizedcurrency('RUB') }}</td>

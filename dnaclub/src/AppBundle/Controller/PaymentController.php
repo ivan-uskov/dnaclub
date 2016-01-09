@@ -19,7 +19,10 @@ class PaymentController extends Controller
      */
     public function debtorsListAction(Request $request)
     {
-        return $this->render('payment/debtors_list.html.twig');
+        $em = $this->getDoctrine()->getManager();
+        $debtors = $em->getRepository('AppBundle:Order')->getDebtors();
+
+        return $this->render('payment/debtors_list.html.twig', ['debtors' => $debtors]);
     }
 
     /**

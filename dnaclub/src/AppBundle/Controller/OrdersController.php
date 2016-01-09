@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\lib\OrderItemPeer;
 use AppBundle\Entity\OrderItem;
+use AppBundle\Form\PreOrderSearchForm;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -120,6 +121,33 @@ class OrdersController extends Controller
      */
     public function preOrdersListAction(Request $request)
     {
-        return $this->render('orders/pre_orders_list.html.twig');
+        $em = $this->getDoctrine()->getManager();
+
+        $searchForm = $this->createForm(new PreOrderSearchForm(), array(
+            PreOrderSearchForm::IS_RELEASED_SEARCH_FIELD     => false,
+            PreOrderSearchForm::IS_NOT_RELEASED_SEARCH_FIELD => true
+        ));
+
+        $searchForm->handleRequest($request);
+
+        $preOrders = $em->getRepository('AppBundle:Order')->getPreOrders($searchForm->getData());
+
+        return $this->render('orders/pre_orders_list.html.twig', ['preOrders' => $preOrders, 'searchForm' => $searchForm->createView()]);
+    }
+
+    /**
+     * @Route("/pre-order/complete/{orderId}", name="completePreOrder")
+     */
+    public function completePreOrder(Request $request, $orderId)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $order = $em->getRepository("AppBundle:Order")->find($orderId);
+        if ($order)
+        {
+            $order->setActualProductDate(new \DateTime());
+            $em->merge($order);
+            $em->flush();
+        }
+        return $this->redirectToRoute('preOrdersList');
     }
 }

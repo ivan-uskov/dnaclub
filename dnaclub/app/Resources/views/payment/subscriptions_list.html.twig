@@ -1,5 +1,4 @@
 {% extends 'layout.html.twig' %}
-{% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
 {% block pageH1 %}Лидерские и контракты{% endblock %}
 {% block stylesheets %}
   {{ parent() }}
@@ -7,6 +6,7 @@
 {% endblock %}
 {% block content %}
   <div class="panel-body">
+    {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
     {{ form_start(form) }}
       <div class="row">
         <div class="col-md-6">
@@ -19,11 +19,13 @@
       </div>
     {{ form_end(form) }}
   </div>
-  <div class="panel-body">
-    {{ form_start(searchForm) }}
-      {{ form_widget(searchForm.months, {'attr': {'style': 'width:200px; margin-bottom: 10px;', 'onchange': "this.form.submit()"}}) }}
-    {{ form_end(searchForm) }}
 
+  {% form_theme searchForm 'bootstrap_3_horizontal_layout.html.twig' %}
+  {{ form_start(searchForm) }}
+    {{ form_widget(searchForm.months, {'attr': {'style': 'width: 200px;', 'onchange': "this.form.submit()"}}) }}
+  {{ form_end(searchForm) }}
+
+  <div class="panel-body">
     <div class="table-responsive">
       <table class="table table-striped table-bordered table-hover" id="subscription_list">
         <thead>
@@ -40,7 +42,7 @@
         {% for subscription in subscriptions %}
           <tr>
             <td>{{ subscription.getClient().getLastName() }} {{ subscription.getClient().getFirstName() }} {{ subscription.getClient().getMiddleName() }}</td>
-            <td>{{ subscription.getDate()|localizeddate('long', 'none', null, null, 'dd LLLL yyyy') }}</td>
+            <td>{{ subscription.getDate()|localizeddate('long', 'none', null, null, 'dd LLL yyyy') }}</td>
             <td>{{ subscription.getTypeName() }}</td>
             <td class="text-right">{{ subscription.getCount() }}</td>
             <td class="text-right">{{ subscription.getSum()|localizedcurrency('RUB') }}</td>
@@ -71,7 +73,9 @@
   <script>
     $(document).ready(function() {
       $('#subscription_list').DataTable({
-        pageLength: 25
+        pageLength: 25,
+        order: [[ 1, "desc" ]],
+        columnDefs: [{ orderable: false, targets: 5 }]
       });
     });
   </script>

@@ -23,6 +23,7 @@ class SubscriptionRepository extends \Doctrine\ORM\EntityRepository
             ->andWhere('s.isDeleted = 0')
             ->setParameter('start_date', $startDate)
             ->setParameter('end_date', $endDate)
+            ->orderBy('s.date', 'desc')
             ->getQuery()
             ->getResult();
     }
