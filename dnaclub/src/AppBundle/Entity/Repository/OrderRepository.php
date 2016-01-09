@@ -30,7 +30,8 @@ class OrderRepository extends EntityRepository
             ->createQueryBuilder()
             ->select('o')
             ->from('AppBundle\Entity\Order', 'o')
-            ->where('o.isPreOrder = 1');
+            ->where('o.isPreOrder = 1')
+            ->orderBy('o.plannedProductDate', 'asc');
 
         $isReleased    = $searchForm[PreOrderSearchForm::IS_RELEASED_SEARCH_FIELD];
         $isNotReleased = $searchForm[PreOrderSearchForm::IS_NOT_RELEASED_SEARCH_FIELD];
