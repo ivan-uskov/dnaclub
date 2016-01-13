@@ -73,7 +73,6 @@
         <a class="btn btn-default btn-lg btn-block" href="{{ path('diseaseHistory', {'clientId': currentDiseaseHistory.getClient().getClientId()}) }}">Добавить запись</a>
     {% endif %}
 {% endblock %}
-
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
