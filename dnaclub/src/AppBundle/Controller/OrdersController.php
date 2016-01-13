@@ -9,6 +9,7 @@ use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Order;
+use AppBundle\Entity\Product;
 
 class OrdersController extends Controller
 {
@@ -26,8 +27,19 @@ class OrdersController extends Controller
      */
     public function createOrderAction(Request $request)
     {
+        $products = [];
+        /** @var Product $product */
+        foreach ($this->getDoctrine()->getRepository('AppBundle:Product')->findAll() as $product)
+        {
+            $products[$product->getName()] = [
+                'id'    => $product->getProductId(),
+                'name'  => $product->getName(),
+                'price' => $product->getPrice()
+            ];
+        }
+
         $clients = $this->getDoctrine()->getRepository('AppBundle:Client')->findAll();
-        return $this->render('orders/create_order.html.twig', ['clients' => $clients]);
+        return $this->render('orders/create_order.html.twig', ['clients' => $clients, 'products' => json_encode($products)]);
     }
 
     /**
@@ -36,6 +48,9 @@ class OrdersController extends Controller
     public function createOrderAjaxAction(Request $request)
     {
         $post = $request->request;
+
+        $productIds = explode(',', $post->get('product_ids'));
+        $products = $this->getDoctrine()->getRepository('AppBundle:Product')->findBy(['id' => $productIds]);
 
         $clientId = (int)$post->get('user_name');
         $client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
@@ -48,6 +63,16 @@ class OrdersController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($order);
+
+        foreach($products as $product)
+        {
+            $orderItem = new OrderItem();
+            $orderItem->setOrder($order);
+            $orderItem->setProduct($product);
+
+            $em->persist($orderItem);
+        }
+
         $em->flush();
 
         return $this->redirectToRoute('ordersList');

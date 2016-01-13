@@ -1,7 +1,7 @@
 {% extends 'layout.html.twig' %}
 {% block pageH1 %}Добавление продажи{% endblock %}
 {% block content %}
-  <form action="{{ path('createOrderAjax') }}" method="post">
+  <form action="{{ path('createOrderAjax') }}" method="post" id="createOrderForm">
     <div class="form-group">
       <label for="userName">ФИО</label>
       <select id="userName" name="user_name" class="form-control">
@@ -12,14 +12,14 @@
     </div>
     <div class="form-group">
       <label for="products">Товары</label>
-      <textarea id="products" name="products" class="form-control" rows="3"></textarea>
+      {% include 'include/product/selection_block.html.twig' with {'id': 'productsSelection', 'products': products, 'selectedProducts': []} %}
     </div>
     <div class="form-group">
       <label for="discount">Скидка</label>
       <input class="form-control" type="text" name="discount" id="discount" />
     </div>
     <div class="form-group">
-      <label for="paidByCash">Оплачено начилными</label>
+      <label for="paidByCash">Оплачено налиными</label>
       <input class="form-control" type="text" name="paidByCash" id="paidByCash" />
     </div>
     <div class="form-group">
@@ -33,6 +33,15 @@
       <label for="debt">Долг</label>
       <input class="form-control" type="text" name="debt" id="debt" />
     </div>
+    <input type="hidden" id="product_ids" name="productIds" value="" />
     <button type="submit" id="submit" class="btn btn-default">Добавить</button>
   </form>
+{% endblock %}
+{% block javascripts %}
+  <script src="/js/lib/bootstrap.typeahead.js"></script>
+  <script src="/js/ui-kit/ProductSelectionBlock.class.js"></script>
+  <script src="/js/orders/CreateOrderPage.js"></script>
+{% endblock %}
+{% block stylesheets %}
+  <link rel="stylesheet" type="text/css" href="/css/orders/manage.css" />
 {% endblock %}

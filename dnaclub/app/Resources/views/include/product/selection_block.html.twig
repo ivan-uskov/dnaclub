@@ -1,0 +1,13 @@
+<div class="product_selection_block" id="{{ id }}">
+  <ul class="list-group" id="{{ id }}List">
+    <li class="list-group-item stub_product hidden" data-product-id=""> <span class="price"></span>
+      <span class="glyphicon glyphicon-remove remove_product"></span>
+    </li>
+    {% for product in selectedProducts %}
+      <li class="list-group-item product" data-product-id="{{ product.getProductId() }}">{{ product.getName() }} <span class="price">{{ product.getPrice() }}</span>
+        <span class="glyphicon glyphicon-remove remove_product"></span>
+      </li>
+    {% endfor %}
+  </ul>
+  <input class="form-control" autocomplete="off" spellcheck="false" type="text" id="{{ id }}Inserter" data-products="{{ products }}" placeholder="Введите название товара и нажмите enter" />
+</div>
