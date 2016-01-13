@@ -38,9 +38,7 @@ $(function(){
 			pageLength: PAGE_LENGTH,
 			columnDefs: [
 				{orderable: false, targets: -1},
-				{searchable: false, targets: 1},
-				{searchable: false, targets: 2},
-				{searchable: false, targets: 3}
+				{searchable: false, targets: [1, 2, 3, 4]}
 			]
 		});
 	}

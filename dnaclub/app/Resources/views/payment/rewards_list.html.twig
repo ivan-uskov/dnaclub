@@ -21,10 +21,17 @@
     {% for reward in rewards %}
       <tr>
         <td>{{ reward.getClient().getFullName() }}</td>
-        <td>{{ reward.getDate().format("F Y") }}</td>
-        <td>{{ reward.getSum() }}</td>
-        <td>{{ reward.getRemainingSum() }}</td>
-        <td>{{ "" }}</td>
+        <td class="text-right">{{ reward.getDate()|localizeddate('long', 'none', null, null, 'dd LLL yyyy') }}</td>
+        <td class="text-right">{{ reward.getSum()|localizedcurrency('RUB') }}</td>
+        <td class="text-right">{{ reward.getRemainingSum()|localizedcurrency('RUB') }}</td>
+        <td>
+          {% set payments = reward.getPayments() %}
+          {% if payments %}
+            {% for payment in payments %}
+              {{ payment.getSum()|localizedcurrency('RUB') }} - {{ payment.getCreatedAt()|localizeddate('long', 'none', null, null, 'dd LLL yyyy') }}<br />
+            {% endfor %}
+          {% endif %}
+        </td>
         <td><a href="{{ path('editReward', {'rewardId': reward.getRewardId()}) }}" class="glyphicon glyphicon-edit"></a></td>
         <td><a href="{{ path('deleteReward', {'rewardId': reward.getRewardId()}) }}" class="glyphicon glyphicon-remove delete-link"></a></td>
       </tr>

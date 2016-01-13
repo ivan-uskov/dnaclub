@@ -15,9 +15,10 @@
         <div class="form-group">
             <label for="client">Клиент</label>
             <select name="client" id="client" class="form-control">
+                {% set currentClientId = reward.getClient().getClientId() %}
                 {% for client in clients %}
                     <option value="{{ client.getClientId() }}"
-                        {% if (not isNew) and (client.getClientId() == reward.getClient().getClientId()) %}
+                        {% if (not isNew) and (client.getClientId() == currentClientId) %}
                             selected="selected"
                         {% endif %}
                     >{{ client.getFullName() }}</option>
