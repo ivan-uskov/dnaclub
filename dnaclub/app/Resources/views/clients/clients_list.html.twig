@@ -1,39 +1,47 @@
 {% extends 'layout.html.twig' %}
 {% block pageH1 %}Список клиентов{% endblock %}
 {% block content %}
-    <div class="panel-body">
-        <div class="table-responsive">
-            <table class="table table-hover" id="clients_list">
-                <thead>
-                <tr>
-                    <th>ФИО</th>
-                    <th>Город</th>
-                    <th>E-mail</th>
-                    <th>Последняя покупка</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody id="table_body">
-                {% for client in clients %}
-                    <tr>
-                        <td>
-                            <a href="{{ path('editClient', {'clientId': client.getClientId()}) }}">
-                                {{ client.getLastName() }} {{ client.getFirstName() }} {{ client.getMiddleName() }}
-                            </a>
-                        </td>
-                        <td>{{ client.getCity() }}</td>
-                        <td>{{ client.getEmail() }}</td>
-                        <td>{{ client.getLastOrderDateStr() }}</td>
-                        <td><a href="{{ path('deleteClient', {'clientId': client.getClientId()}) }}" class="glyphicon glyphicon-remove delete-link"></a></td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
+  <div class="panel-body">
+    <div class="table-responsive">
+      <table class="table table-hover" id="clients_list">
+        <thead>
+        <tr>
+          <th>ФИО</th>
+          <th>Город</th>
+          <th>Телефон</th>
+          <th>E-mail</th>
+          <th>Последняя покупка</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody id="table_body">
+        {% for client in clients %}
+          <tr>
+            <td>
+              <a href="{{ path('editClient', {'clientId': client.getClientId()}) }}">
+                {{ client.getFullName() }}
+              </a>
+            </td>
+            <td>{{ client.getCity() }}</td>
+            <td>{{ client.getPhone() }}</td>
+            <td>{{ client.getEmail() }}</td>
+            {% set lastOrderDate = client.getLastOrderDate() %}
+            {% if lastOrderDate %}
+              <td>{{ lastOrderDate|localizeddate('long', 'none', null, null, 'dd LLL yyyy') }}</td>
+            {% else %}
+              <td></td>
+            {% endif %}
+            <td><a href="{{ path('deleteClient', {'clientId': client.getClientId()}) }}"
+                   class="glyphicon glyphicon-remove delete-link"></a></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
     </div>
-    <a class="btn btn-default btn-lg btn-block" target="_blank" href="{{ path('createClient') }}">Добавить клиента</a>
+  </div>
+  <a class="btn btn-default btn-lg btn-block" target="_blank" href="{{ path('createClient') }}">Добавить клиента</a>
 {% endblock %}
 {% block javascripts %}
-    {{ parent() }}
-    <script src="{{ asset('bundles/app/js/clients_list.js') }}"></script>
+  {{ parent() }}
+  <script src="{{ asset('bundles/app/js/clients_list.js') }}"></script>
 {% endblock %}
