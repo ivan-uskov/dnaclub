@@ -594,7 +594,7 @@ class Client
 	public function getLastOrderDateStr()
 	{
 		$lastOrder = $this->getLastOrder();
-		return $lastOrder ? $lastOrder->getCreatedAt()->format("Y-m-d H:i:s") : "";
+		return $lastOrder ? $lastOrder->getCreatedAt()->format("Y-m-d") : "";
 	}
 
     /**

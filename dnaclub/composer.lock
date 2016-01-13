@@ -5,7 +5,6 @@
         "This file is @generated automatically"
     ],
     "hash": "3149cbfa45da93815b7e190b2fa780c7",
-    "content-hash": "5772d2014047bb178df71355b8a377c2",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -817,12 +816,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Atlantic18/DoctrineExtensions.git",
-                "reference": "9dfafd6c3f487fefbc5725e04b355bebd6cb842c"
+                "reference": "59b674773757bb747677da4dfe6437dad7cfb33a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Atlantic18/DoctrineExtensions/zipball/9dfafd6c3f487fefbc5725e04b355bebd6cb842c",
-                "reference": "9dfafd6c3f487fefbc5725e04b355bebd6cb842c",
+                "url": "https://api.github.com/repos/Atlantic18/DoctrineExtensions/zipball/59b674773757bb747677da4dfe6437dad7cfb33a",
+                "reference": "59b674773757bb747677da4dfe6437dad7cfb33a",
                 "shasum": ""
             },
             "require": {
@@ -888,7 +887,7 @@
                 "tree",
                 "uploadable"
             ],
-            "time": "2016-01-06 14:29:51"
+            "time": "2016-01-07 09:45:25"
         },
         {
             "name": "incenteev/composer-parameter-handler",
@@ -1889,16 +1888,16 @@
         },
         {
             "name": "twig/twig",
-            "version": "v1.23.1",
+            "version": "v1.23.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "d9b6333ae8dd2c8e3fd256e127548def0bc614c6"
+                "reference": "ae53fc2c312fdee63773b75cb570304f85388b08"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/d9b6333ae8dd2c8e3fd256e127548def0bc614c6",
-                "reference": "d9b6333ae8dd2c8e3fd256e127548def0bc614c6",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/ae53fc2c312fdee63773b75cb570304f85388b08",
+                "reference": "ae53fc2c312fdee63773b75cb570304f85388b08",
                 "shasum": ""
             },
             "require": {
@@ -1946,7 +1945,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2015-11-05 12:49:06"
+            "time": "2016-01-11 14:02:19"
         }
     ],
     "packages-dev": [

@@ -17,7 +17,10 @@ class ClientsController extends Controller
      */
     public function clientsListAction(Request $request)
     {
-		$clients = $this->getDoctrine()->getRepository('AppBundle:Client')->findBy(['isDeleted' => 0]);
+		$clients = $this->getDoctrine()->getRepository('AppBundle:Client')->findBy(
+				['isDeleted' => 0],
+				['lastName' => "ASC"]
+		);
         return $this->render('clients/clients_list.html.twig', ['clients' => $clients]);
     }
 
@@ -112,11 +115,17 @@ class ClientsController extends Controller
 	public function diseaseHistoryAction(Request $request, $clientId)
 	{
 		$client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
-		$diseaseHistories = $this->getDoctrine()->getRepository("AppBundle:DiseaseHistory")->findBy(['client' => $client]);
+		$diseaseHistories = $this->getDoctrine()->getRepository("AppBundle:DiseaseHistory")->findBy(
+				['client' => $client],
+				['date' => 'DESC']
+		);
 		if ($request->isMethod(Request::METHOD_POST))
 		{
 			$this->handleDiseaseHistoryPost($request->request, $clientId);
-			$diseaseHistories = $this->getDoctrine()->getRepository("AppBundle:DiseaseHistory")->findBy(['client' => $client]);
+			$diseaseHistories = $this->getDoctrine()->getRepository("AppBundle:DiseaseHistory")->findBy(
+					['client' => $client],
+					['date' => 'DESC']
+			);
 		}
 		return $this->render('clients/disease_history.html.twig', [
 				'client' => $client,
