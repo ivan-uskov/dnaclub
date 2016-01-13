@@ -2,6 +2,9 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\HttpFoundation\ParameterBag;
+
 /**
  * DiseaseHistory
  */
@@ -138,5 +141,23 @@ class DiseaseHistory
     {
         return $this->client;
     }
+
+    /**
+     * @param ParameterBag $post
+     * @param ObjectManager $em
+     * @param Client $client
+     */
+    public function saveFromPost(ParameterBag $post, ObjectManager $em, Client $client, $isNew = true)
+	{
+		$this->setClient($client);
+        if ($isNew)
+        {
+            $this->setDate(new \DateTime($post->get('date')));
+        }
+		$this->setHealthState($post->get('health_state'));
+		$this->setTreatment($post->get('treatment'));
+		$em->persist($this);
+		$em->flush();
+	}
 }
 

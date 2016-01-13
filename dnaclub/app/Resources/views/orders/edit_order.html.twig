@@ -1,0 +1,38 @@
+{% extends 'layout.html.twig' %}
+{% block pageH1 %}Редактирование продажи{% endblock %}
+{% block content %}
+  <form action="{{ path('editOrderAjax', {'orderId': order.getOrderId()}) }}" method="post">
+    <div class="form-group">
+      <label for="userName">ФИО</label>
+      <select id="userName" name="user_name" class="form-control">
+        {% for client in clients %}
+          <option value="{{ client.getClientId() }}" {% if client == order.getClient() %}selected{% endif %}>{{ client.getName() }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label for="products">Товары</label>
+      <textarea id="products" name="products" class="form-control" rows="3"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="discount">Скидка</label>
+      <input class="form-control" type="text" name="discount" id="discount" value="{{ order.getDiscount() }}" />
+    </div>
+    <div class="form-group">
+      <label for="paidByCash">Оплачено начилными</label>
+      <input class="form-control" type="text" name="paidByCash" id="paidByCash" value="{{ order.getSum() }}" />
+    </div>
+    <div class="form-group">
+      <div class="form-group">
+        <label for="paidByReward">Оплачено вознаграждением</label>
+        <button type="reset" class="btn btn-default">Добавить оплату вознаграждением</button>
+      </div>
+      <textarea id="paidByCash" name="paidByReward" class="form-control" rows="3"></textarea>
+    </div>
+    <div class="form-group">
+      <label for="debt">Долг</label>
+      <input class="form-control" type="text" name="debt" id="debt" value="{{ order.getDebt() }}" />
+    </div>
+    <button type="submit" id="submit" class="btn btn-default">Сохранить</button>
+  </form>
+{% endblock %}

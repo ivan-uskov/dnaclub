@@ -2,7 +2,9 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\lib\OrderItemPeer;
 use AppBundle\Entity\OrderItem;
+use AppBundle\Form\PreOrderSearchForm;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -25,7 +27,8 @@ class OrdersController extends Controller
      */
     public function createOrderAction(Request $request)
     {
-        return $this->render('orders/create_order.html.twig');
+        $clients = $this->getDoctrine()->getRepository('AppBundle:Client')->findAll();
+        return $this->render('orders/create_order.html.twig', ['clients' => $clients]);
     }
 
     /**
@@ -35,10 +38,14 @@ class OrdersController extends Controller
     {
         $post = $request->request;
 
+        $clientId = (int)$post->get('user_name');
+        $client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
+
         $order = new Order();
         $order->setDebt((int)$post->get('debt'));
         $order->setDiscount((int)$post->get('discount'));
         $order->setSum((int)$post->get('paidByCash') + (int)$post->get('paidByReward'));
+        $order->setClient($client);
 
         $em = $this->getDoctrine()->getManager();
         $em->persist($order);
@@ -48,10 +55,99 @@ class OrdersController extends Controller
     }
 
     /**
+     * @Route("/edit-order/{orderId}", name="editOrder")
+     */
+    public function editOrderAction(Request $request, $orderId)
+    {
+        $doctrine   = $this->getDoctrine();
+        $orderItems = $doctrine->getRepository("AppBundle:OrderItem")->findBy(['order' => $orderId]);
+        $clients    = $doctrine->getRepository('AppBundle:Client')->findAll();
+        $order      = $doctrine->getRepository("AppBundle:Order")->find($orderId);
+
+        $params = [
+            'order'    => $order,
+            'clients'  => $clients,
+            'products' => OrderItemPeer::orderItemsToProducts($orderItems)
+        ];
+
+        return $this->render('orders/edit_order.html.twig', $params);
+    }
+
+    /**
+     * @Route("/edit-order-ajax/{orderId}", name="editOrderAjax")
+     */
+    public function editOrderAjaxAction(Request $request, $orderId)
+    {
+        $post = $request->request;
+        $clientId = (int)$post->get('user_name');
+
+        $doctrine = $this->getDoctrine();
+        $client   = $doctrine->getRepository("AppBundle:Client")->find($clientId);
+        $order    = $doctrine->getRepository("AppBundle:Order")->find($orderId);
+
+        $order->setDebt((int)$post->get('debt'));
+        $order->setDiscount((int)$post->get('discount'));
+        $order->setSum((int)$post->get('paidByCash') + (int)$post->get('paidByReward'));
+        $order->setClient($client);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($order);
+        $em->flush();
+
+        return $this->redirectToRoute('ordersList');
+    }
+
+    /**
+     * @Route("/delete-order/{orderId}", name="deleteOrder")
+     */
+    public function deleteOrderAction(Request $request, $orderId)
+    {
+        $doctrine = $this->getDoctrine();
+        $em = $doctrine->getManager();
+
+        $order = $doctrine->getRepository("AppBundle:Order")->find($orderId);
+
+        if ($order)
+        {
+            $em->remove($order);
+            $em->flush();
+        }
+
+        return $this->redirectToRoute('ordersList');
+    }
+
+    /**
      * @Route("/pre-orders", name="preOrdersList")
      */
     public function preOrdersListAction(Request $request)
     {
-        return $this->render('orders/pre_orders_list.html.twig');
+        $em = $this->getDoctrine()->getManager();
+
+        $searchForm = $this->createForm(new PreOrderSearchForm(), array(
+            PreOrderSearchForm::IS_RELEASED_SEARCH_FIELD     => false,
+            PreOrderSearchForm::IS_NOT_RELEASED_SEARCH_FIELD => true
+        ));
+
+        $searchForm->handleRequest($request);
+
+        $preOrders = $em->getRepository('AppBundle:Order')->getPreOrders($searchForm->getData());
+
+        return $this->render('orders/pre_orders_list.html.twig', ['preOrders' => $preOrders, 'searchForm' => $searchForm->createView()]);
+    }
+
+    /**
+     * @Route("/pre-order/complete/{orderId}", name="completePreOrder")
+     */
+    public function completePreOrder(Request $request, $orderId)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $order = $em->getRepository("AppBundle:Order")->find($orderId);
+        if ($order)
+        {
+            $order->setActualProductDate(new \DateTime());
+            $em->merge($order);
+            $em->flush();
+        }
+        return $this->redirectToRoute('preOrdersList');
     }
 }

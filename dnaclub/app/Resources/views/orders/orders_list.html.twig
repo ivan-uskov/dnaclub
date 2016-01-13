@@ -14,19 +14,21 @@
             <th>Стоимость</th>
             <th>Оплачено наличными</th>
             <th>Оплачено вознаграждением</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           {% for order in orders %}
-            <tr>
+            <tr onclick="location.href = '{{ path('editOrder', {'orderId': order.getOrderId()}) }}'">
               <td>{{ order.getOrderId() }}</td>
-              <td>Клиент</td>
+              <td>{{ order.getClient().getName() }}</td>
               <td>Пусто</td>
               <td>{{ order.getCreatedAt().format("Y-m-d H:i:s") }}</td>
               <td>{{ order.getStatus() }}</td>
               <td>{{ order.getSum() }}</td>
               <td>Наличка</td>
               <td>Вознаграждение</td>
+              <td><a href="{{ path('deleteOrder', {'orderId': order.getOrderId()}) }}" class="glyphicon glyphicon-remove"></a></td>
             </tr>
           {% endfor %}
         </tbody>

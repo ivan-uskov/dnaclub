@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use AppBundle\config\OrderStatus;
 
 /**
  * Order
@@ -116,6 +117,14 @@ class Order
     public function getStatus()
     {
         return $this->status;
+    }
+
+    /**
+     * @return string
+     */
+    public function getStatusName()
+    {
+        return OrderStatus::getName($this->getStatus());
     }
 
     /**
@@ -400,5 +409,20 @@ class Order
     public function getDiscount()
     {
         return $this->discount;
+    }
+
+    /**
+     * @param string $format
+     * @return string
+     */
+    public function getDebtDuration($format = '%a')
+    {
+        $debtDuration = '';
+        if ($this->getDebt() > 0)
+        {
+            $now = new \DateTime();
+            $debtDuration = $now->diff($this->getCreatedAt())->format($format);
+        }
+        return $debtDuration;
     }
 }

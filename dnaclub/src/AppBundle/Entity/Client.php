@@ -4,6 +4,8 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * Client
@@ -111,6 +113,11 @@ class Client
     private $subscriptions;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $marketingReport;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -202,6 +209,14 @@ class Client
     public function getMiddleName()
     {
         return $this->middleName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullName()
+    {
+        return implode(" ", array($this->getLastName(), $this->getFirstName(), $this->getMiddleName()));
     }
 
     /**
@@ -579,7 +594,7 @@ class Client
 	public function getLastOrderDateStr()
 	{
 		$lastOrder = $this->getLastOrder();
-		return $lastOrder ? $lastOrder->getCreatedAt()->format("Y-m-d H:i:s") : "";
+		return $lastOrder ? $lastOrder->getCreatedAt()->format("Y-m-d") : "";
 	}
 
     /**
@@ -649,5 +664,78 @@ class Client
     {
         return $this->subscriptions;
     }
-}
 
+	public function saveFromPost(ParameterBag $post, ObjectManager $em)
+	{
+		$this->setLastName($post->get('last_name'));
+		$this->setFirstName($post->get('first_name'));
+		$this->setMiddleName($post->get('middle_name'));
+		$this->setBirthday(new \DateTime($post->get('birthday')));
+		$this->setCity($post->get('city'));
+		$this->setIsSubscribed(($post->get('is_subscribed') === 'on') ? 1 : 0);
+		$this->setIsSchoolLearner(($post->get('is_school_learner') === 'on') ? 1 : 0);
+		$this->setIsOnlineLearner(($post->get('is_online_learner') === 'on') ? 1 : 0);
+		$this->setPhone($post->get('phone'));
+		$this->setEmail($post->get('email'));
+		$this->setSubscriptionDate($post->get('subscriptionDate'));
+
+		$oldNotes = $this->getNotes();
+		$itNotes = $oldNotes->getIterator();
+		foreach ($itNotes as $note)
+		{
+			$em->remove($note);
+		}
+		$em->flush();
+		$noteStr = $post->get('notes');
+		if ($noteStr !== '')
+		{
+			$note = new ClientNote();
+			$note->setText($noteStr);
+			$note->setClient($this);
+			$em->persist($note);
+			$this->addNote($note);
+		}
+
+		$em->persist($this);
+		$em->flush();
+	}
+
+    public function getName()
+    {
+        return $this->getFirstName() . ' ' . $this->getLastName();
+    }
+
+    /**
+     * Add marketingReport
+     *
+     * @param \AppBundle\Entity\MarketingReport $marketingReport
+     *
+     * @return Client
+     */
+    public function addMarketingReport(\AppBundle\Entity\MarketingReport $marketingReport)
+    {
+        $this->marketingReport[] = $marketingReport;
+
+        return $this;
+    }
+
+    /**
+     * Remove marketingReport
+     *
+     * @param \AppBundle\Entity\MarketingReport $marketingReport
+     */
+    public function removeMarketingReport(\AppBundle\Entity\MarketingReport $marketingReport)
+    {
+        $this->marketingReport->removeElement($marketingReport);
+    }
+
+    /**
+     * Get marketingReport
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getMarketingReport()
+    {
+        return $this->marketingReport;
+    }
+}

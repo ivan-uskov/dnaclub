@@ -1,0 +1,41 @@
+{% extends 'layout.html.twig' %}
+{% block stylesheets %}
+  {{ parent() }}
+  <link href="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css') }}" type="text/css" rel="stylesheet" />
+{% endblock %}
+{% block pageH1 %}Список вознаграждений{% endblock %}
+{% block content %}
+  <table class="table table-hover" id="rewards_list">
+    <thead>
+    <tr>
+      <th>ФИО</th>
+      <th>Месяц</th>
+      <th>Сумма</th>
+      <th>Остаток</th>
+      <th>Выдано</th>
+      <th></th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for reward in rewards %}
+      <tr>
+        <td>{{ reward.getClient().getFullName() }}</td>
+        <td>{{ reward.getDate().format("F Y") }}</td>
+        <td>{{ reward.getSum() }}</td>
+        <td>{{ reward.getRemainingSum() }}</td>
+        <td>{{ "" }}</td>
+        <td><a href="{{ path('editReward', {'rewardId': reward.getRewardId()}) }}" class="glyphicon glyphicon-edit"></a></td>
+        <td><a href="{{ path('deleteReward', {'rewardId': reward.getRewardId()}) }}" class="glyphicon glyphicon-remove delete-link"></a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <a class="btn btn-default btn-lg btn-block" target="_blank" href="{{ path('createReward') }}">Добавить вознаграждение</a>
+{% endblock %}
+{% block javascripts %}
+  <script src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
+  <script src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js') }}"></script>
+  {{ parent() }}
+  <script src="{{ asset('bundles/app/js/rewards_list.js') }}"></script>
+{% endblock %}
