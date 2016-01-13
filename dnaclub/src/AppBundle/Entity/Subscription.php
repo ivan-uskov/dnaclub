@@ -1,6 +1,7 @@
 <?php
 
 namespace AppBundle\Entity;
+use AppBundle\config\SubscriptionType;
 
 /**
  * Subscription
@@ -99,6 +100,11 @@ class Subscription
     public function getType()
     {
         return $this->type;
+    }
+
+    public function getTypeName()
+    {
+        return SubscriptionType::getName($this->getType());
     }
 
     /**

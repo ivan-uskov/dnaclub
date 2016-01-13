@@ -113,6 +113,11 @@ class Client
     private $subscriptions;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $marketingReport;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -204,6 +209,14 @@ class Client
     public function getMiddleName()
     {
         return $this->middleName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullName()
+    {
+        return implode(" ", array($this->getLastName(), $this->getFirstName(), $this->getMiddleName()));
     }
 
     /**
@@ -572,16 +585,29 @@ class Client
         return $this->orders;
     }
 
-	public function getLastOrder()
+    /**
+     * @return Order|null
+     */
+    public function getLastOrder()
 	{
 		$sortCriteria = Criteria::create()->orderBy(['createdAt' => Criteria::DESC]);
-		return $this->getOrders()->matching($sortCriteria)->first();
+        $lastOrder = $this->getOrders()->matching($sortCriteria)->first();
+		return $lastOrder ? $lastOrder : null ;
 	}
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getLastOrderDate()
+    {
+        $lastOrder = $this->getLastOrder();
+        return $lastOrder ? $lastOrder->getCreatedAt() : null;
+    }
 
 	public function getLastOrderDateStr()
 	{
-		$lastOrder = $this->getLastOrder();
-		return $lastOrder ? $lastOrder->getCreatedAt()->format("Y-m-d H:i:s") : "";
+		$lastOrderDate = $this->getLastOrderDate();
+		return $lastOrderDate ? $lastOrderDate->format("Y-m-d") : "";
 	}
 
     /**
@@ -691,5 +717,38 @@ class Client
     {
         return $this->getFirstName() . ' ' . $this->getLastName();
     }
-}
 
+    /**
+     * Add marketingReport
+     *
+     * @param \AppBundle\Entity\MarketingReport $marketingReport
+     *
+     * @return Client
+     */
+    public function addMarketingReport(\AppBundle\Entity\MarketingReport $marketingReport)
+    {
+        $this->marketingReport[] = $marketingReport;
+
+        return $this;
+    }
+
+    /**
+     * Remove marketingReport
+     *
+     * @param \AppBundle\Entity\MarketingReport $marketingReport
+     */
+    public function removeMarketingReport(\AppBundle\Entity\MarketingReport $marketingReport)
+    {
+        $this->marketingReport->removeElement($marketingReport);
+    }
+
+    /**
+     * Get marketingReport
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getMarketingReport()
+    {
+        return $this->marketingReport;
+    }
+}

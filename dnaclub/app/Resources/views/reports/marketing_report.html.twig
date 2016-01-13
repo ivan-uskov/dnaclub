@@ -1,5 +1,48 @@
 {% extends 'layout.html.twig' %}
 {% block pageH1 %}Маркетинговый отчет{% endblock %}
 {% block content %}
-  here marketing report list
+  {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+  {{ form_start(form) }}
+    {{ form_widget(form.months, {'attr': {'style': 'width: 200px', 'onchange': "this.form.submit()"}}) }}
+  {{ form_end(form) }}
+  <div class="panel-body">
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered table-hover" id="marketing_report">
+        <thead>
+        <tr>
+          <th>Фио клиента</th>
+          <th>Остаток на начало месяца</th>
+          <th>Сумма покупок</th>
+          <th>Сумма к реализации</th>
+          <th>Контракты</th>
+          <th>Лидерские</th>
+          <th>Остаток на конец месяца</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for reportRow in reportRows %}
+          <tr>
+            <td>{{ reportRow.getClient().getFullName() }}</td>
+            <td class="text-right">{{ reportRow.getStartSum()|localizedcurrency('RUB') }}</td>
+            <td class="text-right">{{ reportRow.getOrderSum()|localizedcurrency('RUB') }}</td>
+            <td class="text-right">{{ (reportRow.getStartSum() + reportRow.getOrderSum())|localizedcurrency('RUB') }}</td>
+            <td class="text-right">{{ reportRow.getContract() }}</td>
+            <td class="text-right">{{ reportRow.getMaintenance() }}</td>
+            <td class="text-right">{{ (reportRow.getStartSum() + reportRow.getOrderSum() - reportRow.getContractSum() - reportRow.getMaintenanceSum)|localizedcurrency('RUB') }}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+{% endblock %}
+{% block javascripts %}
+  <script>
+    $(document).ready(function() {
+      $('#marketing_report').DataTable({
+        pageLength: 25
+      });
+    } );
+  </script>
 {% endblock %}

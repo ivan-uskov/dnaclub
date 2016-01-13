@@ -1,6 +1,6 @@
 <?php
 
-namespace AppBundle\Lib;
+namespace AppBundle\lib;
 
 use AppBundle\Entity\OrderItem;
 
