@@ -180,7 +180,7 @@ class ClientsController extends Controller
 	{
 		$client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
 		$em = $this->getDoctrine()->getManager();
-		$isNew = $diseaseHistoryId === null;
+		$isNew = ($diseaseHistoryId === null);
 		if ($isNew)
 		{
 			$diseaseHistory = new DiseaseHistory();
