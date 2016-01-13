@@ -1,0 +1,11 @@
+.product_count_block
+{
+    margin-left: 50px;
+    margin-right: 20px;
+}
+
+.product_count_block input
+{
+    display: inline-block;
+    width: 50px;
+}

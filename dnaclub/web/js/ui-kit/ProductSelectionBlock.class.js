@@ -4,6 +4,12 @@ var ProductSelectionBlock = function(id)
     var stubItem = list.find('.stub_product');
     var inserter = $('#' + id + 'Inserter');
     var products = JSON.parse(inserter.attr('data-products'));
+    var updateHandler  = function(newCoast){};
+
+    this.setUpdateHandler = function(handler)
+    {
+        updateHandler = handler;
+    };
 
     this.getValue = function()
     {
@@ -17,6 +23,19 @@ var ProductSelectionBlock = function(id)
         return ids.join(',');
     };
 
+    function getCoast()
+    {
+        var coast = 0;
+
+        list.find('.product').each(function()
+        {
+            var item = $(this);
+            coast += (parseInt(item.find('.price').first().text())) * parseInt(item.find('.count').first().val());
+        });
+
+        return coast;
+    }
+
     function appendItem(id, name, price)
     {
         var newItem = stubItem.clone();
@@ -24,7 +43,10 @@ var ProductSelectionBlock = function(id)
         newItem.find('.price').first().text(price);
         newItem.html(name + newItem.html());
         newItem.removeClass('hidden');
+        newItem.removeClass('stub_product');
+        newItem.addClass('product');
         list.append(newItem);
+        updateHandler(getCoast());
     }
 
     function tryAddProduct()
@@ -50,6 +72,22 @@ var ProductSelectionBlock = function(id)
 
         list.on('click', '.remove_product', function(){
             $(this).parent().remove();
+            updateHandler(getCoast());
+        });
+
+        list.on('change', '.count', function(){
+            var obj = $(this);
+            if (obj.val() == '')
+            {
+                obj.val(0);
+            }
+            updateHandler(getCoast());
+        });
+
+        list.on('keypress', '.count', function(e){
+            var key = e.which ? e.which : e.keyCode;
+            var char = String.fromCharCode(key);
+            return (char >= '0' && char <= '9');
         });
     }
 
