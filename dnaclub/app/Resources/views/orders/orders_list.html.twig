@@ -3,32 +3,34 @@
 {% block content %}
   <div class="panel-body">
     <div class="table-responsive">
-      <table class="table table-hover">
+      <table class="table table-hover" id="ordersList">
         <thead>
           <tr>
             <th>#</th>
             <th>Фио клиента</th>
-            <th>Товары</th>
+            <th width="200">Товары</th>
             <th>Дата</th>
             <th>Статус</th>
             <th>Стоимость</th>
             <th>Оплачено наличными</th>
-            <th>Оплачено вознаграждением</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          {% for order in orders %}
-            <tr onclick="location.href = '{{ path('editOrder', {'orderId': order.getOrderId()}) }}'">
-              <td>{{ order.getOrderId() }}</td>
-              <td>{{ order.getClient().getName() }}</td>
-              <td>Пусто</td>
-              <td>{{ order.getCreatedAt().format("Y-m-d H:i:s") }}</td>
-              <td>{{ order.getStatus() }}</td>
-              <td>{{ order.getSum() }}</td>
-              <td>Наличка</td>
-              <td>Вознаграждение</td>
-              <td><a href="{{ path('deleteOrder', {'orderId': order.getOrderId()}) }}" class="glyphicon glyphicon-remove"></a></td>
+          {% for orderInfo in orders %}
+            <tr onclick="location.href = '{{ path('editOrder', {'orderId': orderInfo['order'].getOrderId()}) }}'">
+              <td>{{ orderInfo['order'].getOrderId() }}</td>
+              <td>{{ orderInfo['order'].getClient().getName() }}</td>
+              <td>
+                {% for orderItem in orderInfo['orderItems'] %}
+                  {{ orderItem.getProduct().getName() }}<span class="right_float">{{ orderItem.getCount() }} {{ orderItem.getProduct().getPieceName() }}</span><br />
+                {% endfor %}
+              </td>
+              <td>{{ orderInfo['order'].getCreatedAt()|localizeddate('long', 'none', null, null, 'dd LLL yyyy') }}</td>
+              <td>{{ orderInfo['order'].getStatus() }}</td>
+              <td class="right_text_align">{{ orderInfo['order'].getSum()|localizedcurrency('RUB') }}</td>
+              <td class="right_text_align">{{ orderInfo['payment'].getSum()|localizedcurrency('RUB') }}</td>
+              <td><a href="{{ path('deleteOrder', {'orderId': orderInfo['order'].getOrderId()}) }}" class="glyphicon glyphicon-remove remove_order_button"></a></td>
             </tr>
           {% endfor %}
         </tbody>
@@ -36,4 +38,10 @@
     </div>
   </div>
   <a class="btn btn-default btn-lg btn-block" target="_blank" href="{{ path('createOrder') }}">Добавить продажу</a>
+{% endblock %}
+{% block javascripts %}
+  <script src="{{ asset('js/orders/OrdersListPage.js') }}"></script>
+{% endblock %}
+{% block stylesheets %}
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/orders/manage.css') }}" />
 {% endblock %}

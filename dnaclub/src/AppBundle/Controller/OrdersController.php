@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\config\OrderStatus;
+use AppBundle\config\PaymentType;
 use AppBundle\lib\OrderItemPeer;
 use AppBundle\Entity\OrderItem;
 use AppBundle\Form\PreOrderSearchForm;
@@ -11,6 +13,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Product;
+use AppBundle\Entity\OrderPayment;
+use \Symfony\Component\HttpFoundation\ParameterBag;
 
 class OrdersController extends Controller
 {
@@ -20,13 +24,153 @@ class OrdersController extends Controller
     public function ordersListAction(Request $request)
     {
         $orders = $this->getDoctrine()->getRepository('AppBundle:Order')->findAll();
-        return $this->render('orders/orders_list.html.twig', ['orders' => $orders]);
+        $orderInfo = [];
+
+        /** @var Order $order */
+        foreach ($orders as $order)
+        {
+            $order->setStatus(OrderStatus::getName($order->getStatus()));
+            $orderInfo[] = [
+                'order' => $order,
+                'orderItems' => $this->getDoctrine()->getRepository("AppBundle:OrderItem")->findBy(['order' => $order]),
+                'payment' => $this->getOrderPayment($order) ?: new OrderPayment()
+            ];
+        }
+
+        return $this->render('orders/orders_list.html.twig', ['orders' => $orderInfo]);
     }
 
     /**
      * @Route("/new-order", name="createOrder")
      */
     public function createOrderAction(Request $request)
+    {
+        $products = $this->prepareProductsList();
+        $clients = $this->getDoctrine()->getRepository('AppBundle:Client')->findAll();
+        return $this->render('orders/create_order.html.twig', ['clients' => $clients, 'products' => json_encode($products)]);
+    }
+
+    /**
+     * @Route("/new-order-ajax", name="createOrderAjax")
+     */
+    public function createOrderAjaxAction(Request $request)
+    {
+        $order = new Order();
+        $this->saveOrderFromRequest($request->request, $order);
+        return $this->redirectToRoute('ordersList');
+    }
+
+    /**
+     * @Route("/edit-order/{orderId}", name="editOrder")
+     */
+    public function editOrderAction(Request $request, $orderId)
+    {
+        $doctrine   = $this->getDoctrine();
+        /** @var Order $order */
+        $order      = $doctrine->getRepository("AppBundle:Order")->find($orderId);
+        $orderItems = $doctrine->getRepository("AppBundle:OrderItem")->findBy(['order' => $orderId]);
+        $orderPayment = $this->getOrderPayment($order);
+        $products = $this->prepareProductsList();
+        $clients    = $doctrine->getRepository('AppBundle:Client')->findAll();
+
+        $params = [
+            'order'            => $order,
+            'clients'          => $clients,
+            'orderPayment'     => $orderPayment,
+            'productBlockVars' => [
+                'id'         => 'productsSelection',
+                'orderItems' => $orderItems,
+                'products'   => json_encode($products)
+            ]
+        ];
+
+        return $this->render('orders/edit_order.html.twig', $params);
+    }
+
+    /**
+     * @Route("/edit-order-ajax/{orderId}", name="editOrderAjax")
+     */
+    public function editOrderAjaxAction(Request $request, $orderId)
+    {
+        /** @var Order $order */
+        $order = $this->getDoctrine()->getRepository("AppBundle:Order")->find($orderId);
+        $this->saveOrderFromRequest($request->request, $order, false);
+        return $this->redirectToRoute('ordersList');
+    }
+
+    private function saveOrder(Order $order)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($order);
+        $em->flush();
+    }
+
+    private function saveOrderFromRequest(ParameterBag $post, Order &$order, $isNew = true)
+    {
+        $clientId = (int)$post->get('user_name');
+        $client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
+
+        $order->setDebt(abs((float)$post->get('debt')));
+        $order->setDiscount((float)$post->get('discount'));
+        $order->setSum((float)$post->get('cost'));
+        $order->setClient($client);
+
+        if (!$isNew)
+        {
+            $this->deleteOrderItems($order);
+        }
+
+        $this->saveOrder($order);
+        $this->updateOrderPaidByCash($order, (float)$post->get('paidByCash'));
+        $this->fillOrderItems($order, $post);
+    }
+
+    private function fillOrderItems(Order $order, ParameterBag $post)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $productsInfo = explode(',', $post->get('products_info', ''));
+
+        foreach($productsInfo as $productInfo)
+        {
+            $result = explode(':', $productInfo);
+            if (count($result) == 2)
+            {
+                $productId    = (int)$result[0];
+                $productCount = (int)$result[1];
+
+                /** @var Product $product */
+                $product = $this->getDoctrine()->getRepository('AppBundle:Product')->find($productId);
+
+                if ($product)
+                {
+                    $orderItem = new OrderItem();
+                    $orderItem->setOrder($order);
+                    $orderItem->setProduct($product);
+                    $orderItem->setCount($productCount);
+                    $orderItem->setCost($product->getPrice() * $productCount);
+                    $em->persist($orderItem);
+                }
+            }
+        }
+
+        $em->flush();
+    }
+
+    private function deleteOrderItems(Order $order)
+    {
+        $doctrine = $this->getDoctrine();
+        $em = $doctrine->getManager();
+
+        $orderItems = $doctrine->getRepository("AppBundle:OrderItem")->findBy(['order' => $order->getOrderId()]);
+        foreach ($orderItems as $orderItem)
+        {
+            $em->remove($orderItem);
+        }
+
+        $em->flush();
+    }
+
+    private function prepareProductsList()
     {
         $products = [];
         /** @var Product $product */
@@ -39,87 +183,32 @@ class OrdersController extends Controller
             ];
         }
 
-        $clients = $this->getDoctrine()->getRepository('AppBundle:Client')->findAll();
-        return $this->render('orders/create_order.html.twig', ['clients' => $clients, 'products' => json_encode($products)]);
+        return $products;
     }
 
-    /**
-     * @Route("/new-order-ajax", name="createOrderAjax")
-     */
-    public function createOrderAjaxAction(Request $request)
+    private function updateOrderPaidByCash(Order $order, $newValue)
     {
-        $post = $request->request;
-
-        $productIds = explode(',', $post->get('product_ids'));
-        $products = $this->getDoctrine()->getRepository('AppBundle:Product')->findBy(['id' => $productIds]);
-
-        $clientId = (int)$post->get('user_name');
-        $client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
-
-        $order = new Order();
-        $order->setDebt((int)$post->get('debt'));
-        $order->setDiscount((int)$post->get('discount'));
-        $order->setSum((int)$post->get('paidByCash') + (int)$post->get('paidByReward'));
-        $order->setClient($client);
-
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($order);
-
-        foreach($products as $product)
+        /** @var OrderPayment $orderPayment */
+        $orderPayment = $this->getOrderPayment($order);
+        if (!$orderPayment)
         {
-            $orderItem = new OrderItem();
-            $orderItem->setOrder($order);
-            $orderItem->setProduct($product);
-
-            $em->persist($orderItem);
+            $orderPayment = new OrderPayment();
+            $orderPayment->setOrder($order);
+            $orderPayment->setPaymentType(PaymentType::CASH);
+            $orderPayment->setCreatedAt(new \DateTime());
         }
 
-        $em->flush();
-
-        return $this->redirectToRoute('ordersList');
-    }
-
-    /**
-     * @Route("/edit-order/{orderId}", name="editOrder")
-     */
-    public function editOrderAction(Request $request, $orderId)
-    {
-        $doctrine   = $this->getDoctrine();
-        $orderItems = $doctrine->getRepository("AppBundle:OrderItem")->findBy(['order' => $orderId]);
-        $clients    = $doctrine->getRepository('AppBundle:Client')->findAll();
-        $order      = $doctrine->getRepository("AppBundle:Order")->find($orderId);
-
-        $params = [
-            'order'    => $order,
-            'clients'  => $clients,
-            'products' => OrderItemPeer::orderItemsToProducts($orderItems)
-        ];
-
-        return $this->render('orders/edit_order.html.twig', $params);
-    }
-
-    /**
-     * @Route("/edit-order-ajax/{orderId}", name="editOrderAjax")
-     */
-    public function editOrderAjaxAction(Request $request, $orderId)
-    {
-        $post = $request->request;
-        $clientId = (int)$post->get('user_name');
-
-        $doctrine = $this->getDoctrine();
-        $client   = $doctrine->getRepository("AppBundle:Client")->find($clientId);
-        $order    = $doctrine->getRepository("AppBundle:Order")->find($orderId);
-
-        $order->setDebt((int)$post->get('debt'));
-        $order->setDiscount((int)$post->get('discount'));
-        $order->setSum((int)$post->get('paidByCash') + (int)$post->get('paidByReward'));
-        $order->setClient($client);
+        $orderPayment->setSum($newValue);
 
         $em = $this->getDoctrine()->getManager();
-        $em->persist($order);
+        $em->persist($orderPayment);
         $em->flush();
+    }
 
-        return $this->redirectToRoute('ordersList');
+    private function getOrderPayment(Order $order)
+    {
+        $orderPayments = $this->getDoctrine()->getRepository('AppBundle:OrderPayment')->findBy(['order' => $order->getOrderId()]);
+        return count($orderPayments) ? $orderPayments[0] : null;
     }
 
     /**
@@ -131,6 +220,14 @@ class OrdersController extends Controller
         $em = $doctrine->getManager();
 
         $order = $doctrine->getRepository("AppBundle:Order")->find($orderId);
+        $orderItems = $doctrine->getRepository("AppBundle:OrderItem")->findBy(['order' => $orderId]);
+
+        foreach ($orderItems as $orderItem)
+        {
+            $em->remove($orderItem);
+        }
+
+        $em->flush();
 
         if ($order)
         {

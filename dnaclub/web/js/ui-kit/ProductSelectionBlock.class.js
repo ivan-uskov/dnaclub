@@ -17,7 +17,7 @@ var ProductSelectionBlock = function(id)
 
         list.find('.product').each(function()
         {
-            ids.push($(this).attr('data-product-id'));
+            ids.push($(this).attr('data-product-id') + ':' + $(this).find('.count').first().val());
         });
 
         return ids.join(',');
@@ -33,19 +33,34 @@ var ProductSelectionBlock = function(id)
             coast += (parseInt(item.find('.price').first().text())) * parseInt(item.find('.count').first().val());
         });
 
-        return coast;
+        return + coast;
+    }
+
+    function getItem(id)
+    {
+        return list.find('.product[data-product-id=' + id + ']').first();
     }
 
     function appendItem(id, name, price)
     {
-        var newItem = stubItem.clone();
-        newItem.attr('data-product-id', id);
-        newItem.find('.price').first().text(price);
-        newItem.html(name + newItem.html());
-        newItem.removeClass('hidden');
-        newItem.removeClass('stub_product');
-        newItem.addClass('product');
-        list.append(newItem);
+        var item = getItem(id);
+        if (item.length)
+        {
+            var count = item.find('.count').first();
+            count.val(+count.val() + 1);
+        }
+        else
+        {
+            var newItem = stubItem.clone();
+            newItem.attr('data-product-id', id);
+            newItem.find('.price').first().text(price);
+            newItem.html(name + newItem.html());
+            newItem.removeClass('hidden');
+            newItem.removeClass('stub_product');
+            newItem.addClass('product');
+            list.append(newItem);
+        }
+
         updateHandler(getCoast());
     }
 
@@ -97,11 +112,12 @@ var ProductSelectionBlock = function(id)
         inserter.typeahead({source: productNames});
     }
 
-    function initialize()
+
+    this.getCoast = getCoast;
+
+    (function()
     {
         initializeHandlers();
         initializeAutoComplete();
-    }
-
-    initialize();
+    })();
 };
