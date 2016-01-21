@@ -3,6 +3,8 @@
 namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * Reward
@@ -214,5 +216,18 @@ class Reward
     public function getClient()
     {
         return $this->client;
+    }
+
+    public function saveFromPost(ParameterBag $post, ObjectManager $em, Client $client, $isNew = true)
+    {
+        $this->setSum($post->get('sum'));
+        $this->setDate(new \DateTime($post->get('date')));
+        $this->setClient($client);
+        if ($isNew)
+        {
+            $this->setRemainingSum(0);
+        }
+        $em->persist($this);
+        $em->flush();
     }
 }

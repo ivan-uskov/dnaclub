@@ -585,16 +585,29 @@ class Client
         return $this->orders;
     }
 
-	public function getLastOrder()
+    /**
+     * @return Order|null
+     */
+    public function getLastOrder()
 	{
 		$sortCriteria = Criteria::create()->orderBy(['createdAt' => Criteria::DESC]);
-		return $this->getOrders()->matching($sortCriteria)->first();
+        $lastOrder = $this->getOrders()->matching($sortCriteria)->first();
+		return $lastOrder ? $lastOrder : null ;
 	}
+
+    /**
+     * @return \DateTime|null
+     */
+    public function getLastOrderDate()
+    {
+        $lastOrder = $this->getLastOrder();
+        return $lastOrder ? $lastOrder->getCreatedAt() : null;
+    }
 
 	public function getLastOrderDateStr()
 	{
-		$lastOrder = $this->getLastOrder();
-		return $lastOrder ? $lastOrder->getCreatedAt()->format("Y-m-d H:i:s") : "";
+		$lastOrderDate = $this->getLastOrderDate();
+		return $lastOrderDate ? $lastOrderDate->format("Y-m-d") : "";
 	}
 
     /**

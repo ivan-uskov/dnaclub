@@ -2,19 +2,6 @@
 <div class="navbar-default sidebar" role="navigation">
   <div class="sidebar-nav navbar-collapse">
     <ul class="nav" id="side-menu">
-      <li class="sidebar-search">
-        <div class="input-group custom-search-form">
-          <input type="text" class="form-control" id="sidebar_search_input" placeholder="Поиск..." />
-          <span class="input-group-btn">
-            <button class="btn btn-default" type="button" id="sidebar_search_submit">
-              <i class="fa fa-search"></i>
-            </button>
-          </span>
-        </div>
-      </li>
-      <li><a href="{{ path('homepage') }}" {% if route == 'homepage' %}class="active"{% endif %}>
-        <i class="fa fa-fw"></i>Главная</a>
-      </li>
       <li><a href="{{ path('clientsList') }}" {% if route == 'clientsList' %}class="active"{% endif %}>
         <i class="fa fa-fw"></i>Клиенты</a>
       </li>
@@ -38,9 +25,6 @@
       </li>
       <li><a href="{{ path('productsList') }}" {% if route == 'productsList' %}class="active"{% endif %}>
         <i class="fa fa-fw"></i>Товары</a>
-      </li>
-      <li><a href="{{ path('issuesList') }}" {% if route == 'issuesList' %}class="active"{% endif %}>
-        <i class="fa fa-fw"></i>Задачи</a>
       </li>
     </ul>
   </div>
