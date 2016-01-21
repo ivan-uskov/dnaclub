@@ -21,14 +21,39 @@ class ReportsController extends Controller
 
         $dates = $em->getRepository('AppBundle:MarketingReport')->getMonthsForSelect();
         $form = $this->createForm(new MonthSearchForm(), array('months' => ''), array('dates' => $dates));
-
         $form->handleRequest($request);
 
         $data = $form->getData();
-
         $date = $data["months"] ?: key($dates);
         $reportRows = $em->getRepository('AppBundle:MarketingReport')->findByDate($date);
 
-        return $this->render('reports/marketing_report.html.twig', ['reportRows' => $reportRows, 'form' => $form->createView()]);
+        $updateReportForm = $this->createFormBuilder()
+            ->setAction($this->generateUrl('updateMarketingReport'))
+            ->setMethod('POST')
+            ->add('date', 'hidden', array('data' => $date))
+            ->add('update', 'submit', array('label' => 'Обновить отчет'))
+            ->getForm()
+        ;
+        $updateReportForm->handleRequest($request);
+
+        return $this->render('reports/marketing_report.html.twig', ['reportRows' => $reportRows, 'form' => $form->createView(), 'updateReportForm' => $updateReportForm->createView()]);
     }
+
+    /**
+     * @Route("/marketing-report/update", name="updateMarketingReport")
+     */
+    public function updateMarketingReportAction(Request $request)
+    {
+        $form = $request->request->get('form');
+        $date = $form['date'];
+        if ($date)
+        {
+            $em = $this->getDoctrine()->getManager()->getConnection();
+            $em->prepare("CALL fill_marketing_report('" . $date . "')")->execute();
+        }
+
+        return $this->redirectToRoute('marketingReport');
+    }
+
+
 }
