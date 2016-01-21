@@ -1,0 +1,17 @@
+<div class="product_selection_block" id="{{ id }}">
+  <ul class="list-group" id="{{ id }}List">
+    <li class="list-group-item stub_product hidden" data-product-id="">
+      <span class="product_count_block">Количество: <input type="text" class="form-control count" value="1" /></span>
+      <span>Цена: <span class="price"></span></span>
+      <span class="glyphicon glyphicon-remove remove_product"></span>
+    </li>
+    {% for orderItem in orderItems %}
+      <li class="list-group-item product" data-product-id="{{ orderItem.getProduct().getProductId() }}">{{ orderItem.getProduct().getName() }}
+        <span class="product_count_block">Количество: <input type="text" class="form-control count" value="{{ orderItem.getCount() }}" /></span>
+        <span>Цена: <span class="price">{{ orderItem.getProduct().getPrice() }}</span></span>
+        <span class="glyphicon glyphicon-remove remove_product"></span>
+      </li>
+    {% endfor %}
+  </ul>
+  <input class="form-control" autocomplete="off" spellcheck="false" type="text" id="{{ id }}Inserter" data-products="{{ products }}" placeholder="Введите название товара и нажмите enter" />
+</div>
