@@ -27,7 +27,7 @@
             <td>{{ client.getEmail() }}</td>
             {% set lastOrderDate = client.getLastOrderDate() %}
             {% if lastOrderDate %}
-              <td>{{ lastOrderDate|localizeddate('long', 'none', null, null, 'dd LLL yyyy') }}</td>
+              <td>{{ lastOrderDate|date('d.m.Y') }}</td>
             {% else %}
               <td></td>
             {% endif %}
@@ -43,5 +43,7 @@
 {% endblock %}
 {% block javascripts %}
   {{ parent() }}
+  <script src="{{ asset('js/data-table/sorting-date-ru.js') }}"></script>
+  <script src="{{ asset('js/data-table/sorting-formatted-number.js') }}"></script>
   <script src="{{ asset('bundles/app/js/clients_list.js') }}"></script>
 {% endblock %}

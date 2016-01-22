@@ -20,6 +20,7 @@ class OrderRepository extends EntityRepository
             ->select('o')
             ->from('AppBundle\Entity\Order', 'o')
             ->where('o.debt > 0')
+            ->orderBy('o.createdAt', 'asc')
             ->getQuery()
             ->getResult();
     }

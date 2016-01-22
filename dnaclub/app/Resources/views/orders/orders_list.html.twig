@@ -6,7 +6,6 @@
       <table class="table table-hover" id="ordersList">
         <thead>
           <tr>
-            <th>#</th>
             <th>Фио клиента</th>
             <th width="200">Товары</th>
             <th>Дата</th>
@@ -19,14 +18,16 @@
         <tbody>
           {% for orderInfo in orders %}
             <tr onclick="location.href = '{{ path('editOrder', {'orderId': orderInfo['order'].getOrderId()}) }}'">
-              <td>{{ orderInfo['order'].getOrderId() }}</td>
-              <td>{{ orderInfo['order'].getClient().getName() }}</td>
+              <td>
+                <a href="{{ path('editClient', {'clientId': orderInfo['order'].getClient().getClientId()}) }}">
+                  {{ orderInfo['order'].getClient().getFullName() }}
+                </a>
               <td>
                 {% for orderItem in orderInfo['orderItems'] %}
                   {{ orderItem.getProduct().getName() }}<span class="right_float">{{ orderItem.getCount() }} {{ orderItem.getProduct().getPieceName() }}</span><br />
                 {% endfor %}
               </td>
-              <td>{{ orderInfo['order'].getCreatedAt()|localizeddate('long', 'none', null, null, 'dd LLL yyyy') }}</td>
+              <td>{{ orderInfo['order'].getCreatedAt()|date('d.m.Y') }}</td>
               <td>{{ orderInfo['order'].getStatus() }}</td>
               <td class="right_text_align">{{ orderInfo['order'].getSum()|localizedcurrency('RUB') }}</td>
               <td class="right_text_align">{{ orderInfo['payment'].getSum()|localizedcurrency('RUB') }}</td>
@@ -40,6 +41,8 @@
   <a class="btn btn-default btn-lg btn-block" target="_blank" href="{{ path('createOrder') }}">Добавить продажу</a>
 {% endblock %}
 {% block javascripts %}
+  <script src="{{ asset('js/data-table/sorting-date-ru.js') }}"></script>
+  <script src="{{ asset('js/data-table/sorting-formatted-number.js') }}"></script>
   <script src="{{ asset('js/orders/OrdersListPage.js') }}"></script>
 {% endblock %}
 {% block stylesheets %}
