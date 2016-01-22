@@ -35,9 +35,10 @@ $(function()
 			pageLength: PAGE_LENGTH,
 			order: [[0, "asc"]],
 			columnDefs: [
-				{orderable: false, targets: -1},
-				{orderable: false, targets: -2},
-				{orderable: false, targets: -3}
+				{ orderable: false, targets: [-1, -2, -3] },
+				{ searchable: false, targets: [1, 2, 3, 4, 5, 6] },
+				{ type: 'date-ru', targets: [1] },
+				{ type: 'formatted-num', targets: [2, 3] }
 			]
 		});
 	}

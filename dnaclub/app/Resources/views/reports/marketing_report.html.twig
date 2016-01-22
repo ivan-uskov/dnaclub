@@ -33,7 +33,11 @@
         <tbody>
         {% for reportRow in reportRows %}
           <tr>
-            <td>{{ reportRow.getClient().getFullName() }}</td>
+            <td>
+              <a href="{{ path('editClient', {'clientId': reportRow.getClient().getClientId()}) }}">
+                {{ reportRow.getClient().getFullName() }}
+              </a>
+            </td>
             <td class="text-right">{{ reportRow.getStartSum()|localizedcurrency('RUB') }}</td>
             <td class="text-right">{{ reportRow.getOrderSum()|localizedcurrency('RUB') }}</td>
             <td class="text-right">{{ (reportRow.getStartSum() + reportRow.getOrderSum())|localizedcurrency('RUB') }}</td>
@@ -49,10 +53,17 @@
 
 {% endblock %}
 {% block javascripts %}
+  {{ parent() }}
+  <script src="{{ asset('js/data-table/sorting-formatted-number.js') }}"></script>
   <script>
     $(document).ready(function() {
       $('#marketing_report').DataTable({
-        pageLength: 25
+        pageLength: 25,
+        order: [[0, "asc"]],
+        columnDefs: [
+          {searchable: false, targets: [1, 2, 3, 4, 5, 6]},
+          {type: 'formatted-num', targets: [1, 2, 3, 6]}
+        ]
       });
     } );
   </script>

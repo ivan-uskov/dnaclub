@@ -22,7 +22,7 @@
               </a>
             </td>
             <td class="text-right">{{ debtor.getDebt()|localizedcurrency('RUB') }}</td>
-            <td>{{ debtor.getCreatedAt()|localizeddate('long', 'none', null, null, 'dd LLLL yyyy') }}</td>
+            <td>{{ debtor.getCreatedAt()|date('d.m.Y') }}</td>
             <td>{{ debtor.getDebtDuration('%a дн.') }}</td>
             <td>
               <a href="{{ path('editOrder', {'orderId': debtor.getOrderId()}) }}" class="glyphicon glyphicon-pencil"></a>
@@ -37,10 +37,19 @@
 
 {% block javascripts %}
   {{ parent() }}
+  <script src="{{ asset('js/data-table/sorting-date-ru.js') }}"></script>
+  <script src="{{ asset('js/data-table/sorting-formatted-number.js') }}"></script>
   <script>
     $(document).ready(function() {
       $('#debtors_list').DataTable({
-        pageLength: 25
+        pageLength: 25,
+        order: [[ 2 , "asc" ]],
+        columnDefs: [
+          { orderable: false, targets: [4] },
+          { searchable: false, targets: [1, 2, 3, 4] },
+          { type: 'date-ru', targets: [2] },
+          { type: 'formatted-num', targets: [1, 3] }
+        ]
       });
     } );
   </script>
