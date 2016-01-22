@@ -28,7 +28,7 @@ class NewSubscriptionForm extends AbstractType
             ->add('date', 'date', array(
                 'label' => 'Дата',
                 'widget' => 'single_text',
-                'format' => 'dd-MM-yyyy',
+                'format' => 'dd.MM.yyyy',
                 'attr' => array(
                     'class' => 'form-control input-inline datepicker',
                     'data-provide' => 'datepicker'
