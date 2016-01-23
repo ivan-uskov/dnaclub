@@ -2,11 +2,38 @@
 {% block pageH1 %}Список продаж{% endblock %}
 {% block content %}
   <div class="panel-body">
+    {% form_theme searchForm 'bootstrap_3_horizontal_layout.html.twig' %}
+    {{ form_start(searchForm) }}
+    <div class="row" style="padding-bottom: 10px;">
+      <div class="col-sm-12">
+        <div class="form-group">
+          {{ form_label(searchForm.client) }}
+          <div class="col-md-4">{{ form_widget(searchForm.client) }}</div>
+          {{ form_label(searchForm.startDate) }}
+          <div class="col-md-4">{{ form_widget(searchForm.startDate) }}</div>
+        </div>
+        <div class="form-group">
+          {{ form_label(searchForm.status) }}
+          <div class="col-md-4">{{ form_widget(searchForm.status) }}</div>
+          {{ form_label(searchForm.endDate) }}
+          <div class="col-md-4">{{ form_widget(searchForm.endDate) }}</div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-2 col-md-push-10">{{ form_widget(searchForm.search) }}</div>
+        </div>
+      </div>
+    </div>
+    {{ form_end(searchForm) }}
+  </div>
+
+  <div class="panel-body">
     <div class="table-responsive">
-      <table class="table table-hover" id="ordersList">
+      <table class="table table-hover table-striped table-bordered" id="ordersList">
         <thead>
           <tr>
-            <th>Фио клиента</th>
+            <th>
+              Клиент
+            </th>
             <th width="200">Товары</th>
             <th>Дата</th>
             <th>Статус</th>
@@ -41,10 +68,15 @@
   <a class="btn btn-default btn-lg btn-block" target="_blank" href="{{ path('createOrder') }}">Добавить продажу</a>
 {% endblock %}
 {% block javascripts %}
+  <script src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
+  <script src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js') }}"></script>
+  <script src="{{ asset('js/datepicker/standard-datepicker.js') }}"></script>
   <script src="{{ asset('js/data-table/sorting-date-ru.js') }}"></script>
   <script src="{{ asset('js/data-table/sorting-formatted-number.js') }}"></script>
   <script src="{{ asset('js/orders/OrdersListPage.js') }}"></script>
 {% endblock %}
 {% block stylesheets %}
+  {{ parent() }}
+  <link href="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css') }}" type="text/css" rel="stylesheet" />
   <link rel="stylesheet" type="text/css" href="{{ asset('css/orders/manage.css') }}" />
 {% endblock %}

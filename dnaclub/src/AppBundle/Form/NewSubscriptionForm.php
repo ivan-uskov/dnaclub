@@ -18,7 +18,7 @@ class NewSubscriptionForm extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /**
-         * @var EntityManager
+         * @var EntityManager $em
          */
         $em = $options['em'];
         $clients = $em->getRepository('AppBundle:Client')->getSortedClients();

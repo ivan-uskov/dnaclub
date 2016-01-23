@@ -8,13 +8,25 @@
   <div class="panel-body">
     {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
     {{ form_start(form) }}
-      <div class="row">
-        <div class="col-md-6">
-          {{ form_row(form.client) }}
-          {{ form_row(form.type) }}
-          {{ form_row(form.count)  }}
-          {{ form_row(form.date) }}
-          {{ form_row(form.save) }}
+      <div class="row" style="padding-bottom: 10px;">
+        <div class="col-md-8 col-sm-12">
+          <div class="form-group">
+            {{ form_label(form.client) }}
+            <div class="col-md-10">{{ form_widget(form.client) }}</div>
+          </div>
+          <div class="form-group">
+            {{ form_label(form.type) }}
+            <div class="col-md-10">{{ form_widget(form.type) }}</div>
+          </div>
+          <div class="form-group">
+            {{ form_label(form.count) }}
+            <div class="col-md-3">{{ form_widget(form.count) }}</div>
+            <div class="hidden-md hidden-lg">{{ form_label(form.date) }}</div>
+            <div class="col-md-7">{{ form_widget(form.date) }}</div>
+          </div>
+          <div class="form-group">
+            <div class="col-md-9 col-md-push-2">{{ form_widget(form.save) }}</div>
+          </div>
         </div>
       </div>
     {{ form_end(form) }}
@@ -64,17 +76,9 @@
   {{ parent() }}
   <script src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
   <script src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js') }}"></script>
+  <script src="{{ asset('js/datepicker/standard-datepicker.js') }}"></script>
   <script src="{{ asset('js/data-table/sorting-date-ru.js') }}"></script>
   <script src="{{ asset('js/data-table/sorting-formatted-number.js') }}"></script>
-
-  <script>
-    $('.datepicker').datepicker({
-    format: 'dd.mm.yyyy',
-    weekStart: 1,
-    autoclose: true,
-    language: 'ru'
-    });
-  </script>
 
   <script>
     $(document).ready(function() {
