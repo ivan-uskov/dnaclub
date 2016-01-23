@@ -1,0 +1,14 @@
+.remove_product:hover
+{
+    cursor: pointer;
+}
+
+.right_text_align
+{
+    text-align: right;
+}
+
+.right_float
+{
+    float: right;
+}

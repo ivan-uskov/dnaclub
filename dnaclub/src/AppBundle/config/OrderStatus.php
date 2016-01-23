@@ -12,10 +12,10 @@ class OrderStatus
     const CANCELED   = 3;
 
     private static $names = [
-        self::OPEN       => 'Новый',
-        self::PROCESSING => 'Частично оплачен',
-        self::PAID       => 'Оплачен',
-        self::CANCELED   => 'Отменен'
+        self::OPEN       => 'Новое',
+        self::PROCESSING => 'Частично оплачено',
+        self::PAID       => 'Оплачено',
+        self::CANCELED   => 'Отменено'
     ];
 
     public static function getNames()

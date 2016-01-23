@@ -1,7 +1,7 @@
 {% extends 'layout.html.twig' %}
 {% block pageH1 %}Добавление продажи{% endblock %}
 {% block content %}
-  <form action="{{ path('createOrderAjax') }}" method="post">
+  <form action="{{ path('createOrderAjax') }}" method="post" id="createOrderForm">
     <div class="form-group">
       <label for="userName">ФИО</label>
       <select id="userName" name="user_name" class="form-control">
@@ -11,28 +11,33 @@
       </select>
     </div>
     <div class="form-group">
-      <label for="products">Товары</label>
-      <textarea id="products" name="products" class="form-control" rows="3"></textarea>
+      <label for="products">Товары - общая стоимость <span id="coast">0</span> руб.</label>
+      {% include 'include/product/selection_block.html.twig' with {'id': 'productsSelection', 'products': products, 'orderItems': []} %}
     </div>
     <div class="form-group">
       <label for="discount">Скидка</label>
       <input class="form-control" type="text" name="discount" id="discount" />
     </div>
     <div class="form-group">
-      <label for="paidByCash">Оплачено начилными</label>
+      <label for="paidByCash">Оплачено наличными</label>
       <input class="form-control" type="text" name="paidByCash" id="paidByCash" />
     </div>
     <div class="form-group">
-      <div class="form-group">
-      <label for="paidByReward">Оплачено вознаграждением</label>
-      <button type="reset" class="btn btn-default">Добавить оплату вознаграждением</button>
-      </div>
-      <textarea id="paidByCash" name="paidByReward" class="form-control" rows="3"></textarea>
-    </div>
-    <div class="form-group">
       <label for="debt">Долг</label>
-      <input class="form-control" type="text" name="debt" id="debt" />
+      <input class="form-control" type="text" name="debt" id="debt" readonly />
     </div>
+    <input type="hidden" id="productsInfo" name="products_info" value="" />
+    <input type="hidden" id="cost" name="cost" value="" />
     <button type="submit" id="submit" class="btn btn-default">Добавить</button>
   </form>
+{% endblock %}
+{% block javascripts %}
+  <script src="{{ asset('js/lib/bootstrap.typeahead.js') }}"></script>
+  <script src="{{ asset('js/ui-kit/NumberFormField.class.js') }}"></script>
+  <script src="{{ asset('js/ui-kit/ProductSelectionBlock.class.js') }}"></script>
+  <script src="{{ asset('js/orders/CreateOrderPage.js') }}"></script>
+{% endblock %}
+{% block stylesheets %}
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/orders/manage.css') }}" />
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/ui-kit/product_selection_block.css') }}" />
 {% endblock %}

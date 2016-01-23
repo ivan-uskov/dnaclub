@@ -45,7 +45,7 @@
             <label for="birthday">Дата рождения</label>
             <input class="form-control datepicker" type="text" name="birthday" id="birthday"
                     {% if not isNew and (not client.getBirthday() == null) %}
-                        value="{{ client.getBirthday().format("Y-m-d H:i:s") }}"
+                        value="{{ client.getBirthday()|date('d.m.Y') }}"
                     {% endif %}
                     />
         </div>
@@ -133,7 +133,7 @@
 
     <script>
         $('.datepicker').datepicker({
-            format: 'dd-mm-yyyy',
+            format: 'dd.mm.yyyy',
             weekStart: 1,
             autoclose: true,
             language: 'ru'

@@ -37,10 +37,9 @@ $(function(){
 		$("#clients_list").DataTable({
 			pageLength: PAGE_LENGTH,
 			columnDefs: [
-				{orderable: false, targets: -1},
-				{searchable: false, targets: 1},
-				{searchable: false, targets: 2},
-				{searchable: false, targets: 3}
+				{ orderable: false, targets: -1 },
+				{ searchable: false, targets: [4, 5] },
+				{ type: 'date-ru', targets: [4] }
 			]
 		});
 	}
