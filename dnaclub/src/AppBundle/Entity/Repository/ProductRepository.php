@@ -10,4 +10,15 @@ namespace AppBundle\Entity\Repository;
  */
 class ProductRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function getActiveProducts()
+    {
+        return $this->getEntityManager()
+            ->createQueryBuilder()
+            ->select('p')
+            ->from('AppBundle\Entity\Product', 'p')
+            ->andWhere('p.isDeleted = 0')
+            ->orderBy('p.name', 'asc')
+            ->getQuery()
+            ->getResult();
+    }
 }

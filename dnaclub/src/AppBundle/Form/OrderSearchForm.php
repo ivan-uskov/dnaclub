@@ -62,7 +62,7 @@ class OrderSearchForm extends AbstractType
                 'required' => false
             ))
             ->add(self::START_DATE_SEARCH_FIELD, 'date', array(
-                'label' => 'Начало',
+                'label' => 'Начальная дата',
                 'widget' => 'single_text',
                 'format' => 'dd.MM.yyyy',
                 'attr' => array(
@@ -72,7 +72,7 @@ class OrderSearchForm extends AbstractType
                 'required' => false
             ))
             ->add(self::END_DATE_SEARCH_FIELD, 'date', array(
-                'label' => 'Конец',
+                'label' => 'Конечная дата',
                 'widget' => 'single_text',
                 'format' => 'dd.MM.yyyy',
                 'attr' => array(
