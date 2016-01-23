@@ -3,7 +3,9 @@
 namespace AppBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use AppBundle\Form\OrderSearchForm;
 use AppBundle\Form\PreOrderSearchForm;
+use AppBundle\Entity\Client;
 
 /**
  * OrderRepository
@@ -23,6 +25,56 @@ class OrderRepository extends EntityRepository
             ->orderBy('o.createdAt', 'asc')
             ->getQuery()
             ->getResult();
+    }
+
+    public function getOrders($searchForm)
+    {
+        $qb = $this->getEntityManager()
+            ->createQueryBuilder()
+            ->select('o')
+            ->from('AppBundle\Entity\Order', 'o')
+            ->where('o.isPreOrder = 0')
+            ->orderBy('o.createdAt', 'desc');
+
+        if ($searchForm)
+        {
+            /**
+             * @var \DateTime $startDate
+             */
+            $startDate = $searchForm[OrderSearchForm::START_DATE_SEARCH_FIELD];
+            /**
+             * @var \DateTime $endDate
+             */
+            $endDate = $searchForm[OrderSearchForm::END_DATE_SEARCH_FIELD];
+            if ($startDate && $endDate)
+            {
+                date_add($endDate, date_interval_create_from_date_string('1 day'));
+                $qb->andWhere('o.createdAt >= :startDate')
+                    ->andWhere('o.createdAt < :endDate')
+                    ->setParameter('startDate', $startDate->format('Y-m-d'))
+                    ->setParameter('endDate', $endDate->format('Y-m-d'));
+            }
+
+            /**
+             * @var Client $client
+             */
+            $client = $searchForm[OrderSearchForm::CLIENT_SEARCH_FIELD];
+            if ($client)
+            {
+                $qb->andWhere('o.client = :client')
+                    ->setParameter('client', $client);
+            }
+
+            $status = $searchForm[OrderSearchForm::STATUS_SEARCH_FIELD];
+            if ($status)
+            {
+                $qb->andWhere('o.status = :status')
+                    ->setParameter('status', $status);
+            }
+        }
+
+
+        return $qb->getQuery()->getResult();
     }
 
     public function getPreOrders($searchForm)

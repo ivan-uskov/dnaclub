@@ -6,6 +6,7 @@ use AppBundle\config\OrderStatus;
 use AppBundle\config\PaymentType;
 use AppBundle\lib\OrderItemPeer;
 use AppBundle\Entity\OrderItem;
+use AppBundle\Form\OrderSearchForm;
 use AppBundle\Form\PreOrderSearchForm;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Monolog\Logger;
@@ -23,7 +24,12 @@ class OrdersController extends Controller
      */
     public function ordersListAction(Request $request)
     {
-        $orders = $this->getDoctrine()->getRepository('AppBundle:Order')->findAll();
+        $searchForm = $this->createForm(new OrderSearchForm(),
+            OrderSearchForm::getInitData(),
+            ['em' => $this->getDoctrine()->getManager()]
+        );
+        $searchForm->handleRequest($request);
+        $orders = $this->getDoctrine()->getRepository('AppBundle:Order')->getOrders($searchForm->getData());
         $orderInfo = [];
 
         /** @var Order $order */
@@ -37,7 +43,7 @@ class OrdersController extends Controller
             ];
         }
 
-        return $this->render('orders/orders_list.html.twig', ['orders' => $orderInfo]);
+        return $this->render('orders/orders_list.html.twig', ['orders' => $orderInfo, 'searchForm' => $searchForm->createView()]);
     }
 
     /**

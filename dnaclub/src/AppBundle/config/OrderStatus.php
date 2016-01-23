@@ -12,7 +12,7 @@ class OrderStatus
     const CANCELED   = 3;
 
     private static $names = [
-        self::OPEN       => 'Новое',
+        self::OPEN       => 'Нет оплаты',
         self::PROCESSING => 'Частично оплачено',
         self::PAID       => 'Оплачено',
         self::CANCELED   => 'Отменено'
