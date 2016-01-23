@@ -1,5 +1,61 @@
 {% extends 'layout.html.twig' %}
-{% block pageH1 %}Список товаров{% endblock %}
+{% block pageH1 %}Товары{% endblock %}
 {% block content %}
-  here products list
+  <div class="panel-body">
+    {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+    {{ form_start(form) }}
+    <div class="row">
+      <div class="col-md-8 col-sm-12">
+        {{ form_row(form.name) }}
+        {{ form_row(form.price) }}
+        {{ form_row(form.pieceName) }}
+        {{ form_row(form.save) }}
+      </div>
+    </div>
+    {{ form_end(form) }}
+  </div>
+  <div class="panel-body">
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered table-hover" id="products_list">
+        <thead>
+        <tr>
+          <th>Наименование</th>
+          <th>Цена</th>
+          <th>Обозн.</th>
+          <th></th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for product in products %}
+          <tr>
+            <td>{{ product.getName() }}</td>
+            <td>{{ product.getPrice()|localizedcurrency('RUB') }}</td>
+            <td>{{ product.getPieceName() }}</td>
+            <td class="text-center"><a href="{{ path('editProduct', {'productId': product.getProductId()}) }}" class="glyphicon glyphicon-pencil"></a></td>
+            <td class="text-center"><a href="{{ path('deleteProduct', {'productId': product.getProductId()}) }}" class="glyphicon glyphicon-remove" onclick="return confirm('Вы уверены, что хотите удалить запись?')"></a></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+{% block javascripts %}
+  {{ parent() }}
+  <script src="{{ asset('js/data-table/sorting-formatted-number.js') }}"></script>
+
+  <script>
+    $(document).ready(function() {
+      $('#products_list').DataTable({
+        pageLength: 25,
+        order: [[ 0, "asc" ]],
+        columnDefs: [
+          { orderable: false, targets: [3, 4] },
+          { searchable: false, targets: [1, 2, 3, 4] },
+          { type: 'formatted-num', targets: [1] }
+        ]
+      });
+    });
+  </script>
 {% endblock %}

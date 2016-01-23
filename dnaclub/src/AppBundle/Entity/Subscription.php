@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 use AppBundle\config\SubscriptionType;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Subscription
@@ -25,6 +26,7 @@ class Subscription
 
     /**
      * @var integer
+     * @Assert\GreaterThan(value=0)
      */
     private $count;
 
