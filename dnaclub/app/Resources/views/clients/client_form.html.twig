@@ -3,13 +3,13 @@
   {{ parent() }}
   <link href="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css') }}"
         type="text/css" rel="stylesheet"/>
-  <link href="{{ asset('bundles/app/css/forms_common.css') }}" type="text/css" rel="stylesheet" />
+  <link href="{{ asset('css/common/forms_common.css') }}" type="text/css" rel="stylesheet" />
 {% endblock %}
 {% block pageH1 %}
   {% if isNew %}
-    Добавление клиента
+    Добавление данных о клиенте
   {% else %}
-    Редактирование клиента
+    Редактирование данных о клиенте
   {% endif %}
 {% endblock %}
 {% block content %}
