@@ -1,0 +1,27 @@
+<div class="nav navbar">
+  {% if not (mode == 'editClient') %}
+    <a class="btn btn-default col-md-3" href="{{ path('editClient', {'clientId': client.getClientId()}) }}">
+      Информация о клиенте
+    </a>
+  {% endif %}
+  {% if not (mode == 'diseaseHistory') %}
+    <a class="btn btn-default col-md-3" href="{{ path('diseaseHistory', {'clientId': client.getClientId()}) }}">
+      История болезни
+    </a>
+  {% endif %}
+  {% if not (mode == 'subscriptions') %}
+    <a class="btn btn-default col-md-3" href="{{ path('clientsSubscriptions', {'clientId': client.getClientId()}) }}">
+      Лидерские и контракты
+    </a>
+  {% endif %}
+  {% if not (mode == 'orders') %}
+    <a class="btn btn-default col-md-3" href="{#{{ path('orders', {'clientId': client.getClientId()}) }}#}">
+      Продажи
+    </a>
+  {% endif %}
+  {% if not (mode == 'rewards') %}
+    <a class="btn btn-default col-md-3" href="{#{{ path('clients-rewards', {'clientId': client.getClientId()}) }}#}">
+      Вознаграждения
+    </a>
+  {% endif %}
+</div>

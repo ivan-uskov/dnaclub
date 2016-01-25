@@ -1,11 +1,16 @@
 {% extends 'layout.html.twig' %}
-{% block pageH1 %}Лидерские и контракты{% endblock %}
+{% block pageH1 %}
+  Лидерские и контракты{% if (mode == 'clientsSubscripitons') %} - {{ client.getFullName() }} {% endif %}
+{% endblock %}
 {% block stylesheets %}
   {{ parent() }}
   <link href="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css') }}" type="text/css" rel="stylesheet" />
 {% endblock %}
 {% block content %}
   <div class="panel-body">
+    {% if (mode == 'clientsSubscripitons') %}
+      {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'subscriptions'} %}
+    {% endif %}
     {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
     {{ form_start(form) }}
       <div class="row" style="padding-bottom: 10px;">

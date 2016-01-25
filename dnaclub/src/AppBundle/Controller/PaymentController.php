@@ -6,11 +6,10 @@ use AppBundle\config\SubscriptionType;
 use AppBundle\Entity\Subscription;
 use AppBundle\Form\MonthSearchForm;
 use AppBundle\Form\NewSubscriptionForm;
-use Doctrine\ORM\EntityRepository;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 class PaymentController extends Controller
 {
@@ -38,34 +37,15 @@ class PaymentController extends Controller
      */
     public function subscriptionsListAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
+        return $this->subscriptionsListImpl($request);
+    }
 
-        $subscription = new Subscription();
-        $subscription->setCount(1);
-        $subscription->setDate(new \DateTime());
-        $newSubscriptionForm = $this->createForm(new NewSubscriptionForm(), $subscription, array('em' => $em));
-
-        $dates = $em->getRepository('AppBundle:MarketingReport')->getMonthsForSelect();
-        $searchForm = $this->createForm(new MonthSearchForm(), array('months' => ''), array('dates' => $dates));
-
-        $searchForm->handleRequest($request);
-
-        $newSubscriptionForm->handleRequest($request);
-        if ($newSubscriptionForm->isSubmitted() && $newSubscriptionForm->isValid())
-        {
-            $type = $newSubscriptionForm->getData()->getType();
-            $count = $newSubscriptionForm->getData()->getCount();
-            $sum = $count * SubscriptionType::getPrice($type);
-            $subscription->setSum($sum);
-            $em->persist($subscription);
-            $em->flush();
-        }
-
-        $data = $searchForm->getData();
-        $date = $data["months"] ?: key($dates);
-        $subscriptions = $em->getRepository('AppBundle:Subscription')->findByMonth($date);
-
-        return $this->render('payment/subscriptions_list.html.twig', ['searchForm' => $searchForm->createView(), 'form' => $newSubscriptionForm->createView(), 'subscriptions' => $subscriptions]);
+    /**
+     * @Route("/clients-subscriptions/{clientId}", name="clientsSubscriptions")
+     */
+    public function clientsSubscriptionsAction(Request $request, $clientId)
+    {
+        return $this->subscriptionsListImpl($request, $clientId);
     }
 
     /**
@@ -85,5 +65,70 @@ class PaymentController extends Controller
         }
 
         return $this->redirectToRoute('subscriptionsList');
+    }
+
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    private function subscriptionsListImpl(Request $request, $clientId = null)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $client = null;
+        $templateMode = 'subscriptions';
+        if ($clientId != null)
+        {
+            $templateMode = 'clientsSubscripitons';
+            $client = $em->getRepository('AppBundle:Client')->find($clientId);
+        }
+        $isClientPredefined = !($clientId == null) || ($client == null);
+        if (!$isClientPredefined)
+        {
+            $templateMode = 'subscriptions';
+        }
+
+        $subscription = new Subscription();
+        $subscription->setCount(1);
+        $subscription->setDate(new \DateTime());
+        $subscriptionForm = new NewSubscriptionForm();
+        $subscriptionForm->setClient($client);
+        $newSubscriptionForm = $this->createForm($subscriptionForm, $subscription, array('em' => $em));
+
+        $dates = $em->getRepository('AppBundle:MarketingReport')->getMonthsForSelect();
+        $searchForm = $this->createForm(new MonthSearchForm(), array('months' => ''), array('dates' => $dates));
+
+        $searchForm->handleRequest($request);
+
+        $newSubscriptionForm->handleRequest($request);
+        if ($newSubscriptionForm->isSubmitted() && $newSubscriptionForm->isValid())
+        {
+            $type = $newSubscriptionForm->getData()->getType();
+            $count = $newSubscriptionForm->getData()->getCount();
+            $sum = $count * SubscriptionType::getPrice($type);
+            $subscription->setSum($sum);
+            $em->persist($subscription);
+            $em->flush();
+        }
+
+        $data = $searchForm->getData();
+        $date = $data["months"] ?: key($dates);
+        if ($isClientPredefined)
+        {
+            $subscriptions = $em->getRepository('AppBundle:Subscription')->findByMonthAndClient($date, $client);
+        }
+        else
+        {
+            $subscriptions = $em->getRepository('AppBundle:Subscription')->findByMonth($date);
+        }
+
+        return $this->render('payment/subscriptions_list.html.twig',
+            [
+                'searchForm' => $searchForm->createView(),
+                'form' => $newSubscriptionForm->createView(),
+                'subscriptions' => $subscriptions,
+                'mode' => $templateMode,
+                'client' => $client
+            ]);
     }
 }
