@@ -2,3 +2,8 @@ textarea
 {
 	resize: none;
 }
+
+.header-client-fullname
+{
+	margin-top: 0;
+}
