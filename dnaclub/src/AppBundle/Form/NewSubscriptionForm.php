@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form;
 
+use AppBundle\Entity\Client;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -10,6 +11,8 @@ use AppBundle\config\SubscriptionType;
 
 class NewSubscriptionForm extends AbstractType
 {
+    private $client = null;
+
     public function getName()
     {
         return 'new_subscription_form';
@@ -21,7 +24,33 @@ class NewSubscriptionForm extends AbstractType
          * @var EntityManager $em
          */
         $em = $options['em'];
-        $clients = $em->getRepository('AppBundle:Client')->getSortedClients();
+        $isClientPredefined = ($this->client != null);
+        if (!$isClientPredefined)
+        {
+            $clients = $em->getRepository('AppBundle:Client')->getSortedClients();
+            $builder
+                ->add('client', 'entity', array(
+                'label' => 'Клиент',
+                'class' => 'AppBundle:Client',
+                'choice_label' => 'fullName',
+                'choices' => $clients
+            ));
+        }
+        else
+        {
+            $builder
+                ->add('client', 'entity', array(
+                    'label' => false,
+                    'class' => 'AppBundle:Client',
+                    'choice_label' => 'fullName',
+                    'choices' => array($this->client),
+                    'data' => $this->client,
+                    'attr' => array(
+                        'class' => 'hidden'
+                    )
+                ));
+        }
+
         $types = SubscriptionType::getNames();
 
         $builder
@@ -42,12 +71,6 @@ class NewSubscriptionForm extends AbstractType
             ->add('count', 'number', array(
                 'label' => 'Количество'
             ))
-            ->add('client', 'entity', array(
-                'label' => 'Клиент',
-                'class' => 'AppBundle:Client',
-                'choice_label' => 'fullName',
-                'choices' => $clients
-            ))
             ->add('save', 'submit', array(
                 'label' => 'Добавить подписку'
             ));
@@ -59,5 +82,10 @@ class NewSubscriptionForm extends AbstractType
             'data_class' => 'AppBundle\Entity\Subscription',
             'em' => null
         ));
+    }
+
+    public function setClient($client)
+    {
+        $this->client = $client;
     }
 }

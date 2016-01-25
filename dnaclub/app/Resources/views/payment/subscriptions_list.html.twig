@@ -1,11 +1,17 @@
 {% extends 'layout.html.twig' %}
-{% block pageH1 %}Лидерские и контракты{% endblock %}
+{% block pageH1 %}
+  Лидерские и контракты{% if (mode == 'clientsSubscripitons') %} - {{ client.getFullName() }} {% endif %}
+{% endblock %}
 {% block stylesheets %}
   {{ parent() }}
   <link href="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css') }}" type="text/css" rel="stylesheet" />
 {% endblock %}
 {% block content %}
   <div class="panel-body">
+    {% if (mode == 'clientsSubscripitons') %}
+      {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'subscriptions'} %}
+    {% endif %}
+    <input type="hidden" id="template_mode" value="{{ mode }}" />
     {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
     {{ form_start(form) }}
       <div class="row" style="padding-bottom: 10px;">
@@ -42,7 +48,9 @@
       <table class="table table-striped table-bordered table-hover" id="subscription_list">
         <thead>
         <tr>
-          <th>Фио клиента</th>
+          {% if (mode == 'subscripitons') %}
+            <th>Фио клиента</th>
+          {% endif %}
           <th>Дата</th>
           <th>Тип подписки</th>
           <th>Количество</th>
@@ -53,11 +61,13 @@
         <tbody>
         {% for subscription in subscriptions %}
           <tr>
+            {% if (mode == 'subscripitons') %}
             <td>
               <a href="{{ path('editClient', {'clientId': subscription.getClient().getClientId()}) }}">
                 {{ subscription.getClient().getFullName() }}
               </a>
             </td>
+            {% endif %}
             <td>{{ subscription.getDate()|date('d.m.Y') }}</td>
             <td>{{ subscription.getTypeName() }}</td>
             <td class="text-right">{{ subscription.getCount() }}</td>
@@ -82,16 +92,32 @@
 
   <script>
     $(document).ready(function() {
-      $('#subscription_list').DataTable({
-        pageLength: 25,
-        order: [[ 1, "desc" ]],
-        columnDefs: [
-          { orderable: false, targets: [5] },
-          { searchable: false, targets: [1, 3, 4, 5] },
-          { type: 'date-ru', targets: [1] },
-          { type: 'formatted-num', targets: [4] }
-        ]
-      });
+      if ($('#template_mode').val() == 'subscriptions')
+      {
+        $('#subscription_list').DataTable({
+          pageLength: 25,
+          order: [[1, "desc"]],
+          columnDefs: [
+            {orderable: false, targets: [5]},
+            {searchable: false, targets: [1, 3, 4, 5]},
+            {type: 'date-ru', targets: [1]},
+            {type: 'formatted-num', targets: [4]}
+          ]
+        });
+      }
+      else
+      {
+        $('#subscription_list').DataTable({
+          pageLength: 25,
+          order: [[0, "desc"]],
+          columnDefs: [
+            {orderable: false, targets: [4]},
+            {searchable: false, targets: [0, 2, 3, 4]},
+            {type: 'date-ru', targets: [0]},
+            {type: 'formatted-num', targets: [3]}
+          ]
+        });
+      }
     });
   </script>
 {% endblock %}

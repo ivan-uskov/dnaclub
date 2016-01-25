@@ -31,15 +31,31 @@ $(function()
 
 	function initDataTable()
 	{
-		$("#rewards_list").DataTable({
-			pageLength: PAGE_LENGTH,
-			order: [[0, "asc"]],
-			columnDefs: [
-				{ orderable: false, targets: [-1, -2, -3] },
-				{ searchable: false, targets: [1, 2, 3, 4, 5, 6] },
-				{ type: 'date-ru', targets: [1] },
-				{ type: 'formatted-num', targets: [2, 3] }
-			]
-		});
+		if ($("#template_mode").val() == "rewards")
+		{
+			$("#rewards_list").DataTable({
+				pageLength: PAGE_LENGTH,
+				order: [[0, "asc"]],
+				columnDefs: [
+					{orderable: false, targets: [-1, -2, -3]},
+					{searchable: false, targets: [-1, -2, -3]},
+					{type: 'date-ru', targets: [1]},
+					{type: 'formatted-num', targets: [2, 3]}
+				]
+			});
+		}
+		else
+		{
+			$("#rewards_list").DataTable({
+				pageLength: PAGE_LENGTH,
+				order: [[0, "desc"]],
+				columnDefs: [
+					{orderable: false, targets: [-1, -2, -3]},
+					{searchable: false, targets: [-1, -2, -3]},
+					{type: 'date-ru', targets: [0]},
+					{type: 'formatted-num', targets: [1, 2]}
+				]
+			});
+		}
 	}
 });

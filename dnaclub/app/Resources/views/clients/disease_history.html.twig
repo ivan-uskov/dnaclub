@@ -7,7 +7,7 @@
   <link href="{{ asset('css/common/lists_common.css') }}" type="text/css" rel="stylesheet"/>
 {% endblock %}
 {% block pageH1 %}
-  История болезни - <a href="{{ path('editClient', {'clientId': client.getClientId()}) }}">{{ client.getFullName() }}</a>
+  История болезни - {{ client.getFullName() }}
   {% if not isNew %}
     <a class="btn btn-success"
        href="{{ path('diseaseHistory', {'clientId': currentDiseaseHistory.getClient().getClientId()}) }}">Добавить
@@ -15,6 +15,7 @@
   {% endif %}
 {% endblock %}
 {% block content %}
+{% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'diseaseHistory'} %}
   <div class="col-md-6">
     <form action="" method="post" class="row">
       <div class="form-group row">
