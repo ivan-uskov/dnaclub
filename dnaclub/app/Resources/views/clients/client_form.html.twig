@@ -1,114 +1,84 @@
 {% extends 'layout.html.twig' %}
 {% block stylesheets %}
-    {{ parent() }}
-    <link href="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css') }}" type="text/css" rel="stylesheet" />
+  {{ parent() }}
+  <link href="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css') }}"
+        type="text/css" rel="stylesheet"/>
+  <link href="{{ asset('css/common/forms_common.css') }}" type="text/css" rel="stylesheet" />
 {% endblock %}
 {% block pageH1 %}
-    {% if isNew %}
-        Добавление клиента
-    {% else %}
-        Редактирование клиента
-    {% endif %}
+  {% if isNew %}
+    Добавление данных о клиенте
+  {% else %}
+    Редактирование данных о клиенте
+  {% endif %}
 {% endblock %}
 {% block content %}
-    {% if not isNew %}
-        <h3>
-            <a href="{{ path('diseaseHistory', {'clientId': client.getClientId()}) }}">Перейти к истории болезни</a>
-        </h3>
-    {% endif %}
-    <form action="" method="post">
-        <div class="form-group">
-            <label for="lastName">Фамилия</label>
-            <input class="form-control" type="text" name="last_name" id="lastName"
-                    {% if not isNew %}
-                        value="{{ client.getLastName() }}"
-                    {% endif %}
-                    />
+  {% if not isNew %}
+    <h3>
+      <a href="{{ path('diseaseHistory', {'clientId': client.getClientId()}) }}">Перейти к истории болезни</a>
+    </h3>
+  {% endif %}
+  <form action="" method="post" class="row">
+    <div class="col-md-6">
+      <div class="form-group row">
+        <label for="lastName" class="col-md-5">Фамилия</label>
+
+        <div class="col-md-7">
+          <input class="form-control" type="text" name="last_name" id="lastName"
+              {% if not isNew %}
+                value="{{ client.getLastName() }}"
+              {% endif %}
+          />
         </div>
-        <div class="form-group">
-            <label for="firstName">Имя</label>
-            <input class="form-control" type="text" name="first_name" id="firstName"
-                    {% if not isNew %}
-                        value="{{ client.getFirstName() }}"
-                    {% endif %}
-                    />
+      </div>
+      <div class="form-group row">
+        <label for="firstName" class="col-md-5">Имя</label>
+
+        <div class="col-md-7">
+          <input class="form-control" type="text" name="first_name" id="firstName"
+              {% if not isNew %}
+                value="{{ client.getFirstName() }}"
+              {% endif %}
+          />
         </div>
-        <div class="form-group">
-            <label for="middleName">Отчество</label>
-            <input class="form-control" type="text" name="middle_name" id="middleName"
-                    {% if not isNew %}
-                        value="{{ client.getMiddleName() }}"
-                    {% endif %}
-                    />
+      </div>
+      <div class="form-group row">
+        <label for="middleName" class="col-md-5">Отчество</label>
+
+        <div class="col-md-7">
+          <input class="form-control" type="text" name="middle_name" id="middleName"
+              {% if not isNew %}
+                value="{{ client.getMiddleName() }}"
+              {% endif %}
+          />
         </div>
-        <div class="form-group">
-            <label for="birthday">Дата рождения</label>
-            <input class="form-control datepicker" type="text" name="birthday" id="birthday"
-                    {% if not isNew and (not client.getBirthday() == null) %}
-                        value="{{ client.getBirthday()|date('d.m.Y') }}"
-                    {% endif %}
-                    />
+      </div>
+      <div class="form-group row">
+        <label for="birthday" class="col-md-5">Дата рождения</label>
+
+        <div class="col-md-7">
+          <input class="form-control datepicker" type="text" name="birthday" id="birthday"
+              {% if not isNew and (not client.getBirthday() == null) %}
+                value="{{ client.getBirthday()|date('d.m.Y') }}"
+              {% endif %}
+          />
         </div>
-        <div class="form-group">
-            <label for="city">Город</label>
-            <input class="form-control" type="text" name="city" id="city"
-                    {% if not isNew %}
-                        value="{{ client.getCity() }}"
-                    {% else %}
-                        value="Йошкар-Ола"
-                    {% endif %}
-                    />
+      </div>
+      <div class="form-group row">
+        <label for="city" class="col-md-5">Город</label>
+
+        <div class="col-md-7">
+          <input class="form-control" type="text" name="city" id="city"
+              {% if not isNew %}
+                value="{{ client.getCity() }}"
+              {% else %}
+                value="Йошкар-Ола"
+              {% endif %}
+          />
         </div>
-        <div class="form-group">
-            <input type="checkbox" name="is_subscribed" id="isSubscribed"
-                    {% if not isNew and client.getIsSubscribed() %}
-                        checked="checked"
-                    {% endif %}
-                    />
-            <label for="isSubscribed">Участвует в маркетинге</label>
-        </div>
-        <div class="form-group">
-            <input type="checkbox" name="is_school_learner" id="isSchoolLearner"
-                    {% if not isNew and client.getIsSchoolLearner() %}
-                        checked="checked"
-                    {% endif %}
-                    />
-            <label for="isSchoolLearner">Обучается в школе</label>
-        </div>
-        <div class="form-group">
-            <input type="checkbox" name="is_online_learner" id="isOnlineLearner"
-                    {% if not isNew and client.getIsOnlineLearner() %}
-                        checked="checked"
-                    {% endif %}
-                    />
-            <label for="isOnlineLearner">Обучается онлайн</label>
-        </div>
-        <div class="form-group">
-            <label for="phone">Телефон</label>
-            <input class="form-control" type="text" name="phone" id="phone"
-                    {% if not isNew %}
-                        value="{{ client.getPhone() }}"
-                    {% endif %}
-                    />
-        </div>
-        <div class="form-group">
-            <label for="email">E-mail</label>
-            <input class="form-control" type="text" name="email" id="email"
-                    {% if not isNew %}
-                        value="{{ client.getEmail() }}"
-                    {% endif %}
-                    />
-        </div>
-        <div class="form-group">
-            <label for="subscriptionDate">Дата подписки</label>
-            <input class="form-control datepicker" type="text" name="subscription_date" id="subscriptionDate"
-                    {% if not isNew and (not client.getSubscriptionDate() == null) %}
-                        value="{{ client.getSubscriptionDate().format("Y-m-d H:i:s") }}"
-                    {% endif %}
-                    />
-        </div>
-        <div class="form-group">
-            <label for="notes">Заметки</label>
+      </div>
+      <div class="form-group">
+        <label for="notes">Заметки</label>
             <textarea id="notes" name="notes" class="form-control" rows="3">{#
                 #}{% if not isNew %}{#
                     #}{% for note in clientNotes %}{#
@@ -116,27 +86,92 @@
                     #}{% endfor %}{#
                 #}{% endif %}{#
             #}</textarea>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="form-group row">
+        <label for="phone" class="col-md-5">Телефон</label>
+
+        <div class="col-md-7">
+          <input class="form-control" type="text" name="phone" id="phone"
+              {% if not isNew %}
+                value="{{ client.getPhone() }}"
+              {% endif %}
+          />
         </div>
-        <button type="submit" id="submit" class="btn btn-default">
-            {% if isNew %}
-                Добавить
-            {% else %}
-                Сохранить
+      </div>
+      <div class="form-group row">
+        <label for="email" class="col-md-5">E-mail</label>
+
+        <div class="col-md-7">
+          <input class="form-control" type="text" name="email" id="email"
+              {% if not isNew %}
+                value="{{ client.getEmail() }}"
+              {% endif %}
+          />
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="subscriptionDate" class="col-md-5">Дата подписки</label>
+
+        <div class="col-md-7">
+          <input class="form-control datepicker" type="text" name="subscription_date" id="subscriptionDate"
+              {% if not isNew and (not client.getSubscriptionDate() == null) %}
+                value="{{ client.getSubscriptionDate().format("Y-m-d H:i:s") }}"
+              {% endif %}
+          />
+        </div>
+      </div>
+      <div class="form-group row col-md-12">
+        <input type="checkbox" name="is_subscribed" id="isSubscribed"
+            {% if not isNew and client.getIsSubscribed() %}
+              checked="checked"
             {% endif %}
-        </button>
-    </form>
+        />
+        <label for="isSubscribed">Участвует в маркетинге</label>
+      </div>
+      <div class="form-group row col-md-12">
+        <input type="checkbox" name="is_school_learner" id="isSchoolLearner"
+            {% if not isNew and client.getIsSchoolLearner() %}
+              checked="checked"
+            {% endif %}
+        />
+        <label for="isSchoolLearner">Обучается в школе</label>
+      </div>
+      <div class="form-group row col-md-12">
+        <input type="checkbox" name="is_online_learner" id="isOnlineLearner"
+            {% if not isNew and client.getIsOnlineLearner() %}
+              checked="checked"
+            {% endif %}
+        />
+        <label for="isOnlineLearner">Обучается онлайн</label>
+      </div>
+    </div>
+
+    <div class="col-md-12">
+      <button type="submit" id="submit" class="btn btn-default">
+        {% if isNew %}
+          Добавить
+        {% else %}
+          Сохранить
+        {% endif %}
+      </button>
+    </div>
+  </form>
 {% endblock %}
 {% block javascripts %}
-    {{ parent() }}
-    <script src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
-    <script src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js') }}"></script>
+  {{ parent() }}
+  <script src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
+  <script
+      src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js') }}"></script>
 
-    <script>
-        $('.datepicker').datepicker({
-            format: 'dd.mm.yyyy',
-            weekStart: 1,
-            autoclose: true,
-            language: 'ru'
-        });
-    </script>
+  <script>
+    $('.datepicker').datepicker({
+      format: 'dd.mm.yyyy',
+      weekStart: 1,
+      autoclose: true,
+      language: 'ru'
+    });
+  </script>
 {% endblock %}

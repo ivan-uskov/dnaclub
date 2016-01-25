@@ -1,5 +1,8 @@
 {% extends 'layout.html.twig' %}
-{% block pageH1 %}Список продаж{% endblock %}
+{% block pageH1 %}
+  Список продаж
+  <a class="btn btn-success btn-add-top" target="_blank" href="{{ path('createOrder') }}">Добавить</a>
+{% endblock %}
 {% block content %}
   <div class="panel-body">
     {% form_theme searchForm 'bootstrap_3_horizontal_layout.html.twig' %}
@@ -65,7 +68,6 @@
       </table>
     </div>
   </div>
-  <a class="btn btn-default btn-lg btn-block" target="_blank" href="{{ path('createOrder') }}">Добавить продажу</a>
 {% endblock %}
 {% block javascripts %}
   <script src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
@@ -79,4 +81,5 @@
   {{ parent() }}
   <link href="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css') }}" type="text/css" rel="stylesheet" />
   <link rel="stylesheet" type="text/css" href="{{ asset('css/orders/manage.css') }}" />
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/common/lists_common.css') }}" />
 {% endblock %}
