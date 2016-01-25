@@ -14,9 +14,15 @@ class RewardsController extends Controller
      */
     public function rewardsListAction(Request $request)
     {
-        $rewards = $this->getDoctrine()->getRepository('AppBundle:Reward')->findBy(['isDeleted' => 0]);
+        return $this->rewardsListImpl();
+    }
 
-        return $this->render('payment/rewards_list.html.twig', ['rewards' => $rewards]);
+    /**
+     * @Route("/clients-rewards/{clientId}", name="clientsRewards")
+     */
+    public function clientsRewardsListAction(Request $request, $clientId)
+    {
+        return $this->rewardsListImpl($clientId);
     }
 
     /**
@@ -24,24 +30,15 @@ class RewardsController extends Controller
      */
     public function createRewardAction(Request $request)
     {
-        if ($request->isMethod(Request::METHOD_POST))
-        {
-            $this->handleRewardPost($request->request);
+        return $this->createRewardImpl($request);
+    }
 
-            return $this->redirectToRoute('rewardsList');
-        }
-        else
-        {
-            $clients = $this->getDoctrine()->getRepository("AppBundle:Client")->findBy(
-                ['isDeleted' => 0],
-                ['lastName' => 'ASC']
-            );
-
-            return $this->render('payment/reward_form.html.twig', [
-                'clients' => $clients,
-                'isNew' => true
-            ]);
-        }
+    /**
+     * @Route("/clients-rewards/{clientId}/new", name="createClientsReward")
+     */
+    public function createClientsRewardAction(Request $request, $clientId)
+    {
+        return $this->createRewardImpl($request, $clientId);
     }
 
     /**
@@ -49,26 +46,15 @@ class RewardsController extends Controller
      */
     public function editRewardAction(Request $request, $rewardId)
     {
-        $reward = $this->getDoctrine()->getRepository("AppBundle:Reward")->find($rewardId);
-        if ($request->isMethod(Request::METHOD_POST))
-        {
-            $this->handleRewardPost($request->request, $rewardId);
+        return $this->editRewardImpl($request, $rewardId);
+    }
 
-            return $this->redirectToRoute('rewardsList');
-        }
-        else
-        {
-            $clients = $this->getDoctrine()->getRepository("AppBundle:Client")->findBy(
-                ['isDeleted' => 0],
-                ['lastName' => 'ASC']
-            );
-
-            return $this->render('payment/reward_form.html.twig', [
-                'clients' => $clients,
-                'isNew' => false,
-                'reward' => $reward
-            ]);
-        }
+    /**
+     * @Route("/clients-rewards/{clientId}/edit/{rewardId}", name="editClientsReward")
+     */
+    public function editClientsRewardAction(Request $request, $clientId, $rewardId)
+    {
+        return $this->editRewardImpl($request, $rewardId, $clientId);
     }
 
     /**
@@ -76,13 +62,15 @@ class RewardsController extends Controller
      */
     public function deleteRewardAction(Request $request, $rewardId)
     {
-        $em = $this->getDoctrine()->getManager();
-        $reward = $this->getDoctrine()->getRepository("AppBundle:Reward")->find($rewardId);
-        $reward->setIsDeleted(true);
-        $em->persist($reward);
-        $em->flush();
+        return $this->deleteRewardImpl($rewardId);
+    }
 
-        return $this->redirectToRoute('rewardsList');
+    /**
+     * @Route("/clients-rewards/{clientId}/delete/{rewardId}", name="deleteClientsReward")
+     */
+    public function deleteClientsRewardAction(Request $request, $clientId, $rewardId)
+    {
+        return $this->deleteRewardImpl($rewardId, $clientId);
     }
 
     private function handleRewardPost(ParameterBag $post, $rewardId = null)
@@ -93,5 +81,173 @@ class RewardsController extends Controller
             : $this->getDoctrine()->getRepository("AppBundle:Reward")->find($rewardId);
         $client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($post->get('client'));
         $reward->saveFromPost($post, $this->getDoctrine()->getManager(), $client);
+    }
+
+    /**
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    private function rewardsListImpl($clientId = null)
+    {
+        $client = null;
+        if ($clientId != null)
+        {
+            $client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
+        }
+        $isClientPredefined = (($clientId != null) && ($client != null));
+        if ($isClientPredefined)
+        {
+            $rewards = $this->getDoctrine()->getRepository('AppBundle:Reward')->findNotDeletedByClient($client);
+            $templateMode = 'clientsRewards';
+        }
+        else
+        {
+            $rewards = $this->getDoctrine()->getRepository('AppBundle:Reward')->findNotDeleted();
+            $templateMode = 'rewards';
+        }
+
+        return $this->render('payment/rewards_list.html.twig', [
+            'rewards' => $rewards,
+            'client' => $client,
+            'mode' => $templateMode
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    private function createRewardImpl(Request $request, $clientId = null)
+    {
+        $client = null;
+        if ($clientId != null)
+        {
+            $client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
+        }
+        $isClientPredefined = (($clientId != null) && ($client != null));
+        if ($isClientPredefined)
+        {
+            $templateMode = 'editClientsReward';
+        }
+        else
+        {
+            $templateMode = 'editReward';
+        }
+
+        if ($request->isMethod(Request::METHOD_POST))
+        {
+            $this->handleRewardPost($request->request);
+
+            if ($isClientPredefined)
+            {
+                return $this->redirectToRoute('clientsRewards', ['clientId' => $client->getClientId()]);
+            }
+            else
+            {
+                return $this->redirectToRoute('rewardsList');
+            }
+        }
+        else
+        {
+            if ($isClientPredefined)
+            {
+                $clients = [$client];
+            }
+            else
+            {
+                $clients = $this->getDoctrine()->getRepository("AppBundle:Client")->findBy(
+                    ['isDeleted' => 0],
+                    ['lastName' => 'ASC']
+                );
+            }
+
+            return $this->render('payment/reward_form.html.twig', [
+                'clients' => $clients,
+                'mode' => $templateMode,
+                'isNew' => true
+            ]);
+        }
+    }
+
+    /**
+     * @param $rewardId
+     * @param $clientId
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    private function deleteRewardImpl($rewardId, $clientId = null)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $reward = $this->getDoctrine()->getRepository("AppBundle:Reward")->find($rewardId);
+        $reward->setIsDeleted(true);
+        $em->persist($reward);
+        $em->flush();
+
+        if ($clientId == null)
+        {
+            return $this->redirectToRoute('rewardsList');
+        }
+        else
+        {
+            return $this->redirectToRoute('clientsRewards', ['clientId' => $clientId]);
+        }
+    }
+
+    /**
+     * @param Request $request
+     * @param $clientId
+     * @param $rewardId
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    private function editRewardImpl(Request $request, $rewardId, $clientId = null)
+    {
+        $client = null;
+        if ($clientId != null)
+        {
+            $client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
+        }
+        $isClientPredefined = (($clientId != null) && ($client != null));
+        if ($isClientPredefined)
+        {
+            $templateMode = 'editClientsReward';
+        }
+        else
+        {
+            $templateMode = 'editReward';
+        }
+
+        $reward = $this->getDoctrine()->getRepository("AppBundle:Reward")->find($rewardId);
+        if ($request->isMethod(Request::METHOD_POST))
+        {
+            $this->handleRewardPost($request->request, $rewardId);
+
+            if ($isClientPredefined)
+            {
+                return $this->redirectToRoute('clientsRewards', ['clientId' => $client->getClientId()]);
+            }
+            else
+            {
+                return $this->redirectToRoute('rewardsList');
+            }
+        }
+        else
+        {
+            if ($isClientPredefined)
+            {
+                $clients = [$client];
+            }
+            else
+            {
+                $clients = $this->getDoctrine()->getRepository("AppBundle:Client")->findBy(
+                    ['isDeleted' => 0],
+                    ['lastName' => 'ASC']
+                );
+            }
+
+            return $this->render('payment/reward_form.html.twig', [
+                'clients' => $clients,
+                'isNew' => false,
+                'mode' => $templateMode,
+                'reward' => $reward
+            ]);
+        }
     }
 }

@@ -5,15 +5,23 @@
   <link href="{{ asset('css/common/lists_common.css') }}" type="text/css" rel="stylesheet" />
 {% endblock %}
 {% block pageH1 %}
-  Список вознаграждений
-  <a class="btn btn-success btn-add-top" target="_blank" href="{{ path('createReward') }}">Добавить</a>
+  Список вознаграждений{% if (mode == 'clientsRewards') %} - {{ client.getFullName() }}{% endif %}
 {% endblock %}
 {% block content %}
+  <input type="hidden" id="template_mode" value="{{ mode }}" />
+  {% if (mode == 'clientsRewards') %}
+    <a class="btn btn-success" target="_blank" href="{{ path('createClientsReward', {'clientId': client.getClientId()}) }}">Добавить</a>
+    {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'editClient'} %}
+  {% else %}
+    <a class="btn btn-success" target="_blank" href="{{ path('createReward') }}">Добавить</a>
+  {% endif %}
   <table class="table table-hover" id="rewards_list">
     <thead>
     <tr>
-      <th>ФИО</th>
-      <th>Месяц</th>
+      {% if (mode == 'rewards') %}
+        <th>ФИО</th>
+      {% endif %}
+      <th>Дата</th>
       <th>Сумма</th>
       <th>Остаток</th>
       <th>Выдано</th>
@@ -24,11 +32,13 @@
     <tbody>
     {% for reward in rewards %}
       <tr>
-        <td>
-          <a href="{{ path('editClient', {'clientId': reward.getClient().getClientId()}) }}">
-            {{ reward.getClient().getFullName() }}
-          </a>
-        </td>
+        {% if (mode == 'rewards') %}
+          <td>
+            <a href="{{ path('editClient', {'clientId': reward.getClient().getClientId()}) }}">
+              {{ reward.getClient().getFullName() }}
+            </a>
+          </td>
+        {% endif %}
         <td class="text-right">{{ reward.getDate()|date('d.m.Y') }}</td>
         <td class="text-right">{{ reward.getSum()|localizedcurrency('RUB') }}</td>
         <td class="text-right">{{ reward.getRemainingSum()|localizedcurrency('RUB') }}</td>
@@ -40,8 +50,13 @@
             {% endfor %}
           {% endif %}
         </td>
-        <td><a href="{{ path('editReward', {'rewardId': reward.getRewardId()}) }}" class="glyphicon glyphicon-pencil"></a></td>
-        <td><a href="{{ path('deleteReward', {'rewardId': reward.getRewardId()}) }}" class="glyphicon glyphicon-remove delete-link"></a></td>
+        {% if (mode == 'rewards') %}
+          <td><a href="{{ path('editReward', {'rewardId': reward.getRewardId()}) }}" class="glyphicon glyphicon-pencil"></a></td>
+          <td><a href="{{ path('deleteReward', {'rewardId': reward.getRewardId()}) }}" class="glyphicon glyphicon-remove delete-link"></a></td>
+        {% else %}
+          <td><a href="{{ path('editClientsReward', {'clientId': reward.getClient.getClientId(), 'rewardId': reward.getRewardId()}) }}" class="glyphicon glyphicon-pencil"></a></td>
+          <td><a href="{{ path('deleteClientsReward', {'clientId': reward.getClient.getClientId(), 'rewardId': reward.getRewardId()}) }}" class="glyphicon glyphicon-remove delete-link"></a></td>
+        {% endif %}
       </tr>
     {% endfor %}
     </tbody>

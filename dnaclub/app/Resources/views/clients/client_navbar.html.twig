@@ -15,12 +15,12 @@
     </a>
   {% endif %}
   {% if not (mode == 'orders') %}
-    <a class="btn btn-default col-md-3" href="{#{{ path('orders', {'clientId': client.getClientId()}) }}#}">
+    <a class="btn btn-default col-md-3" href="javascript:void(0);">
       Продажи
     </a>
   {% endif %}
   {% if not (mode == 'rewards') %}
-    <a class="btn btn-default col-md-3" href="{#{{ path('clients-rewards', {'clientId': client.getClientId()}) }}#}">
+    <a class="btn btn-default col-md-3" href="{{ path('clientsRewards', {'clientId': client.getClientId()}) }}">
       Вознаграждения
     </a>
   {% endif %}

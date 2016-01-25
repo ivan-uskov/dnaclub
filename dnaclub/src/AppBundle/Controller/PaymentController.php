@@ -76,14 +76,16 @@ class PaymentController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $client = null;
-        $templateMode = 'subscriptions';
         if ($clientId != null)
         {
-            $templateMode = 'clientsSubscripitons';
             $client = $em->getRepository('AppBundle:Client')->find($clientId);
         }
-        $isClientPredefined = !($clientId == null) || ($client == null);
-        if (!$isClientPredefined)
+        $isClientPredefined = (($clientId != null) && ($client != null));
+        if ($isClientPredefined)
+        {
+            $templateMode = 'clientsSubscripitons';
+        }
+        else
         {
             $templateMode = 'subscriptions';
         }

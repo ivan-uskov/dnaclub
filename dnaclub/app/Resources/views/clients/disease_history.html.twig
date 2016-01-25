@@ -7,7 +7,7 @@
   <link href="{{ asset('css/common/lists_common.css') }}" type="text/css" rel="stylesheet"/>
 {% endblock %}
 {% block pageH1 %}
-  История болезни - <a href="{{ path('editClient', {'clientId': client.getClientId()}) }}">{{ client.getFullName() }}</a>
+  История болезни - {{ client.getFullName() }}
   {% if not isNew %}
     <a class="btn btn-success"
        href="{{ path('diseaseHistory', {'clientId': currentDiseaseHistory.getClient().getClientId()}) }}">Добавить
