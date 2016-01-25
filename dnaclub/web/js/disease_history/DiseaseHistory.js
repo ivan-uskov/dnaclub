@@ -1,11 +1,13 @@
-$(function(){
+$(function()
+{
 	var PAGE_LENGTH = 25;
 
 	initDatePicker();
 	attachConfirmToDeleteLinks();
 	initDataTable();
 
-	function initDatePicker() {
+	function initDatePicker()
+	{
 		$('.datepicker').datepicker({
 			format: 'dd.mm.yyyy',
 			weekStart: 1,
@@ -14,24 +16,28 @@ $(function(){
 		});
 	}
 
-	function attachConfirmToDeleteLinks() {
-		$(".delete-link").click(function(event) {
+	function attachConfirmToDeleteLinks()
+	{
+		$(".delete-link").click(function(event)
+		{
 			event.preventDefault();
 			var answer = confirm("Вы уверены?");
-			if (answer === true) {
+			if (answer === true)
+			{
 				location.href = $(this).attr("href");
 			}
 		});
 	}
 
-	function initDataTable() {
+	function initDataTable()
+	{
 		$("#disease_histories_list").DataTable({
 			pageLength: PAGE_LENGTH,
-			order: [[ 0, "desc" ]],
+			order: [[0, "desc"]],
 			bFilter: false,
 			columnDefs: [
-				{orderable: false, targets: -1},
-				{orderable: false, targets: -2}
+				{orderable: false, targets: [-1, -2]},
+				{type: 'date-ru', targets: [0]}
 			]
 		});
 	}
