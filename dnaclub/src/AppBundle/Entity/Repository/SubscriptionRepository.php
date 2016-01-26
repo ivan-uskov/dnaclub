@@ -12,9 +12,15 @@ class SubscriptionRepository extends \Doctrine\ORM\EntityRepository
 {
     public function findByMonth($date)
     {
+        return $this->findByMonthAndClient($date);
+    }
+
+    public function findByMonthAndClient($date, $client = null)
+    {
         $startDate = (new \DateTime($date))->modify('first day of this month');
         $endDate = (new \DateTime($date))->modify('first day of next month');
-        return $this->getEntityManager()
+
+        $result = $this->getEntityManager()
             ->createQueryBuilder()
             ->select('s')
             ->from('AppBundle\Entity\Subscription', 's')
@@ -23,8 +29,17 @@ class SubscriptionRepository extends \Doctrine\ORM\EntityRepository
             ->andWhere('s.isDeleted = 0')
             ->setParameter('start_date', $startDate)
             ->setParameter('end_date', $endDate)
-            ->orderBy('s.date', 'desc')
-            ->getQuery()
-            ->getResult();
+            ->orderBy('s.date', 'desc');
+
+        if ($client != null)
+        {
+            $result
+                ->andWhere('s.client = :client_id')
+                ->setParameter('client_id', $client->getClientId());
+        }
+
+        $result = $result->getQuery()->getResult();
+
+        return $result;
     }
 }

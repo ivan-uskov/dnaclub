@@ -10,4 +10,29 @@ namespace AppBundle\Entity\Repository;
  */
 class RewardRepository extends \Doctrine\ORM\EntityRepository
 {
+    public function findNotDeleted()
+    {
+        return $this->findNotDeletedByClient();
+    }
+
+    public function findNotDeletedByClient($client = null)
+    {
+        $result = $this->getEntityManager()
+            ->createQueryBuilder()
+            ->select('r')
+            ->from('AppBundle\Entity\Reward', 'r')
+            ->where('r.isDeleted = 0')
+            ->orderBy('r.date', 'asc');
+
+        if ($client != null)
+        {
+            $result
+                ->andWhere('r.client = :client_id')
+                ->setParameter('client_id', $client->getClientId());
+        }
+
+        $result = $result->getQuery()->getResult();
+
+        return $result;
+    }
 }

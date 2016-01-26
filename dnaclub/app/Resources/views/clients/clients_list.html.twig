@@ -1,5 +1,11 @@
 {% extends 'layout.html.twig' %}
-{% block pageH1 %}Список клиентов{% endblock %}
+{% block pageH1 %}
+  Список клиентов
+  <a class="btn btn-success btn-add-top" target="_blank" href="{{ path('createClient') }}">Добавить</a>
+{% endblock %}
+{% block stylesheets %}
+  <link href="{{ asset('css/common/lists_common.css') }}" type="text/css" rel="stylesheet" />
+{% endblock %}
 {% block content %}
   <div class="panel-body">
     <div class="table-responsive">
@@ -39,11 +45,10 @@
       </table>
     </div>
   </div>
-  <a class="btn btn-default btn-lg btn-block" target="_blank" href="{{ path('createClient') }}">Добавить клиента</a>
 {% endblock %}
 {% block javascripts %}
   {{ parent() }}
   <script src="{{ asset('js/data-table/sorting-date-ru.js') }}"></script>
   <script src="{{ asset('js/data-table/sorting-formatted-number.js') }}"></script>
-  <script src="{{ asset('bundles/app/js/clients_list.js') }}"></script>
+  <script src="{{ asset('js/clients/ClientsListPage.js') }}"></script>
 {% endblock %}
