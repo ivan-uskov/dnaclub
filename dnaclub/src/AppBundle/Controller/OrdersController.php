@@ -24,26 +24,15 @@ class OrdersController extends Controller
      */
     public function ordersListAction(Request $request)
     {
-        $searchForm = $this->createForm(new OrderSearchForm(),
-            OrderSearchForm::getInitData(),
-            ['em' => $this->getDoctrine()->getManager()]
-        );
-        $searchForm->handleRequest($request);
-        $orders = $this->getDoctrine()->getRepository('AppBundle:Order')->getOrders($searchForm->getData());
-        $orderInfo = [];
+        return $this->ordersListImpl($request);
+    }
 
-        /** @var Order $order */
-        foreach ($orders as $order)
-        {
-            $order->setStatus(OrderStatus::getName($order->getStatus()));
-            $orderInfo[] = [
-                'order' => $order,
-                'orderItems' => $this->getDoctrine()->getRepository("AppBundle:OrderItem")->findBy(['order' => $order]),
-                'payment' => $this->getOrderPayment($order) ?: new OrderPayment()
-            ];
-        }
-
-        return $this->render('orders/orders_list.html.twig', ['orders' => $orderInfo, 'searchForm' => $searchForm->createView()]);
+    /**
+     * @Route("/clients-orders/{clientId}", name="clientsOrdersList")
+     */
+    public function clientsOrdersListAction(Request $request, $clientId)
+    {
+        return $this->ordersListImpl($request, $clientId);
     }
 
     /**
@@ -222,26 +211,15 @@ class OrdersController extends Controller
      */
     public function deleteOrderAction(Request $request, $orderId)
     {
-        $doctrine = $this->getDoctrine();
-        $em = $doctrine->getManager();
+        return $this->deleteOrderImpl($orderId);
+    }
 
-        $order = $doctrine->getRepository("AppBundle:Order")->find($orderId);
-        $orderItems = $doctrine->getRepository("AppBundle:OrderItem")->findBy(['order' => $orderId]);
-
-        foreach ($orderItems as $orderItem)
-        {
-            $em->remove($orderItem);
-        }
-
-        $em->flush();
-
-        if ($order)
-        {
-            $em->remove($order);
-            $em->flush();
-        }
-
-        return $this->redirectToRoute('ordersList');
+    /**
+     * @Route("/delete-clients-order/{clientId}/{orderId}", name="deleteClientsOrder")
+     */
+    public function deleteClientsOrderAction(Request $request, $clientId, $orderId)
+    {
+        return $this->deleteOrderImpl($orderId, $clientId);
     }
 
     /**
@@ -277,5 +255,92 @@ class OrdersController extends Controller
             $em->flush();
         }
         return $this->redirectToRoute('preOrdersList');
+    }
+
+    /**
+     * @param Request $request
+     * @param $clientId
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    private function ordersListImpl(Request $request, $clientId = null)
+    {
+        $client = null;
+        if ($clientId != null)
+        {
+            $client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
+        }
+        $isClientPredefined = (($clientId != null) && ($client != null));
+        if ($isClientPredefined)
+        {
+            $templateMode = 'clientsOrders';
+        }
+        else
+        {
+            $templateMode = 'orders';
+        }
+
+        $orderSearchForm = new OrderSearchForm();
+        $orderSearchForm->setClient($client);
+        $searchForm = $this->createForm($orderSearchForm,
+            $orderSearchForm->getInitData(),
+            ['em' => $this->getDoctrine()->getManager()]
+        );
+        $searchForm->handleRequest($request);
+        $orders = $this->getDoctrine()->getRepository('AppBundle:Order')->getOrders($searchForm->getData());
+        $orderInfo = [];
+
+        /** @var Order $order */
+        foreach ($orders as $order)
+        {
+            $order->setStatus(OrderStatus::getName($order->getStatus()));
+            $orderInfo[] = [
+                'order' => $order,
+                'orderItems' => $this->getDoctrine()->getRepository("AppBundle:OrderItem")->findBy(['order' => $order]),
+                'payment' => $this->getOrderPayment($order) ?: new OrderPayment()
+            ];
+        }
+
+        return $this->render('orders/orders_list.html.twig', [
+            'orders' => $orderInfo,
+            'searchForm' => $searchForm->createView(),
+            'mode' => $templateMode,
+            'client' => $client
+        ]);
+    }
+
+    /**
+     * @param $orderId
+     * @param $clientId
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    private function deleteOrderImpl($orderId, $clientId = null)
+    {
+        $doctrine = $this->getDoctrine();
+        $em = $doctrine->getManager();
+
+        $order = $doctrine->getRepository("AppBundle:Order")->find($orderId);
+        $orderItems = $doctrine->getRepository("AppBundle:OrderItem")->findBy(['order' => $orderId]);
+
+        foreach ($orderItems as $orderItem)
+        {
+            $em->remove($orderItem);
+        }
+
+        $em->flush();
+
+        if ($order)
+        {
+            $em->remove($order);
+            $em->flush();
+        }
+
+        if ($clientId == null)
+        {
+            return $this->redirectToRoute('ordersList');
+        }
+        else
+        {
+            return $this->redirectToRoute('clientsOrdersList', ['clientId', $clientId]);
+        }
     }
 }

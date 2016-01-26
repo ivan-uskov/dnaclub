@@ -25,18 +25,7 @@ class NewSubscriptionForm extends AbstractType
          */
         $em = $options['em'];
         $isClientPredefined = ($this->client != null);
-        if (!$isClientPredefined)
-        {
-            $clients = $em->getRepository('AppBundle:Client')->getSortedClients();
-            $builder
-                ->add('client', 'entity', array(
-                'label' => 'Клиент',
-                'class' => 'AppBundle:Client',
-                'choice_label' => 'fullName',
-                'choices' => $clients
-            ));
-        }
-        else
+        if ($isClientPredefined)
         {
             $builder
                 ->add('client', 'entity', array(
@@ -48,6 +37,17 @@ class NewSubscriptionForm extends AbstractType
                     'attr' => array(
                         'class' => 'hidden'
                     )
+                ));
+        }
+        else
+        {
+            $clients = $em->getRepository('AppBundle:Client')->getSortedClients();
+            $builder
+                ->add('client', 'entity', array(
+                    'label' => 'Клиент',
+                    'class' => 'AppBundle:Client',
+                    'choice_label' => 'fullName',
+                    'choices' => $clients
                 ));
         }
 

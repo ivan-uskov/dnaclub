@@ -12,8 +12,8 @@
     <h3 class="header-client-fullname">{{ client.getFullName() }}</h3>
   {% endif %}
   <div class="panel-body">
-    {% if (mode == 'clientsSubscriptionsList') %}
-      {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'subscriptions'} %}
+    {% if (mode == 'clientsSubscriptions') %}
+      {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'clientsSubscriptions'} %}
     {% endif %}
     <input type="hidden" id="template_mode" value="{{ mode }}" />
     {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
