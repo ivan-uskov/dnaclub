@@ -4,6 +4,11 @@
   <a class="btn btn-success btn-add-top" target="_blank" href="{{ path('createOrder') }}">Добавить</a>
 {% endblock %}
 {% block content %}
+  {% if (mode == 'clientsOrders') %}
+    <h3 class="header-client-fullname">{{ client.getFullName() }}</h3>
+    {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'clientsOrders'} %}
+  {% endif %}
+  <input id="template_mode" type="hidden" value="{{ mode }}" />
   <div class="panel-body">
     {% form_theme searchForm 'bootstrap_3_horizontal_layout.html.twig' %}
     {{ form_start(searchForm) }}
@@ -34,9 +39,11 @@
       <table class="table table-hover table-striped table-bordered" id="ordersList">
         <thead>
           <tr>
-            <th>
-              Клиент
-            </th>
+            {% if (mode == 'orders') %}
+              <th>
+                Клиент
+              </th>
+            {% endif %}
             <th width="200">Товары</th>
             <th>Дата</th>
             <th>Статус</th>
@@ -48,10 +55,13 @@
         <tbody>
           {% for orderInfo in orders %}
             <tr onclick="location.href = '{{ path('editOrder', {'orderId': orderInfo['order'].getOrderId()}) }}'">
+              {% if (mode == 'orders') %}
               <td>
                 <a href="{{ path('editClient', {'clientId': orderInfo['order'].getClient().getClientId()}) }}">
                   {{ orderInfo['order'].getClient().getFullName() }}
                 </a>
+              </td>
+              {% endif %}
               <td>
                 {% for orderItem in orderInfo['orderItems'] %}
                   {{ orderItem.getProduct().getName() }}<span class="right_float">{{ orderItem.getCount() }} {{ orderItem.getProduct().getPieceName() }}</span><br />
@@ -61,7 +71,11 @@
               <td>{{ orderInfo['order'].getStatus() }}</td>
               <td class="right_text_align">{{ orderInfo['order'].getSum()|localizedcurrency('RUB') }}</td>
               <td class="right_text_align">{{ orderInfo['payment'].getSum()|localizedcurrency('RUB') }}</td>
-              <td><a href="{{ path('deleteOrder', {'orderId': orderInfo['order'].getOrderId()}) }}" class="glyphicon glyphicon-remove remove_order_button"></a></td>
+              {% if (mode == 'orders') %}
+                <td><a href="{{ path('deleteOrder', {'orderId': orderInfo['order'].getOrderId()}) }}" class="glyphicon glyphicon-remove remove_order_button"></a></td>
+              {% else %}
+                <td><a href="{{ path('deleteClientsOrder', {'clientId': client.getClientId(), 'orderId': orderInfo['order'].getOrderId()}) }}" class="glyphicon glyphicon-remove remove_order_button"></a></td>
+              {% endif %}
             </tr>
           {% endfor %}
         </tbody>

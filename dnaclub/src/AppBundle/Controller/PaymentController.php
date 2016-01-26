@@ -41,9 +41,9 @@ class PaymentController extends Controller
     }
 
     /**
-     * @Route("/clients-subscriptions/{clientId}", name="clientsSubscriptions")
+     * @Route("/clients-subscriptions/{clientId}", name="clientsSubscriptionsList")
      */
-    public function clientsSubscriptionsAction(Request $request, $clientId)
+    public function clientsSubscriptionsListAction(Request $request, $clientId)
     {
         return $this->subscriptionsListImpl($request, $clientId);
     }
@@ -53,18 +53,15 @@ class PaymentController extends Controller
      */
     public function deleteSubscriptionAction(Request $request, $subscriptionId)
     {
-        $em = $this->getDoctrine()->getManager();
+        return $this->deleteSubscriptionImpl($subscriptionId);
+    }
 
-        $subscription = $em->getRepository('AppBundle:Subscription')->find($subscriptionId);
-
-        if ($subscription)
-        {
-            $subscription->setIsDeleted(true);
-            $em->merge($subscription);
-            $em->flush();
-        }
-
-        return $this->redirectToRoute('subscriptionsList');
+    /**
+     * @Route("/clients-subscription/{clientId}/delete/{subscriptionId}", name="deleteClientsSubscription")
+     */
+    public function deleteClientsSubscriptionAction(Request $request, $clientId, $subscriptionId)
+    {
+        return $this->deleteSubscriptionImpl($subscriptionId, $clientId);
     }
 
     /**
@@ -83,7 +80,7 @@ class PaymentController extends Controller
         $isClientPredefined = (($clientId != null) && ($client != null));
         if ($isClientPredefined)
         {
-            $templateMode = 'clientsSubscripitons';
+            $templateMode = 'clientsSubscriptions';
         }
         else
         {
@@ -132,5 +129,33 @@ class PaymentController extends Controller
                 'mode' => $templateMode,
                 'client' => $client
             ]);
+    }
+
+    /**
+     * @param $subscriptionId
+     * @param $clientId
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     */
+    private function deleteSubscriptionImpl($subscriptionId, $clientId = null)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $subscription = $em->getRepository('AppBundle:Subscription')->find($subscriptionId);
+
+        if ($subscription)
+        {
+            $subscription->setIsDeleted(true);
+            $em->merge($subscription);
+            $em->flush();
+        }
+
+        if ($clientId == null)
+        {
+            return $this->redirectToRoute('subscriptionsList');
+        }
+        else
+        {
+            return $this->redirectToRoute('clientsSubscriptionsList', ['clientId' => $clientId]);
+        }
     }
 }

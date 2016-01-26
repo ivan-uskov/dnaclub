@@ -15,25 +15,26 @@ class OrderSearchForm extends AbstractType
     const START_DATE_SEARCH_FIELD = 'startDate';
     const END_DATE_SEARCH_FIELD   = 'endDate';
 
-    private static $initData = array();
+    private $initData = array();
+    private $client = null;
 
     public function getName()
     {
         return 'order_search_form';
     }
 
-    public static function getInitData()
+    public function getInitData()
     {
-        if (!self::$initData)
+        if (!$this->initData)
         {
-            self::$initData = array(
-                self::CLIENT_SEARCH_FIELD     => '',
+            $this->initData = array(
+                self::CLIENT_SEARCH_FIELD => ($this->client == null) ? '' : $this->client->getClientId(),
                 self::STATUS_SEARCH_FIELD     => '',
                 self::START_DATE_SEARCH_FIELD => new \DateTime('first day of this month'),
                 self::END_DATE_SEARCH_FIELD   => new \DateTime()
             );
         }
-        return self::$initData;
+        return $this->initData;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
@@ -42,18 +43,38 @@ class OrderSearchForm extends AbstractType
          * @var EntityManager $em
          */
         $em = $options['em'];
-        $clients = $em->getRepository('AppBundle:Client')->getSortedClients();
+        $isClientPredefined = ($this->client != null);
         $statusList = OrderStatus::getNames();
 
+        if ($isClientPredefined)
+        {
+            $builder
+                ->add(self::CLIENT_SEARCH_FIELD, 'entity', array(
+                    'label' => false,
+                    'class' => 'AppBundle:Client',
+                    'choice_label' => 'fullName',
+                    'choices' => array($this->client),
+                    'data' => $this->client,
+                    'attr' => array(
+                        'class' => 'hidden'
+                    )
+                ));
+        }
+        else
+        {
+            $clients = $em->getRepository('AppBundle:Client')->getSortedClients();
+            $builder
+                ->add(self::CLIENT_SEARCH_FIELD, 'entity', array(
+                    'label' => 'Клиент',
+                    'placeholder' => '',
+                    'class' => 'AppBundle:Client',
+                    'choice_label' => 'fullName',
+                    'choices' => $clients,
+                    'required' => false
+                ));
+        }
+
         $builder
-            ->add(self::CLIENT_SEARCH_FIELD, 'entity', array(
-                'label' => 'Клиент',
-                'placeholder' => '',
-                'class' => 'AppBundle:Client',
-                'choice_label' => 'fullName',
-                'choices' => $clients,
-                'required' => false
-            ))
             ->add(self::STATUS_SEARCH_FIELD, 'choice', array(
                 'label' => 'Статус',
                 'placeholder' => '',
@@ -91,5 +112,14 @@ class OrderSearchForm extends AbstractType
         $resolver->setDefaults(array(
             'em' => null
         ));
+    }
+
+    public function setClient($client)
+    {
+        $this->client = $client;
+        if ($this->initData)
+        {
+            $this->initData[self::CLIENT_SEARCH_FIELD] = ($this->client == null) ? '' : $this->client->getClientId();
+        }
     }
 }
