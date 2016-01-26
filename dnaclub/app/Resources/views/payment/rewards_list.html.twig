@@ -16,7 +16,7 @@
 {% block content %}
   {% if (mode == 'clientsRewards') %}
     <h3 class="header-client-fullname">{{ client.getFullName() }}</h3>
-    {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'editClient'} %}
+    {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'clientsRewards'} %}
   {% endif %}
   <input type="hidden" id="template_mode" value="{{ mode }}" />
   <table class="table table-hover" id="rewards_list">
