@@ -72,7 +72,8 @@ class NewSubscriptionForm extends AbstractType
                 'label' => 'Количество'
             ))
             ->add('save', 'submit', array(
-                'label' => 'Добавить подписку'
+                'label' => 'Добавить подписку',
+                'attr' => array('class' => 'btn-success')
             ));
     }
 

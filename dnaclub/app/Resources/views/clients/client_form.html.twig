@@ -19,7 +19,7 @@
   <form action="" method="post" class="row">
     <div class="col-md-6">
       <div class="form-group row">
-        <label for="lastName" class="col-md-5">Фамилия</label>
+        <label for="lastName" class="col-md-4">Фамилия</label>
 
         <div class="col-md-7">
           <input class="form-control" type="text" name="last_name" id="lastName"
@@ -30,7 +30,7 @@
         </div>
       </div>
       <div class="form-group row">
-        <label for="firstName" class="col-md-5">Имя</label>
+        <label for="firstName" class="col-md-4">Имя</label>
 
         <div class="col-md-7">
           <input class="form-control" type="text" name="first_name" id="firstName"
@@ -41,7 +41,7 @@
         </div>
       </div>
       <div class="form-group row">
-        <label for="middleName" class="col-md-5">Отчество</label>
+        <label for="middleName" class="col-md-4">Отчество</label>
 
         <div class="col-md-7">
           <input class="form-control" type="text" name="middle_name" id="middleName"
@@ -52,7 +52,7 @@
         </div>
       </div>
       <div class="form-group row">
-        <label for="birthday" class="col-md-5">Дата рождения</label>
+        <label for="birthday" class="col-md-4">Дата рождения</label>
 
         <div class="col-md-7">
           <input class="form-control datepicker" type="text" name="birthday" id="birthday"
@@ -63,7 +63,7 @@
         </div>
       </div>
       <div class="form-group row">
-        <label for="city" class="col-md-5">Город</label>
+        <label for="city" class="col-md-4">Город</label>
 
         <div class="col-md-7">
           <input class="form-control" type="text" name="city" id="city"
@@ -75,8 +75,9 @@
           />
         </div>
       </div>
-      <div class="form-group">
-        <label for="notes">Заметки</label>
+      <div class="form-group row">
+        <div class="col-md-11">
+          <label for="notes">Заметки</label>
             <textarea id="notes" name="notes" class="form-control" rows="3">{#
                 #}{% if not isNew %}{#
                     #}{% for note in clientNotes %}{#
@@ -84,14 +85,15 @@
                     #}{% endfor %}{#
                 #}{% endif %}{#
             #}</textarea>
+        </div>
       </div>
     </div>
 
     <div class="col-md-6">
       <div class="form-group row">
-        <label for="phone" class="col-md-5">Телефон</label>
+        <label for="phone" class="col-md-4">Телефон</label>
 
-        <div class="col-md-7">
+        <div class="col-md-8">
           <input class="form-control" type="text" name="phone" id="phone"
               {% if not isNew %}
                 value="{{ client.getPhone() }}"
@@ -100,9 +102,9 @@
         </div>
       </div>
       <div class="form-group row">
-        <label for="email" class="col-md-5">E-mail</label>
+        <label for="email" class="col-md-4">E-mail</label>
 
-        <div class="col-md-7">
+        <div class="col-md-8">
           <input class="form-control" type="text" name="email" id="email"
               {% if not isNew %}
                 value="{{ client.getEmail() }}"
@@ -111,9 +113,9 @@
         </div>
       </div>
       <div class="form-group row">
-        <label for="subscriptionDate" class="col-md-5">Дата подписки</label>
+        <label for="subscriptionDate" class="col-md-4">Дата подписки</label>
 
-        <div class="col-md-7">
+        <div class="col-md-8">
           <input class="form-control datepicker" type="text" name="subscription_date" id="subscriptionDate"
               {% if not isNew and (not client.getSubscriptionDate() == null) %}
                 value="{{ client.getSubscriptionDate().format("Y-m-d H:i:s") }}"
@@ -121,6 +123,7 @@
           />
         </div>
       </div>
+      <br>
       <div class="form-group row col-md-12">
         <input type="checkbox" name="is_subscribed" id="isSubscribed"
             {% if not isNew and client.getIsSubscribed() %}
@@ -148,7 +151,7 @@
     </div>
 
     <div class="col-md-12">
-      <button type="submit" id="submit" class="btn btn-default">
+      <button type="submit" id="submit" class="btn btn-success">
         {% if isNew %}
           Добавить
         {% else %}
