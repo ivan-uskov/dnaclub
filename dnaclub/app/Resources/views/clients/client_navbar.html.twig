@@ -10,7 +10,7 @@
     </a>
   {% endif %}
   {% if not (mode == 'subscriptions') %}
-    <a class="btn btn-default col-md-3" href="{{ path('clientsSubscriptions', {'clientId': client.getClientId()}) }}">
+    <a class="btn btn-default col-md-3" href="{{ path('clientsSubscriptionsList', {'clientId': client.getClientId()}) }}">
       Лидерские и контракты
     </a>
   {% endif %}
