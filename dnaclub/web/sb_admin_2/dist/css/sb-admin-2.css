@@ -5,7 +5,7 @@
  */
 
 body {
-    background-color: #FDFCCC;
+    background-color: #FDFCE5;
     color: #6F4350;
 }
 
@@ -560,9 +560,9 @@ fieldset[disabled] .btn-info.active {
 .pagination>.disabled>span,
 .pagination>.disabled>span:focus,
 .pagination>.disabled>span:hover {
-    color: #777;
+    color: #CAB9B9;
     cursor: not-allowed;
-    background-color: #FDFCCC;
+    background-color: #FFFED4;
     border-color: #FCE46A;
 }
 
