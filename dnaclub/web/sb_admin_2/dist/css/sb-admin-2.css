@@ -42,6 +42,7 @@ body {
 .navbar-default
 .navbar-brand {
     color: #D4AB8B;
+    font-style: italic;
 }
 
 .navbar-top-links {
@@ -105,7 +106,7 @@ body {
 .sidebar .sidebar-nav.navbar-collapse {
     padding-right: 0;
     padding-left: 0;
-    background-color: #FCEBB3;
+    background-color: #FCEBB6;
 }
 
 .sidebar .sidebar-search {
@@ -464,6 +465,7 @@ fieldset[disabled] .btn-default.active {
     color: #1B87A9;;
     background-color: #aee2dd;
     border-color: #78C5DC;
+    font-style: italic;
 }
 .btn-info:hover,
 .btn-info:focus,
@@ -742,4 +744,8 @@ table th[class*="col-"] {
 .table-hover > tbody > tr:hover > .danger,
 .table-hover > tbody > tr.danger:hover > th {
     background-color: #ebcccc;
+}
+
+hr {
+    border-bottom: 1px solid #F5DCB4;
 }

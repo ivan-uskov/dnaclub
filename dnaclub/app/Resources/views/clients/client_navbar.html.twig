@@ -9,14 +9,14 @@
       История болезни
     </a>
   {% endif %}
-  {% if not (mode == 'clientsSubscriptions') %}
-    <a class="btn btn-info col-md-3" href="{{ path('clientsSubscriptionsList', {'clientId': client.getClientId()}) }}">
-      Лидерские и контракты
-    </a>
-  {% endif %}
   {% if not (mode == 'clientsOrders') %}
     <a class="btn btn-info col-md-3" href="{{ path('clientsOrdersList', {'clientId': client.getClientId()}) }}">
       Продажи
+    </a>
+  {% endif %}
+  {% if not (mode == 'clientsSubscriptions') %}
+    <a class="btn btn-info col-md-3" href="{{ path('clientsSubscriptionsList', {'clientId': client.getClientId()}) }}">
+      Лидерские и контракты
     </a>
   {% endif %}
   {% if not (mode == 'clientsRewards') %}

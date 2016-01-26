@@ -43,7 +43,7 @@
             <textarea class="form-control" name="treatment" id="treatment"
                       rows="3">{% if not isNew %}{{ currentDiseaseHistory.getTreatment() }}{% endif %}</textarea>
       </div>
-      <button type="submit" id="submit" class="btn btn-default">
+      <button type="submit" id="submit" class="btn btn-success">
         {% if isNew %}
           Добавить
         {% else %}
@@ -54,8 +54,8 @@
   </div>
 
   <div class="clearfix"></div>
+  <br>
   <h3 class="disease-history-h3">Записи:</h3>
-  <hr class="form-table-delimiter"/>
 
   <table class="table table-hover table-striped table-bordered" id="disease_histories_list">
     <thead>
