@@ -33,6 +33,7 @@ $(function()
 	{
 		$("#disease_histories_list").DataTable({
 			pageLength: PAGE_LENGTH,
+			bLengthChange: false,
 			order: [[0, "desc"]],
 			bFilter: false,
 			columnDefs: [

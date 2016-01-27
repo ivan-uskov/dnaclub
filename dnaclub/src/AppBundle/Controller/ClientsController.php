@@ -154,8 +154,7 @@ class ClientsController extends Controller
         if ($request->isMethod(Request::METHOD_POST))
         {
             $this->handleDiseaseHistoryPost($request->request, $clientId, $diseaseHistoryId);
-            $diseaseHistories = $this->getDoctrine()->getRepository("AppBundle:DiseaseHistory")
-                ->findBy(['client' => $client]);
+            return $this->redirectToRoute('diseaseHistory', ['clientId' => $clientId]);
         }
 
         return $this->render('clients/disease_history.html.twig', [

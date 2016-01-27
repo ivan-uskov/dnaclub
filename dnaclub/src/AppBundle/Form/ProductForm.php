@@ -29,7 +29,8 @@ class ProductForm extends AbstractType
                 'trim' => true
             ))
             ->add('save', 'submit', array(
-                'label' => 'Сохранить'
+                'label' => 'Сохранить',
+                'attr' => array('class' => 'btn-success')
             ));
     }
 

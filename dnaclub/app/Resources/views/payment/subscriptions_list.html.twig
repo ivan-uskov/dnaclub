@@ -8,7 +8,7 @@
   <link href="{{ asset('css/common/forms_common.css') }}" type="text/css" rel="stylesheet" />
 {% endblock %}
 {% block content %}
-  {% if (mode == 'clientsSubscriptionsList') %}
+  {% if (mode == 'clientsSubscriptions') %}
     <h3 class="header-client-fullname">{{ client.getFullName() }}</h3>
   {% endif %}
   <div class="panel-body">
@@ -42,19 +42,19 @@
     {{ form_end(form) }}
   </div>
 
-  {% form_theme searchForm 'bootstrap_3_horizontal_layout.html.twig' %}
-  {{ form_start(searchForm) }}
-    {{ form_widget(searchForm.months, {'attr': {'style': 'width: 200px;', 'onchange': "this.form.submit()"}}) }}
-  {{ form_end(searchForm) }}
+  {% if (mode == 'subscriptions') %}
+    {% form_theme searchForm 'bootstrap_3_horizontal_layout.html.twig' %}
+    {{ form_start(searchForm) }}
+      {{ form_widget(searchForm.months, {'attr': {'style': 'width: 200px;', 'onchange': "this.form.submit()"}}) }}
+    {{ form_end(searchForm) }}
+  {% endif %}
 
   <div class="panel-body">
     <div class="table-responsive">
       <table class="table table-striped table-bordered table-hover" id="subscription_list">
         <thead>
         <tr>
-          {% if (mode == 'subscriptions') %}
-            <th>Фио клиента</th>
-          {% endif %}
+          <th>Фио клиента</th>
           <th>Дата</th>
           <th>Тип подписки</th>
           <th>Количество</th>
@@ -65,21 +65,19 @@
         <tbody>
         {% for subscription in subscriptions %}
           <tr>
-            {% if (mode == 'subscriptions') %}
             <td>
               <a href="{{ path('editClient', {'clientId': subscription.getClient().getClientId()}) }}">
                 {{ subscription.getClient().getFullName() }}
               </a>
             </td>
-            {% endif %}
             <td>{{ subscription.getDate()|date('d.m.Y') }}</td>
             <td>{{ subscription.getTypeName() }}</td>
             <td class="text-right">{{ subscription.getCount() }}</td>
             <td class="text-right">{{ subscription.getSum()|localizedcurrency('RUB') }}</td>
             {% if (mode == 'subscriptions') %}
-              <td><a href="{{ path('deleteSubscription', {'subscriptionId': subscription.getSubscriptionId()}) }}" class="glyphicon glyphicon-remove" onclick="return confirm('Вы уверены, что хотите удалить запись?')"></a></td>
+              <td class="text-center"><a href="{{ path('deleteSubscription', {'subscriptionId': subscription.getSubscriptionId()}) }}" class="glyphicon glyphicon-remove" onclick="return confirm('Вы уверены, что хотите удалить запись?')"></a></td>
             {% else %}
-              <td><a href="{{ path('deleteClientsSubscription', {'clientId': subscription.getClient().getClientId(), 'subscriptionId': subscription.getSubscriptionId()}) }}" class="glyphicon glyphicon-remove" onclick="return confirm('Вы уверены, что хотите удалить запись?')"></a></td>
+              <td class="text-center"><a href="{{ path('deleteClientsSubscription', {'clientId': subscription.getClient().getClientId(), 'subscriptionId': subscription.getSubscriptionId()}) }}" class="glyphicon glyphicon-remove" onclick="return confirm('Вы уверены, что хотите удалить запись?')"></a></td>
             {% endif %}
           </tr>
         {% endfor %}
@@ -97,35 +95,5 @@
   <script src="{{ asset('js/datepicker/standard-datepicker.js') }}"></script>
   <script src="{{ asset('js/data-table/sorting-date-ru.js') }}"></script>
   <script src="{{ asset('js/data-table/sorting-formatted-number.js') }}"></script>
-
-  <script>
-    $(document).ready(function() {
-      if ($('#template_mode').val() == 'subscriptions')
-      {
-        $('#subscription_list').DataTable({
-          pageLength: 25,
-          order: [[1, "desc"]],
-          columnDefs: [
-            {orderable: false, targets: [5]},
-            {searchable: false, targets: [1, 3, 4, 5]},
-            {type: 'date-ru', targets: [1]},
-            {type: 'formatted-num', targets: [4]}
-          ]
-        });
-      }
-      else
-      {
-        $('#subscription_list').DataTable({
-          pageLength: 25,
-          order: [[0, "desc"]],
-          columnDefs: [
-            {orderable: false, targets: [4]},
-            {searchable: false, targets: [0, 2, 3, 4]},
-            {type: 'date-ru', targets: [0]},
-            {type: 'formatted-num', targets: [3]}
-          ]
-        });
-      }
-    });
-  </script>
+  <script src="{{ asset('js/subscription/SubscriptionList.js') }}"></script>
 {% endblock %}

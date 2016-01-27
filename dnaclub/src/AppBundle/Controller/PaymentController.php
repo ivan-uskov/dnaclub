@@ -25,14 +25,6 @@ class PaymentController extends Controller
     }
 
     /**
-     * @Route("/rewards", name="rewardsList")
-     */
-    public function rewardsListAction(Request $request)
-    {
-        return $this->render('payment/rewards_list.html.twig');
-    }
-
-    /**
      * @Route("/subscriptions", name="subscriptionsList")
      */
     public function subscriptionsListAction(Request $request)
@@ -94,7 +86,7 @@ class PaymentController extends Controller
         $subscriptionForm->setClient($client);
         $newSubscriptionForm = $this->createForm($subscriptionForm, $subscription, array('em' => $em));
 
-        $dates = $em->getRepository('AppBundle:MarketingReport')->getMonthsForSelect();
+        $dates = $em->getRepository('AppBundle:Subscription')->getMonthsForSelect();
         $searchForm = $this->createForm(new MonthSearchForm(), array('months' => ''), array('dates' => $dates));
 
         $searchForm->handleRequest($request);
@@ -108,13 +100,21 @@ class PaymentController extends Controller
             $subscription->setSum($sum);
             $em->persist($subscription);
             $em->flush();
+            if ($isClientPredefined)
+            {
+                return $this->redirectToRoute('clientsSubscriptionsList', ['clientId' => $clientId]);
+            }
+            else
+            {
+                return $this->redirectToRoute('subscriptionsList');
+            }
         }
 
         $data = $searchForm->getData();
         $date = $data["months"] ?: key($dates);
         if ($isClientPredefined)
         {
-            $subscriptions = $em->getRepository('AppBundle:Subscription')->findByMonthAndClient($date, $client);
+            $subscriptions = $em->getRepository('AppBundle:Subscription')->findByClient($client);
         }
         else
         {
