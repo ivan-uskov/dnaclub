@@ -5,7 +5,7 @@
     <div class="col-md-6">
     {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
     {{ form_start(form) }}
-      {{ form_widget(form.months, {'attr': {'style': 'width: 200px', 'onchange': "this.form.submit()"}}) }}
+      {{ form_widget(form.months, {'attr': {'class': 'monthSelect', 'onchange': "this.form.submit()"}}) }}
     {{ form_end(form) }}
     </div>
     <div class="col-md-6 text-right">
@@ -50,7 +50,11 @@
       </table>
     </div>
   </div>
+{% endblock %}
 
+{% block stylesheets %}
+  {{ parent() }}
+  <link href="{{ asset('css/common/forms_common.css') }}" type="text/css" rel="stylesheet" />
 {% endblock %}
 {% block javascripts %}
   {{ parent() }}

@@ -27,6 +27,7 @@ class ProductsController extends Controller
             $newProduct = $newProductForm->getData();
             $em->persist($newProduct);
             $em->flush();
+            return $this->redirectToRoute('productsList');
         }
 
         $products = $em->getRepository('AppBundle:Product')->getActiveProducts();

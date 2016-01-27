@@ -3,6 +3,7 @@
 namespace AppBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use AppBundle\utils\DateUtils;
 
 /**
  * MarketingReportRepository
@@ -34,17 +35,6 @@ class MarketingReportRepository extends EntityRepository
             ->getQuery()
             ->getResult();
 
-        $formatter = new \IntlDateFormatter(\Locale::getDefault(), \IntlDateFormatter::NONE, \IntlDateFormatter::NONE);
-        $formatter->setPattern('LLLL Y');
-
-        $months = array();
-        foreach ($dates as $date)
-        {
-
-
-            $dateObj = $date['date'];
-            $months[$dateObj->format('Y-m-d')] = $formatter->format($dateObj);
-        }
-        return $months;
+       return DateUtils::getMonthsSelectFromTimestamp($dates);
     }
 }

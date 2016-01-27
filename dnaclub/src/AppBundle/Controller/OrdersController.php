@@ -269,24 +269,26 @@ class OrdersController extends Controller
         {
             $client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
         }
-        $isClientPredefined = (($clientId != null) && ($client != null));
-        if ($isClientPredefined)
-        {
-            $templateMode = 'clientsOrders';
-        }
-        else
-        {
-            $templateMode = 'orders';
-        }
 
         $orderSearchForm = new OrderSearchForm();
-        $orderSearchForm->setClient($client);
         $searchForm = $this->createForm($orderSearchForm,
             $orderSearchForm->getInitData(),
             ['em' => $this->getDoctrine()->getManager()]
         );
-        $searchForm->handleRequest($request);
-        $orders = $this->getDoctrine()->getRepository('AppBundle:Order')->getOrders($searchForm->getData());
+
+        $isClientPredefined = (($clientId != null) && ($client != null));
+        if ($isClientPredefined)
+        {
+            $templateMode = 'clientsOrders';
+            $orders = $this->getDoctrine()->getRepository('AppBundle:Order')->getOrdersByClient($client);
+        }
+        else
+        {
+            $templateMode = 'orders';
+            $searchForm->handleRequest($request);
+            $orders = $this->getDoctrine()->getRepository('AppBundle:Order')->getOrders($searchForm->getData());
+        }
+
         $orderInfo = [];
 
         /** @var Order $order */

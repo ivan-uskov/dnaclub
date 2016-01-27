@@ -47,7 +47,8 @@ class NewSubscriptionForm extends AbstractType
                     'label' => 'Клиент',
                     'class' => 'AppBundle:Client',
                     'choice_label' => 'fullName',
-                    'choices' => $clients
+                    'choices' => $clients,
+                    'placeholder' => ''
                 ));
         }
 
@@ -66,7 +67,8 @@ class NewSubscriptionForm extends AbstractType
             ->add('type', 'choice', array(
                 'label' => 'Тип подписки',
                 'choices' => $types,
-                'choices_as_values' => false
+                'choices_as_values' => false,
+                'placeholder' => ''
             ))
             ->add('count', 'number', array(
                 'label' => 'Количество'

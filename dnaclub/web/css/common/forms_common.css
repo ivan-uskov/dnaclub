@@ -1,9 +1,15 @@
 textarea
 {
-	resize: none;
+    resize: none;
 }
 
 .header-client-fullname
 {
-	margin-top: 0;
+    margin-top: 0;
+}
+
+.monthSelect
+{
+    width: 200px;
+    margin-bottom: 10px;
 }

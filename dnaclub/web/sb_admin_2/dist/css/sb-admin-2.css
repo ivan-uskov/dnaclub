@@ -749,3 +749,8 @@ table th[class*="col-"] {
 hr {
     border-bottom: 1px solid #F5DCB4;
 }
+
+.navbar-static-top {
+    z-index: 9;
+    border-width: 0 0 1px;
+}

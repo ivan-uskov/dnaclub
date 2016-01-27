@@ -27,6 +27,28 @@ class OrderRepository extends EntityRepository
             ->getResult();
     }
 
+    /**
+     * @param Client $client
+     * @return array
+     */
+    public function getOrdersByClient($client)
+    {
+        return $this->getEntityManager()
+            ->createQueryBuilder()
+            ->select('o')
+            ->from('AppBundle\Entity\Order', 'o')
+            ->where('o.isPreOrder = 0')
+            ->andWhere('o.client = :client')
+            ->setParameter('client', $client)
+            ->orderBy('o.createdAt', 'desc')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @param array $searchForm
+     * @return array
+     */
     public function getOrders($searchForm)
     {
         $qb = $this->getEntityManager()

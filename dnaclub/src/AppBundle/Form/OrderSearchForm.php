@@ -43,38 +43,18 @@ class OrderSearchForm extends AbstractType
          * @var EntityManager $em
          */
         $em = $options['em'];
-        $isClientPredefined = ($this->client != null);
         $statusList = OrderStatus::getNames();
 
-        if ($isClientPredefined)
-        {
-            $builder
-                ->add(self::CLIENT_SEARCH_FIELD, 'entity', array(
-                    'label' => false,
-                    'class' => 'AppBundle:Client',
-                    'choice_label' => 'fullName',
-                    'choices' => array($this->client),
-                    'data' => $this->client,
-                    'attr' => array(
-                        'class' => 'hidden'
-                    )
-                ));
-        }
-        else
-        {
-            $clients = $em->getRepository('AppBundle:Client')->getSortedClients();
-            $builder
-                ->add(self::CLIENT_SEARCH_FIELD, 'entity', array(
-                    'label' => 'Клиент',
-                    'placeholder' => '',
-                    'class' => 'AppBundle:Client',
-                    'choice_label' => 'fullName',
-                    'choices' => $clients,
-                    'required' => false
-                ));
-        }
-
+        $clients = $em->getRepository('AppBundle:Client')->getSortedClients();
         $builder
+            ->add(self::CLIENT_SEARCH_FIELD, 'entity', array(
+                'label' => 'Клиент',
+                'placeholder' => '',
+                'class' => 'AppBundle:Client',
+                'choice_label' => 'fullName',
+                'choices' => $clients,
+                'required' => false
+            ))
             ->add(self::STATUS_SEARCH_FIELD, 'choice', array(
                 'label' => 'Статус',
                 'placeholder' => '',
