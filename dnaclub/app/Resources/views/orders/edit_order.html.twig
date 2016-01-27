@@ -18,8 +18,7 @@
       </select>
     </div>
     <div class="form-group">
-      <label for="products">Товары - общая стоимость <span id="coast">{{ order.getSum() }}</span> руб.</label>
-      {% include 'include/product/selection_block.html.twig' with productBlockVars %}
+      {% include 'include/product_selection_block.html.twig' with productBlockVars %}
     </div>
     <div class="form-group">
       <label for="discount">Скидка</label>
@@ -27,7 +26,7 @@
     </div>
     <div class="form-group">
       <label for="paidByCash">Оплачено наличными</label>
-      <input class="form-control" type="text" name="paidByCash" id="paidByCash" value="{{ orderPayment.getSum() }}" />
+      <input class="form-control" type="text" name="paidByCash" id="paidByCash" value="{{ orderPayment ? orderPayment.getSum() : '' }}" />
     </div>
     <div class="form-group">
       <label for="debt">Долг</label>

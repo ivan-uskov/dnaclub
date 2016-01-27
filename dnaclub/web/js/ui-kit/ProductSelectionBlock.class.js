@@ -94,7 +94,7 @@ var ProductSelectionBlock = function(id)
             var obj = $(this);
             if (obj.val() == '')
             {
-                obj.val(0);
+                obj.val(1);
             }
             updateHandler(getCoast());
         });

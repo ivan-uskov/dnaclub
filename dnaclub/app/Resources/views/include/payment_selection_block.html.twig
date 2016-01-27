@@ -1,0 +1,38 @@
+<label>Оплата - долг <span id="debt"></span> руб.</label>
+<a id="{{ id }}AddByCash" class="btn btn-success btn-add-top">Наличными</a>
+<a id="{{ id }}AddByReword" class="btn btn-success btn-add-top">Вознаграждением</a>
+<input type="hidden" name="paidByCash" id="paidByCash" />
+<div class="payment_selection_block" id="{{ id }}">
+  <table class="table table-hover table-striped table-bordered dataTable no-footer" id="ordersList" role="grid" aria-describedby="ordersList_info">
+    <thead>
+      <tr role="row">
+        <th class="sorting_desc" tabindex="0" aria-controls="ordersList" rowspan="1" colspan="1" aria-sort="descending" aria-label="Дата: activate to sort column ascending" style="width: 150px;">Дата</th>
+        <th class="sorting_desc" tabindex="0" aria-controls="ordersList" rowspan="1" colspan="1" aria-sort="descending" aria-label="Сумма: activate to sort column ascending">Сумма</th>
+        <th class="sorting_desc" tabindex="0" aria-controls="ordersList" rowspan="1" colspan="1" aria-sort="descending" aria-label="Тип: activate to sort column ascending">Тип</th>
+        <th class="sorting_disabled" rowspan="1" colspan="1" aria-label="" style="width: 15px;"></th>
+      </tr>
+    </thead>
+    <tbody id="{{ id }}List">
+      <tr role="row" data-payment-id="" class="hidden" id="{{ id }}StubCashRow">
+        <td><input class="form-control date date_picker" type="text" value="{{ "now"|date('d.m.Y') }}" /></td>
+        <td class="sum"><input class="form-control sum" autocomplete="off" spellcheck="false" type="text" id="{{ id }}Inserter" data-rewords="" placeholder="Введите сумму платежа" /></td>
+        <td class="type" data-value="1">Наличными</td>
+        <td><span class="glyphicon glyphicon-remove remove_payment"></span></td>
+      </tr>
+      <tr role="row" data-payment-id="" class="hidden" id="{{ id }}StubRewordRow">
+        <td><input class="form-control date date_picker" type="text" value="{{ "now"|date('d.m.Y') }}" /></td>
+        <td><input class="form-control sum" autocomplete="off" spellcheck="false" type="text" id="{{ id }}Inserter" data-rewords="" placeholder="Введите сумму платежа" /></td>
+        <td class="type" data-value="1">Вознаграждением</td>
+        <td><span class="glyphicon glyphicon-remove remove_payment"></span></td>
+      </tr>
+      {% for payment in payments %}
+        <tr role="row" data-payment-id="{{ payment.getOrderPaymentId() }}">
+          <td class="date">{{ payment.getCreatedAt() }}</td>
+          <td class="sum">{{ payment.getSum() }}</td>
+          <td class="type">{{ payment.getName() }}</td>
+          <td></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

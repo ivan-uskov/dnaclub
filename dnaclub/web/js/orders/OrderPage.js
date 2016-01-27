@@ -6,6 +6,8 @@ $(function()
         debt.setValue(result >= 0 ? 0 : result);
     }
 
+    new PaymentSelectionBlock('paidByCash');
+
     var discount = new NumberFormField('discount');
     var paidByCash = new NumberFormField('paidByCash');
     var debt = new NumberFormField('debt');
