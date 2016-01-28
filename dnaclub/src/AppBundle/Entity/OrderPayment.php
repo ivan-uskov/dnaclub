@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\config\PaymentType;
+
 /**
  * OrderPayment
  */
@@ -166,5 +168,15 @@ class OrderPayment
     public function getReward()
     {
         return $this->reward;
+    }
+
+    public function isByCash()
+    {
+        return $this->getPaymentType() == PaymentType::CASH;
+    }
+
+    public function getName()
+    {
+        return PaymentType::getName($this->getPaymentType());
     }
 }

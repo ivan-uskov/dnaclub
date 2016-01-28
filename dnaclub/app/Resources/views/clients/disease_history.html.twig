@@ -17,45 +17,49 @@
 {% block content %}
   <h3 class="header-client-fullname">{{ client.getFullName() }}</h3>
   {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'diseaseHistory'} %}
-  <div class="col-md-6">
-    <form action="" method="post" class="row">
-      <div class="form-group row">
-        <label for="date" class="col-md-5">Дата</label>
 
-        <div class="col-md-7">
-          <input class="form-control {% if isNew %} datepicker{% endif %}" type="text" name="date" id="date"
-              {% if isNew %}
-                value="{{ 'now'|date("d.m.Y") }}"
-              {% else %}
-                disabled="disabled"
-                value="{{ currentDiseaseHistory.getDate().format("d.m.Y") }}"
-              {% endif %}
-          />
+    <form action="" method="post">
+      <div class="row">
+        <div class="form-group col-md-2">
+          <label for="date">Дата</label>
+
+          <div>
+            <input class="form-control {% if isNew %} datepicker{% endif %}" type="text" name="date" id="date"
+                {% if isNew %}
+                  value="{{ 'now'|date("d.m.Y") }}"
+                {% else %}
+                  disabled="disabled"
+                  value="{{ currentDiseaseHistory.getDate().format("d.m.Y") }}"
+                {% endif %}
+            />
+          </div>
         </div>
-      </div>
-      <div class="form-group">
-        <label for="healthState">Состояние здоровья</label>
+        <div class="form-group col-md-5">
+          <label for="healthState">Состояние здоровья</label>
             <textarea class="form-control" name="health_state" id="healthState"
                       rows="3">{% if not isNew %}{{ currentDiseaseHistory.getHealthState() }}{% endif %}</textarea>
-      </div>
-      <div class="form-group">
-        <label for="treatment">Курс</label>
+        </div>
+        <div class="form-group col-md-5">
+          <label for="treatment">Курс</label>
             <textarea class="form-control" name="treatment" id="treatment"
                       rows="3">{% if not isNew %}{{ currentDiseaseHistory.getTreatment() }}{% endif %}</textarea>
+        </div>
       </div>
-      <button type="submit" id="submit" class="btn btn-default">
-        {% if isNew %}
-          Добавить
-        {% else %}
-          Сохранить
-        {% endif %}
-      </button>
+
+      <div class="text-right">
+        <button type="submit" id="submit" class="btn btn-success">
+          {% if isNew %}
+            Добавить
+          {% else %}
+            Сохранить
+          {% endif %}
+        </button>
+      </div>
     </form>
-  </div>
 
   <div class="clearfix"></div>
+  <br>
   <h3 class="disease-history-h3">Записи:</h3>
-  <hr class="form-table-delimiter"/>
 
   <table class="table table-hover table-striped table-bordered" id="disease_histories_list">
     <thead>

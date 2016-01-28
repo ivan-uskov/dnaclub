@@ -1,6 +1,6 @@
 {% extends 'layout.html.twig' %}
 {% block pageH1 %}
-  Список продаж
+  Продажи
   <a class="btn btn-success btn-add-top" target="_blank" href="{{ path('createOrder') }}">Добавить</a>
 {% endblock %}
 {% block content %}
@@ -9,41 +9,40 @@
     {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'clientsOrders'} %}
   {% endif %}
   <input id="template_mode" type="hidden" value="{{ mode }}" />
-  <div class="panel-body">
-    {% form_theme searchForm 'bootstrap_3_horizontal_layout.html.twig' %}
-    {{ form_start(searchForm) }}
-    <div class="row" style="padding-bottom: 10px;">
-      <div class="col-sm-12">
-        <div class="form-group">
-          {{ form_label(searchForm.client) }}
-          <div class="col-md-4">{{ form_widget(searchForm.client) }}</div>
-          {{ form_label(searchForm.startDate) }}
-          <div class="col-md-4">{{ form_widget(searchForm.startDate) }}</div>
-        </div>
-        <div class="form-group">
-          {{ form_label(searchForm.status) }}
-          <div class="col-md-4">{{ form_widget(searchForm.status) }}</div>
-          {{ form_label(searchForm.endDate) }}
-          <div class="col-md-4">{{ form_widget(searchForm.endDate) }}</div>
-        </div>
-        <div class="form-group">
-          <div class="col-md-2 col-md-push-10">{{ form_widget(searchForm.search) }}</div>
+
+  {% if (mode == 'orders') %}
+    <div class="panel-body">
+      {% form_theme searchForm 'bootstrap_3_horizontal_layout.html.twig' %}
+      {{ form_start(searchForm) }}
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="form-group">
+            {{ form_label(searchForm.client) }}
+            <div class="col-md-4">{{ form_widget(searchForm.client) }}</div>
+            {{ form_label(searchForm.startDate) }}
+            <div class="col-md-4">{{ form_widget(searchForm.startDate) }}</div>
+          </div>
+          <div class="form-group">
+            {{ form_label(searchForm.status) }}
+            <div class="col-md-4">{{ form_widget(searchForm.status) }}</div>
+            {{ form_label(searchForm.endDate) }}
+            <div class="col-md-4">{{ form_widget(searchForm.endDate) }}</div>
+          </div>
+          <div class="form-group text-right">
+            <div>{{ form_widget(searchForm.search) }}</div>
+          </div>
         </div>
       </div>
+      {{ form_end(searchForm) }}
     </div>
-    {{ form_end(searchForm) }}
-  </div>
+  {% endif %}
 
   <div class="panel-body">
     <div class="table-responsive">
       <table class="table table-hover table-striped table-bordered" id="ordersList">
         <thead>
           <tr>
-            {% if (mode == 'orders') %}
-              <th>
-                Клиент
-              </th>
-            {% endif %}
+            <th>Клиент</th>
             <th width="200">Товары</th>
             <th>Дата</th>
             <th>Статус</th>
@@ -55,13 +54,11 @@
         <tbody>
           {% for orderInfo in orders %}
             <tr onclick="location.href = '{{ path('editOrder', {'orderId': orderInfo['order'].getOrderId()}) }}'">
-              {% if (mode == 'orders') %}
               <td>
                 <a href="{{ path('editClient', {'clientId': orderInfo['order'].getClient().getClientId()}) }}">
                   {{ orderInfo['order'].getClient().getFullName() }}
                 </a>
               </td>
-              {% endif %}
               <td>
                 {% for orderItem in orderInfo['orderItems'] %}
                   {{ orderItem.getProduct().getName() }}<span class="right_float">{{ orderItem.getCount() }} {{ orderItem.getProduct().getPieceName() }}</span><br />
@@ -96,4 +93,5 @@
   <link href="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css') }}" type="text/css" rel="stylesheet" />
   <link rel="stylesheet" type="text/css" href="{{ asset('css/orders/manage.css') }}" />
   <link rel="stylesheet" type="text/css" href="{{ asset('css/common/lists_common.css') }}" />
+  <link href="{{ asset('css/common/forms_common.css') }}" type="text/css" rel="stylesheet" />
 {% endblock %}

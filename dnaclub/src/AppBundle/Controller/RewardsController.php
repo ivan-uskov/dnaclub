@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use AppBundle\Form\MonthSearchForm;
 
 class RewardsController extends Controller
 {
@@ -14,7 +15,7 @@ class RewardsController extends Controller
      */
     public function rewardsListAction(Request $request)
     {
-        return $this->rewardsListImpl();
+        return $this->rewardsListImpl($request);
     }
 
     /**
@@ -22,7 +23,7 @@ class RewardsController extends Controller
      */
     public function clientsRewardsListAction(Request $request, $clientId)
     {
-        return $this->rewardsListImpl($clientId);
+        return $this->rewardsListImpl($request, $clientId);
     }
 
     /**
@@ -86,8 +87,17 @@ class RewardsController extends Controller
     /**
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    private function rewardsListImpl($clientId = null)
+    private function rewardsListImpl(Request $request, $clientId = null)
     {
+        $em = $this->getDoctrine()->getManager();
+
+        $defaultDate = (new \DateTime())->format('Y-m-01');
+        $dates = $em->getRepository('AppBundle:Reward')->getMonthsForSelect();
+        $form = $this->createForm(new MonthSearchForm(), array('months' => $defaultDate), array('dates' => $dates));
+        $form->handleRequest($request);
+
+        $date = $form->getData()["months"];
+
         $client = null;
         if ($clientId != null)
         {
@@ -101,14 +111,15 @@ class RewardsController extends Controller
         }
         else
         {
-            $rewards = $this->getDoctrine()->getRepository('AppBundle:Reward')->findNotDeleted();
+            $rewards = $this->getDoctrine()->getRepository('AppBundle:Reward')->getRewardsByMonth($date);
             $templateMode = 'rewards';
         }
 
         return $this->render('payment/rewards_list.html.twig', [
             'rewards' => $rewards,
-            'client' => $client,
-            'mode' => $templateMode
+            'client'  => $client,
+            'mode'    => $templateMode,
+            'form'    => $form->createView()
         ]);
     }
 

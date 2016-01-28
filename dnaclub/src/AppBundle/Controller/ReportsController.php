@@ -19,12 +19,12 @@ class ReportsController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
+        $defaultDate = (new \DateTime())->format('Y-m-01');
         $dates = $em->getRepository('AppBundle:MarketingReport')->getMonthsForSelect();
-        $form = $this->createForm(new MonthSearchForm(), array('months' => ''), array('dates' => $dates));
+        $form = $this->createForm(new MonthSearchForm(), array('months' => $defaultDate), array('dates' => $dates));
         $form->handleRequest($request);
 
-        $data = $form->getData();
-        $date = $data["months"] ?: key($dates);
+        $date = $form->getData()["months"];
         $reportRows = $em->getRepository('AppBundle:MarketingReport')->findByDate($date);
 
         $updateReportForm = $this->createFormBuilder()

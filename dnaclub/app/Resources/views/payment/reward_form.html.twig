@@ -12,7 +12,9 @@
   {% endif %}
 {% endblock %}
 {% block content %}
-  <form action="" method="post">
+  <div class="row">
+    <div class="col-md-6">
+      <form action="" method="post">
     {% if (mode == 'editClientsReward') %}
       <select name="client" id="client" class="hidden">
           <option value="{{ clients[0].getClientId() }}"
@@ -53,7 +55,7 @@
           {% endif %}
       />
     </div>
-    <button type="submit" id="submit" class="btn btn-default">
+    <button type="submit" id="submit" class="btn btn-success">
       {% if isNew %}
         Добавить
       {% else %}
@@ -61,6 +63,8 @@
       {% endif %}
     </button>
   </form>
+    </div>
+  </div>
 {% endblock %}
 {% block javascripts %}
   {{ parent() }}
