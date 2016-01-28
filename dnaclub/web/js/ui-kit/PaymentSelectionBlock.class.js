@@ -1,17 +1,17 @@
-var PaymentSelectionBlock = function(id)
+var PaymentSelectionBlock = function(id, updateHandler)
 {
+    var cashItemInputs = [];
     var list = $('#' + id + 'List');
     var stubCashItem = $('#' + id + 'StubCashRow');
     var stubRewordItem = $('#' + id + 'StubRewordRow');
-    var updateHandler  = function(){};
-
-    this.setUpdateHandler = function(handler)
-    {
-        updateHandler = handler;
-    };
 
     $('#' + id + 'AddByCash').click(function(){
-        insertClone(stubCashItem);
+        var newItem = insertClone(stubCashItem);
+        var uniqId = 'id' + (new Date()).getTime();
+
+        var input = newItem.find('input.sum').attr('id', uniqId);
+        var field = new NumberFormField(uniqId, updateHandler);
+        cashItemInputs.push(field);
     });
 
     $('#' + id + 'AddByReword').click(function(){
@@ -24,6 +24,9 @@ var PaymentSelectionBlock = function(id)
         newItem.removeClass('hidden');
         list.append(newItem);
         initDatePicker(newItem.find('.date_picker'));
+        updateHandler();
+
+        return newItem;
     }
 
     function initDatePicker(item)
@@ -36,10 +39,34 @@ var PaymentSelectionBlock = function(id)
         });
     }
 
+    this.getSum = function()
+    {
+        var value = 0;
+
+        $.each(cashItemInputs, function(i, field){
+            value += field.getValue();
+        });
+
+        return value;
+    };
+
     this.getValue = function()
     {
-        var ids = [];
-        return ids.join(',');
+        var cashValue = [];
+
+        list.find('tr.cash').each(function() {
+            var row = $(this);
+            if (!row.hasClass('hidden'))
+            {
+                cashValue.push({
+                    id: row.attr('data-payment-id'),
+                    date: row.find('.date').first().val(),
+                    sum: row.find('.sum_holder').first().val()
+                });
+            }
+        });
+
+        return $.toJSON({cash: cashValue});
     };
 
     function getCoast()
@@ -49,11 +76,24 @@ var PaymentSelectionBlock = function(id)
         return + coast;
     }
 
+    function deleteNumberField(id)
+    {
+        $.each(cashItemInputs, function(i, field) {
+            if (field.getId() == id)
+            {
+
+            }
+        });
+    }
+
     function initializeHandlers()
     {
         list.on('click', '.remove_payment', function()
         {
-            $(this).parents('tr').remove();
+            var row = $(this).parents('tr');
+            var id = row.find('.sum').attr('id');
+            deleteNumberField(id);
+            row.remove();
             updateHandler();
         });
     }

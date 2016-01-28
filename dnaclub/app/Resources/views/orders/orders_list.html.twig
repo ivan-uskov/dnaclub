@@ -67,7 +67,7 @@
               <td>{{ orderInfo['order'].getCreatedAt()|date('d.m.Y') }}</td>
               <td>{{ orderInfo['order'].getStatus() }}</td>
               <td class="right_text_align">{{ orderInfo['order'].getSum()|localizedcurrency('RUB') }}</td>
-              <td class="right_text_align">{{ orderInfo['payment'].getSum()|localizedcurrency('RUB') }}</td>
+              <td class="right_text_align">{{ orderInfo['paymentSum']|localizedcurrency('RUB') }}</td>
               {% if (mode == 'orders') %}
                 <td><a href="{{ path('deleteOrder', {'orderId': orderInfo['order'].getOrderId()}) }}" class="glyphicon glyphicon-remove remove_order_button"></a></td>
               {% else %}

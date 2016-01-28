@@ -1,8 +1,9 @@
-<label>Оплата - долг <span id="debt"></span> руб.</label>
-<a id="{{ id }}AddByCash" class="btn btn-success btn-add-top">Наличными</a>
-<a id="{{ id }}AddByReword" class="btn btn-success btn-add-top">Вознаграждением</a>
-<input type="hidden" name="paidByCash" id="paidByCash" />
 <div class="payment_selection_block" id="{{ id }}">
+  <input type="hidden" name="paidByCash" id="paidByCash" />
+  <label>Оплата - долг <span id="debt">0</span> руб.</label>
+  <!--a id="{{ id }}AddByReword" class="btn btn-default btn-add-top float_right add_reward_button">Вознаграждением</a-->
+  <a id="{{ id }}AddByCash" class="btn btn-default btn-add-top float_right">Наличными</a>
+  <div class="clear"></div>
   <table class="table table-hover table-striped table-bordered dataTable no-footer" id="ordersList" role="grid" aria-describedby="ordersList_info">
     <thead>
       <tr role="row">
@@ -13,15 +14,19 @@
       </tr>
     </thead>
     <tbody id="{{ id }}List">
-      <tr role="row" data-payment-id="" class="hidden" id="{{ id }}StubCashRow">
+      <tr role="row" data-payment-id="" class="cash hidden" id="{{ id }}StubCashRow">
         <td><input class="form-control date date_picker" type="text" value="{{ "now"|date('d.m.Y') }}" /></td>
-        <td class="sum"><input class="form-control sum" autocomplete="off" spellcheck="false" type="text" id="{{ id }}Inserter" data-rewords="" placeholder="Введите сумму платежа" /></td>
+        <td class="sum"><input class="form-control sum sum_holder" autocomplete="off" spellcheck="false" type="text" id="{{ id }}Inserter" data-rewords="" placeholder="Введите сумму платежа" /></td>
         <td class="type" data-value="1">Наличными</td>
         <td><span class="glyphicon glyphicon-remove remove_payment"></span></td>
       </tr>
-      <tr role="row" data-payment-id="" class="hidden" id="{{ id }}StubRewordRow">
+      <tr role="row" data-payment-id="" class="reword hidden" id="{{ id }}StubRewordRow">
         <td><input class="form-control date date_picker" type="text" value="{{ "now"|date('d.m.Y') }}" /></td>
-        <td><input class="form-control sum" autocomplete="off" spellcheck="false" type="text" id="{{ id }}Inserter" data-rewords="" placeholder="Введите сумму платежа" /></td>
+        <td class="sum_container">
+          <input class="form-control sum" autocomplete="off" spellcheck="false" type="text" data-rewords="" placeholder="Введите сумму платежа" />
+          <select name="user_name" class="form-control current_reward"></select>
+          <div class="clear"></div>
+        </td>
         <td class="type" data-value="1">Вознаграждением</td>
         <td><span class="glyphicon glyphicon-remove remove_payment"></span></td>
       </tr>
