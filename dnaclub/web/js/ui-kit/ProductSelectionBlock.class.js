@@ -1,15 +1,9 @@
-var ProductSelectionBlock = function(id)
+var ProductSelectionBlock = function(id, updateHandler)
 {
     var list = $('#' + id + 'List');
     var stubItem = list.find('.stub_product');
     var inserter = $('#' + id + 'Inserter');
     var products = JSON.parse(inserter.attr('data-products'));
-    var updateHandler  = function(newCoast){};
-
-    this.setUpdateHandler = function(handler)
-    {
-        updateHandler = handler;
-    };
 
     this.getValue = function()
     {
@@ -61,7 +55,8 @@ var ProductSelectionBlock = function(id)
             list.append(newItem);
         }
 
-        updateHandler(getCoast());
+        $('#coast').text(getCoast());
+        updateHandler();
     }
 
     function tryAddProduct()
