@@ -98,17 +98,26 @@ var PaymentSelectionBlock = function(id, updateHandler)
         });
     }
 
-    function initializeAutoComplete()
+    function initializeCashItemInputs()
     {
-
+        $('#' + id + 'List').find('tr.cash').each(function() {
+            var row = $(this);
+            if (!row.hasClass('hidden'))
+            {
+                var uniqId = 'id' + (new Date()).getTime();
+                var input = row.find('input.sum').attr('id', uniqId);
+                var field = new NumberFormField(uniqId, updateHandler);
+                cashItemInputs.push(field);
+                initDatePicker(row.find('.date_picker'));
+            }
+        });
     }
-
 
     this.getCoast = getCoast;
 
     (function()
     {
         initializeHandlers();
-        initializeAutoComplete();
+        initializeCashItemInputs();
     })();
 };

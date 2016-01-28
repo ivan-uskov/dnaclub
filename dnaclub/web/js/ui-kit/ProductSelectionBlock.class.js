@@ -114,5 +114,6 @@ var ProductSelectionBlock = function(id, updateHandler)
     {
         initializeHandlers();
         initializeAutoComplete();
+        $('#coast').text(getCoast());
     })();
 };
