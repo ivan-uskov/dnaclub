@@ -8,6 +8,7 @@ use AppBundle\lib\OrderItemPeer;
 use AppBundle\Entity\OrderItem;
 use AppBundle\Form\OrderSearchForm;
 use AppBundle\Form\PreOrderSearchForm;
+use AppBundle\utils\ArrayUtils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -116,7 +117,7 @@ class OrdersController extends Controller
         }
 
         $this->saveOrder($order);
-        $this->updateOrderPaidByCash($order, (float)$post->get('paidByCash'));
+        $this->updateOrderPaymentInfo($order, $post->get('payment_info'));
         $this->fillOrderItems($order, $post);
     }
 
@@ -181,29 +182,70 @@ class OrdersController extends Controller
         return $products;
     }
 
-    private function updateOrderPaidByCash(Order $order, $newValue)
+    private function updateOrderPaymentInfo(Order $order, $paymentInfoJson)
     {
-        /** @var OrderPayment $orderPayment */
-        $orderPayment = $this->getOrderPayment($order);
-        if (!$orderPayment)
+        $paymentInfo = ArrayUtils::fromJson($paymentInfoJson);
+        $cashPayments = ArrayUtils::getParameter($paymentInfo, 'cash');
+        if (!is_array($cashPayments))
         {
-            $orderPayment = new OrderPayment();
-            $orderPayment->setOrder($order);
-            $orderPayment->setPaymentType(PaymentType::CASH);
-            $orderPayment->setCreatedAt(new \DateTime());
+            return;
         }
 
-        $orderPayment->setSum($newValue);
-
         $em = $this->getDoctrine()->getManager();
-        $em->persist($orderPayment);
+        $payments = $this->getOrderPayments($order);
+
+        foreach ($cashPayments as $cashPaymentInfo)
+        {
+            /** @var OrderPayment $orderPayment */
+            if (array_key_exists($cashPaymentInfo['id'], $payments))
+            {
+                $orderPayment = $payments[$cashPaymentInfo['id']];
+            }
+            else
+            {
+                $orderPayment = new OrderPayment();
+            }
+
+            $orderPayment->setOrder($order);
+            $orderPayment->setPaymentType(PaymentType::CASH);
+            $orderPayment->setCreatedAt(new \DateTime($cashPaymentInfo['date']));
+            $orderPayment->setSum($cashPaymentInfo['sum']);
+            $em->persist($orderPayment);
+        }
+
         $em->flush();
+    }
+
+    private function getOrderPayments(Order $order)
+    {
+        $payments = [];
+        $orderPayments = $this->getDoctrine()->getRepository('AppBundle:OrderPayment')->findBy(['order' => $order->getOrderId()]);
+        /** @var OrderPayment $payment */
+        foreach ($orderPayments as $payment)
+        {
+            $payments[$payment->getOrderPaymentId()] = $payment;
+        }
+
+        return $payments;
     }
 
     private function getOrderPayment(Order $order)
     {
         $orderPayments = $this->getDoctrine()->getRepository('AppBundle:OrderPayment')->findBy(['order' => $order->getOrderId()]);
         return count($orderPayments) ? $orderPayments[0] : null;
+    }
+
+    private function getOrderPaymentSum(Order $order)
+    {
+        $sum = 0;
+        $orderPayments = $this->getDoctrine()->getRepository('AppBundle:OrderPayment')->findBy(['order' => $order->getOrderId()]);
+        /** @var OrderPayment $orderPayment */
+        foreach ($orderPayments as $orderPayment)
+        {
+            $sum += (float) $orderPayment->getSum();
+        }
+
+        return $sum;
     }
 
     /**
@@ -296,7 +338,7 @@ class OrdersController extends Controller
             $orderInfo[] = [
                 'order' => $order,
                 'orderItems' => $this->getDoctrine()->getRepository("AppBundle:OrderItem")->findBy(['order' => $order]),
-                'payment' => $this->getOrderPayment($order) ?: new OrderPayment()
+                'paymentSum' => $this->getOrderPaymentSum($order)
             ];
         }
 
@@ -320,10 +362,16 @@ class OrdersController extends Controller
 
         $order = $doctrine->getRepository("AppBundle:Order")->find($orderId);
         $orderItems = $doctrine->getRepository("AppBundle:OrderItem")->findBy(['order' => $orderId]);
+        $orderPayments = $this->getDoctrine()->getRepository('AppBundle:OrderPayment')->findBy(['order' => $orderId]);
 
         foreach ($orderItems as $orderItem)
         {
             $em->remove($orderItem);
+        }
+
+        foreach ($orderPayments as $orderPayment)
+        {
+            $em->remove($orderPayment);
         }
 
         $em->flush();

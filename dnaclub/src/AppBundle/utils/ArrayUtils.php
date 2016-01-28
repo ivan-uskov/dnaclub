@@ -14,7 +14,7 @@ class ArrayUtils
         return json_encode($data);
     }
 
-    public static function fromJson(array $data)
+    public static function fromJson($data)
     {
         return json_decode($data, true);
     }

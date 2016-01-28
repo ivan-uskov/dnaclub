@@ -1,16 +1,15 @@
-var NumberFormField = function(id)
+var NumberFormField = function(id, updateHandler)
 {
     var field = $('#' + id);
-    var updateHandler = function(){};
-
-    this.setUpdateHandler = function(handler)
-    {
-        updateHandler = handler;
-    };
 
     this.getValue = function()
     {
         return + field.val();
+    };
+
+    this.getId = function()
+    {
+        return id;
     };
 
     this.setValue = function(val)
@@ -21,7 +20,7 @@ var NumberFormField = function(id)
 
     function initializeHandlers()
     {
-        field.change(function(){
+        field.change(function() {
             if (field.val() == '')
             {
                 field.val(0);
