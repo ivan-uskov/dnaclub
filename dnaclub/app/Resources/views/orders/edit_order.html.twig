@@ -23,7 +23,7 @@
         </select>
       </div>
       <div class="form-group">
-        {% include 'include/product_selection_block.html.twig' with {'id': productBlockVars['id'], 'products': productBlockVars['products'], 'orderItems': productBlockVars['orderItems']} %}
+        {% include 'include/product_selection_block.html.twig' with {'id': productBlockVars['id'], 'isEditable': order.isProductsEditable(), 'products': productBlockVars['products'], 'orderItems': productBlockVars['orderItems']} %}
       </div>
     </div>
     <div class="col-md-6 half_block">

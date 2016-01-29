@@ -425,4 +425,14 @@ class Order
         }
         return $debtDuration;
     }
+
+    public function isProductsEditable()
+    {
+        return $this->getStatus() == OrderStatus::OPEN;
+    }
+
+    public function isPaymentEditable()
+    {
+        return $this->getStatus() == OrderStatus::OPEN;
+    }
 }
