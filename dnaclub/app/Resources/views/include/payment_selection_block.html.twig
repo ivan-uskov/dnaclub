@@ -1,7 +1,7 @@
 <div class="payment_selection_block" id="{{ id }}">
   <input type="hidden" name="paidByCash" id="paidByCash" />
   <label>Оплата - долг <span id="debt">0</span> руб.</label>
-  <!--a id="{{ id }}AddByReword" class="btn btn-default btn-add-top float_right add_reward_button">Вознаграждением</a-->
+  <a id="{{ id }}AddByReword" class="btn btn-default btn-add-top float_right add_reward_button">Вознаграждением</a>
   <a id="{{ id }}AddByCash" class="btn btn-default btn-add-top float_right">Наличными</a>
   <div class="clear"></div>
   <table class="table table-hover table-striped table-bordered dataTable no-footer" id="ordersList" role="grid" aria-describedby="ordersList_info">
@@ -31,12 +31,25 @@
         <td><span class="glyphicon glyphicon-remove remove_payment"></span></td>
       </tr>
       {% for payment in payments %}
-        <tr role="row" class="cash" data-payment-id="{{ payment.getOrderPaymentId() }}">
-          <td class="date"><input readonly class="form-control date date_picker" type="text" value="{{ payment.getCreatedAt()|date('d.m.Y') }}" /></td>
-          <td class="sum"><input readonly class="form-control sum sum_holder" autocomplete="off" value="{{ payment.getSum() }}" spellcheck="false" type="text" id="{{ id }}Inserter" data-rewords="" placeholder="Введите сумму платежа" /></td>
-          <td class="type">{{ payment.getName() }}</td>
-          <td></td>
-        </tr>
+        {% if payment.isByCash() %}
+          <tr role="row" class="cash" data-payment-id="{{ payment.getOrderPaymentId() }}">
+            <td class="date"><input readonly class="form-control date date_picker" type="text" value="{{ payment.getCreatedAt()|date('d.m.Y') }}" /></td>
+            <td class="sum"><input readonly class="form-control sum sum_holder" autocomplete="off" value="{{ payment.getSum() }}" spellcheck="false" type="text" id="{{ id }}Inserter" data-rewords="" placeholder="Введите сумму платежа" /></td>
+            <td class="type">{{ payment.getName() }}</td>
+            <td></td>
+          </tr>
+        {% else %}
+          <tr role="row" data-payment-id="{{ payment.getOrderPaymentId() }}" class="reword">
+            <td><input class="form-control date date_picker" type="text" value="{{ payment.getCreatedAt()|date('d.m.Y') }}" readonly /></td>
+            <td class="sum_container">
+              <input readonly class="form-control sum" autocomplete="off" value="{{ payment.getReward().getRemainingSum() }}" spellcheck="false" type="text" data-rewords="" placeholder="Введите сумму платежа" />
+              <select name="user_name" class="form-control current_reward" readonly></select>
+              <div class="clear"></div>
+            </td>
+            <td class="type" data-value="1">{{ payment.getName() }}</td>
+            <td><span class="glyphicon glyphicon-remove remove_payment"></span></td>
+          </tr>
+        {% endif %}
       {% endfor %}
     </tbody>
   </table>

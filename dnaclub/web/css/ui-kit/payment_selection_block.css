@@ -1,11 +1,9 @@
 .payment_selection_block .sum_container input,
 .payment_selection_block .sum_container select
 {
-    float: left;
-    width: 200px;
+    width: 160px;
 }
 
-.payment_selection_block .sum_container select,
 .payment_selection_block .add_reward_button
 {
     margin-left: 10px;
@@ -20,6 +18,12 @@
 .payment_selection_block .type
 {
     vertical-align: middle;
+}
+
+
+.payment_selection_block .sum_container select
+{
+    margin-top: 4px;
 }
 
 .payment_selection_block .remove_payment
