@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use AppBundle\config\SubscriptionType;
 
 class MarketingReport
 {
@@ -252,5 +253,21 @@ class MarketingReport
     public function getClient()
     {
         return $this->client;
+    }
+
+    public function getSubscriptionsInfo()
+    {
+        $result = '';
+        if ($this->getContract())
+        {
+            $result = $this->getContract() . SubscriptionType::getShortName(SubscriptionType::CONTRACT) . ' ';
+        }
+
+        if ($this->getMaintenance())
+        {
+            $result .= $this->getMaintenance() . SubscriptionType::getShortName(SubscriptionType::MAINTENANCE);
+        }
+
+        return $result;
     }
 }

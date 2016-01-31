@@ -1,5 +1,12 @@
 {% extends 'layout.html.twig' %}
-{% block pageH1 %}Маркетинговый отчет{% endblock %}
+{% block pageH1 %}
+  Маркетинговый отчет
+  <form method="post" id="save_subscription_form" class="btn-add-top" action="{{ path('marketingReportSaveSubscriptions') }}">
+    <input type="hidden" id="contract_result" name="contract" value="">
+    <input type="hidden" id="maintenance_result" name="maintenance" value="">
+    <button type="submit" id="submit_subscriptions" class="btn-success btn" style="display: none;">Сохранить изменения</button>
+  </form>
+{% endblock %}
 {% block content %}
   <div class="row">
     <div class="col-md-6">
@@ -9,12 +16,14 @@
     {{ form_end(form) }}
     </div>
     <div class="col-md-6 text-right">
-    {% form_theme updateReportForm 'bootstrap_3_horizontal_layout.html.twig' %}
-    {{ form_start(updateReportForm) }}
-      {{ form_widget(updateReportForm.update) }}
-    {{ form_end(updateReportForm) }}
+      {% form_theme updateReportForm 'bootstrap_3_horizontal_layout.html.twig' %}
+      {{ form_start(updateReportForm) }}
+        {{ form_widget(updateReportForm.update) }}
+      {{ form_end(updateReportForm) }}
     </div>
   </div>
+  {% if successMessage %}<div class="alert alert-success">{{ successMessage }}</div>{% endif %}
+  {% if errorMessage %}<div class="alert alert-danger">{{ errorMessage }}</div>{% endif %}
 
   <div class="panel-body">
     <div class="table-responsive">
@@ -25,50 +34,53 @@
           <th>Остаток на начало месяца</th>
           <th>Сумма покупок</th>
           <th>Сумма к реализации</th>
-          <th>Контракты</th>
-          <th>Лидерские</th>
+          <th>ЛиК</th>
+          <th>+ контр.</th>
+          <th>+ лид.</th>
           <th>Остаток на конец месяца</th>
+          <th class="hidden"></th>
         </tr>
         </thead>
         <tbody>
         {% for reportRow in reportRows %}
+          {% set clientId = reportRow.getClient().getClientId() %}
+          {% set result =  reportRow.getStartSum() + reportRow.getOrderSum() - reportRow.getContractSum() - reportRow.getMaintenanceSum%}
           <tr>
             <td>
-              <a href="{{ path('editClient', {'clientId': reportRow.getClient().getClientId()}) }}">
+              <a href="{{ path('editClient', {'clientId': clientId}) }}">
                 {{ reportRow.getClient().getFullName() }}
               </a>
             </td>
             <td class="text-right">{{ reportRow.getStartSum()|localizedcurrency('RUB') }}</td>
             <td class="text-right">{{ reportRow.getOrderSum()|localizedcurrency('RUB') }}</td>
             <td class="text-right">{{ (reportRow.getStartSum() + reportRow.getOrderSum())|localizedcurrency('RUB') }}</td>
-            <td class="text-right">{{ reportRow.getContract() }}</td>
-            <td class="text-right">{{ reportRow.getMaintenance() }}</td>
-            <td class="text-right">{{ (reportRow.getStartSum() + reportRow.getOrderSum() - reportRow.getContractSum() - reportRow.getMaintenanceSum)|localizedcurrency('RUB') }}</td>
+            <td class="text-center">{{ reportRow.getSubscriptionsInfo() }}</td>
+            <td class="text-center">
+              <input type="number" class="small-counter form-control" autofocus min="0" id="{{ clientId }}_add_contract" name="add_new_subscription" value="0">
+            </td>
+            <td class="text-center">
+              <input type="number" class="small-counter form-control" autofocus min="0" id="{{ clientId }}_add_maintenance" name="add_new_subscription" value="0">
+            </td>
+            <td class="text-right" id="{{ clientId }}_result_sum">{{ result|localizedcurrency('RUB') }}</td>
+            <td class="hidden" id="{{ clientId }}_initial_result">{{ result }}</td>
           </tr>
         {% endfor %}
         </tbody>
       </table>
     </div>
+    <input type="hidden" id="contract_price" value="{{ contractPrice }}">
+    <input type="hidden" id="maintenance_price" value="{{ maintenancePrice }}">
   </div>
 {% endblock %}
 
 {% block stylesheets %}
   {{ parent() }}
   <link href="{{ asset('css/common/forms_common.css') }}" type="text/css" rel="stylesheet" />
+  <link href="{{ asset('css/common/lists_common.css') }}" type="text/css" rel="stylesheet" />
 {% endblock %}
 {% block javascripts %}
   {{ parent() }}
   <script src="{{ asset('js/data-table/sorting-formatted-number.js') }}"></script>
-  <script>
-    $(document).ready(function() {
-      $('#marketing_report').DataTable({
-        pageLength: 25,
-        order: [[0, "asc"]],
-        columnDefs: [
-          {searchable: false, targets: [1, 2, 3, 4, 5, 6]},
-          {type: 'formatted-num', targets: [1, 2, 3, 6]}
-        ]
-      });
-    } );
-  </script>
+  <script src="{{ asset('bundles/app/plugins/accounting.js') }}"></script>
+  <script src="{{ asset('js/report/MarketingReportPage.js') }}"></script>
 {% endblock %}

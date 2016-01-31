@@ -15,8 +15,8 @@ class SubscriptionType
     ];
 
     private static $shortNames = [
-        self::CONTRACT    => 'К',
-        self::MAINTENANCE => 'Л'
+        self::CONTRACT    => 'к',
+        self::MAINTENANCE => 'л'
     ];
 
     private static $prices = [

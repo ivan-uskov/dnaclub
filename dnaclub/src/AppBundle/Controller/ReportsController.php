@@ -2,6 +2,8 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\config\SubscriptionType;
+use AppBundle\Entity\Subscription;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -36,7 +38,31 @@ class ReportsController extends Controller
         ;
         $updateReportForm->handleRequest($request);
 
-        return $this->render('reports/marketing_report.html.twig', ['reportRows' => $reportRows, 'form' => $form->createView(), 'updateReportForm' => $updateReportForm->createView()]);
+        $saveResult = $request->query->get('save_result');
+        $successMessage = '';
+        $errorMessage = '';
+
+        if (!is_null($saveResult))
+        {
+            if ((bool)$saveResult)
+            {
+                $successMessage = "Изменения успешно сохранены";
+            }
+            else
+            {
+                $errorMessage = "При сохранении произошла ошибка";
+            }
+        }
+
+        return $this->render('reports/marketing_report.html.twig', [
+            'reportRows' => $reportRows,
+            'form' => $form->createView(),
+            'updateReportForm' => $updateReportForm->createView(),
+            'contractPrice' => SubscriptionType::getPrice(SubscriptionType::CONTRACT),
+            'maintenancePrice' => SubscriptionType::getPrice(SubscriptionType::MAINTENANCE),
+            'successMessage' => $successMessage,
+            'errorMessage' => $errorMessage
+        ]);
     }
 
     /**
@@ -55,5 +81,42 @@ class ReportsController extends Controller
         return $this->redirectToRoute('marketingReport');
     }
 
+    /**
+     * @Route("/marketing-report/save-subscriptions", name="marketingReportSaveSubscriptions")
+     */
+    public function saveSubscriptionsAction(Request $request)
+    {
+        $contractArr = json_decode($request->request->get('contract'), true);
+        $maintenanceArr = json_decode($request->request->get('maintenance'), true);
 
+        if (empty($contractArr) && empty($maintenanceArr))
+        {
+            return $this->redirectToRoute('marketingReport');
+        }
+
+        $this->insertSubscriptions($contractArr, SubscriptionType::CONTRACT);
+        $this->insertSubscriptions($maintenanceArr, SubscriptionType::MAINTENANCE);
+
+        return $this->redirectToRoute('marketingReport', ['save_result' => true]);
+    }
+
+    private function insertSubscriptions($subscriptions, $type)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        foreach ($subscriptions as $clientId => $count)
+        {
+            $client = $em->getRepository("AppBundle:Client")->find($clientId);
+            $subscription = new Subscription();
+            $subscription->setClient($client)
+                ->setType($type)
+                ->setCount($count)
+                ->setSum($count * SubscriptionType::getPrice($type))
+                ->setDate(new \DateTime());
+
+            $em->persist($subscription);
+        }
+
+        $em->flush();
+    }
 }
