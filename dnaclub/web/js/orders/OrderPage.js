@@ -9,6 +9,7 @@ $(function()
     var discount = new NumberFormField('discount', update);
     var productsBlock = new ProductSelectionBlock('productsSelection', update);
     var paymentBlock = new PaymentSelectionBlock('paidByCash', update);
+    update();
 
     $('#submit').click(function(){
         $('#productsInfo').val(productsBlock.getValue());

@@ -3,7 +3,7 @@ var ProductSelectionBlock = function(id, updateHandler)
     var list = $('#' + id + 'List');
     var stubItem = list.find('.stub_product');
     var inserter = $('#' + id + 'Inserter');
-    var products = JSON.parse(inserter.attr('data-products'));
+    var products = inserter.length ? JSON.parse(inserter.attr('data-products')) : [];
 
     this.getValue = function()
     {
@@ -114,5 +114,6 @@ var ProductSelectionBlock = function(id, updateHandler)
     {
         initializeHandlers();
         initializeAutoComplete();
+        $('#coast').text(getCoast());
     })();
 };

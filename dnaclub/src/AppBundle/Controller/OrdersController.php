@@ -67,6 +67,7 @@ class OrdersController extends Controller
         $orderItems = $doctrine->getRepository("AppBundle:OrderItem")->findBy(['order' => $orderId]);
         $orderPayment = $this->getOrderPayment($order);
         $products = $this->prepareProductsList();
+        $payments = $this->getOrderPayments($order);
         $clients    = $doctrine->getRepository('AppBundle:Client')->findAll();
 
         $params = [
@@ -77,6 +78,10 @@ class OrdersController extends Controller
                 'id'         => 'productsSelection',
                 'orderItems' => $orderItems,
                 'products'   => json_encode($products)
+            ],
+            'paymentBlockVars' => [
+                'id'         => 'paidByCash',
+                'payments'   => $payments
             ]
         ];
 
@@ -111,9 +116,11 @@ class OrdersController extends Controller
         $order->setSum((float)$post->get('cost'));
         $order->setClient($client);
 
+
         if (!$isNew)
         {
             $this->deleteOrderItems($order);
+            $order->setStatus(OrderStatus::OPEN);
         }
 
         $this->saveOrder($order);
@@ -211,6 +218,21 @@ class OrdersController extends Controller
             $orderPayment->setCreatedAt(new \DateTime($cashPaymentInfo['date']));
             $orderPayment->setSum($cashPaymentInfo['sum']);
             $em->persist($orderPayment);
+        }
+
+        $em->flush();
+
+        $sum = $this->getOrderPaymentSum($order);
+        if ($sum > 0)
+        {
+            $order->setStatus(OrderStatus::PROCESSING);
+            $em->persist($order);
+        }
+
+        if ($order->getSum() <= ($sum + (float)$order->getDiscount()))
+        {
+            $order->setStatus(OrderStatus::PAID);
+            $em->persist($order);
         }
 
         $em->flush();

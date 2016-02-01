@@ -14,5 +14,7 @@
       </li>
     {% endfor %}
   </ul>
-  <input class="form-control" autocomplete="off" spellcheck="false" type="text" id="{{ id }}Inserter" data-products="{{ products }}" placeholder="Введите название товара и нажмите enter" />
+  {% if isEditable %}
+    <input class="form-control" autocomplete="off" spellcheck="false" type="text" id="{{ id }}Inserter" data-products="{{ products }}" placeholder="Введите название товара и нажмите enter" />
+  {% endif %}
 </div>

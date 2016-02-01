@@ -17,7 +17,7 @@
       <tr role="row" data-payment-id="" class="cash hidden" id="{{ id }}StubCashRow">
         <td><input class="form-control date date_picker" type="text" value="{{ "now"|date('d.m.Y') }}" /></td>
         <td class="sum"><input class="form-control sum sum_holder" autocomplete="off" spellcheck="false" type="text" id="{{ id }}Inserter" data-rewords="" placeholder="Введите сумму платежа" /></td>
-        <td class="type" data-value="1">Наличными</td>
+        <td class="type">Наличными</td>
         <td><span class="glyphicon glyphicon-remove remove_payment"></span></td>
       </tr>
       <tr role="row" data-payment-id="" class="reword hidden" id="{{ id }}StubRewordRow">
@@ -31,9 +31,9 @@
         <td><span class="glyphicon glyphicon-remove remove_payment"></span></td>
       </tr>
       {% for payment in payments %}
-        <tr role="row" data-payment-id="{{ payment.getOrderPaymentId() }}">
-          <td class="date">{{ payment.getCreatedAt() }}</td>
-          <td class="sum">{{ payment.getSum() }}</td>
+        <tr role="row" class="cash" data-payment-id="{{ payment.getOrderPaymentId() }}">
+          <td class="date"><input readonly class="form-control date date_picker" type="text" value="{{ payment.getCreatedAt()|date('d.m.Y') }}" /></td>
+          <td class="sum"><input readonly class="form-control sum sum_holder" autocomplete="off" value="{{ payment.getSum() }}" spellcheck="false" type="text" id="{{ id }}Inserter" data-rewords="" placeholder="Введите сумму платежа" /></td>
           <td class="type">{{ payment.getName() }}</td>
           <td></td>
         </tr>

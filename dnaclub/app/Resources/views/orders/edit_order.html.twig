@@ -1,49 +1,61 @@
 {% extends 'layout.html.twig' %}
-{% block pageH1 %}Редактирование продажи{% endblock %}
+{% block pageH1 %}Редактирование продажи <button type="submit" id="submit" class="btn btn-success float_right">Сохранить</button>{% endblock %}
 {% block content %}
   <form action="{{ path('editOrderAjax', {'orderId': order.getOrderId()}) }}" method="post" id="createOrderForm">
-    <div class="form-group">
-      <label for="userName">ФИО</label>
-      <select id="userName" name="user_name" class="form-control">
-        {% for client in clients %}
-          <option
-            value="{{ client.getClientId() }}"
-            {% if client.getClientId() == order.getClient().getClientId() %}
-              selected
-            {% endif %}
-          >
-            {{ client.getName() }}
-          </option>
-        {% endfor %}
-      </select>
+    <div class="col-md-6 half_block">
+      <div class="form-group">
+        <label for="orderCreatedDate">Дата</label>
+        <input type="text" id="orderCreatedDate" class="form-control date_picker form-control" data-provide="datepicker" value="{{ order.getCreatedAt()|date('d.m.Y') }}">
+      </div>
+      <div class="form-group">
+        <label for="userName">ФИО</label>
+        <select id="userName" name="user_name" class="form-control">
+          {% for client in clients %}
+            <option
+              value="{{ client.getClientId() }}"
+              {% if client.getClientId() == order.getClient().getClientId() %}
+                selected
+              {% endif %}
+            >
+              {{ client.getName() }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        {% include 'include/product_selection_block.html.twig' with {'id': productBlockVars['id'], 'isEditable': order.isProductsEditable(), 'products': productBlockVars['products'], 'orderItems': productBlockVars['orderItems']} %}
+      </div>
     </div>
-    <div class="form-group">
-      {% include 'include/product_selection_block.html.twig' with productBlockVars %}
+    <div class="col-md-6 half_block">
+      <div class="form-group">
+        <label for="discount">Скидка</label>
+        <input class="form-control" type="text" name="discount" id="discount" placeholder="Введите скидку" value="{{ order.getDiscount() }}" />
+      </div>
+      <div class="form-group">
+        {% include 'include/payment_selection_block.html.twig' with {'id': paymentBlockVars['id'], 'payments': paymentBlockVars['payments']} %}
+      </div>
+      <input type="hidden" id="paymentInfo" name="payment_info" value="" />
+      <input type="hidden" id="productsInfo" name="products_info" value="" />
+      <input type="hidden" id="cost" name="cost" value="" />
+      <input type="hidden" id="debtField" name="debt" value="" />
     </div>
-    <div class="form-group">
-      <label for="discount">Скидка</label>
-      <input class="form-control" type="text" name="discount" id="discount" value="{{ order.getDiscount() }}" />
-    </div>
-    <div class="form-group">
-      <label for="paidByCash">Оплачено наличными</label>
-      <input class="form-control" type="text" name="paidByCash" id="paidByCash" value="{{ orderPayment ? orderPayment.getSum() : '' }}" />
-    </div>
-    <div class="form-group">
-      <label for="debt">Долг</label>
-      <input class="form-control" type="text" name="debt" id="debt" readonly value="{{ order.getDebt() * -1 ?: 0 }}" />
-    </div>
-    <input type="hidden" id="productsInfo" name="products_info" value="" />
-    <input type="hidden" id="cost" name="cost" value="{{ order.getSum() }}" />
-    <button type="submit" id="submit" class="btn btn-default">Сохранить</button>
   </form>
 {% endblock %}
 {% block javascripts %}
+  {{ parent() }}
+  <script src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
+  <script src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js') }}"></script>
   <script src="{{ asset('js/lib/bootstrap.typeahead.js') }}"></script>
+  <script src="{{ asset('js/lib/jquery.json.min.js') }}"></script>
   <script src="{{ asset('js/ui-kit/NumberFormField.class.js') }}"></script>
   <script src="{{ asset('js/ui-kit/ProductSelectionBlock.class.js') }}"></script>
-  <script src="{{ asset('js/orders/CreateOrderPage.js') }}"></script>
+  <script src="{{ asset('js/ui-kit/PaymentSelectionBlock.class.js') }}"></script>
+  <script src="{{ asset('js/orders/OrderPage.js') }}"></script>
 {% endblock %}
 {% block stylesheets %}
+  {{ parent() }}
+  <link href="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css') }}" type="text/css" rel="stylesheet" />
   <link rel="stylesheet" type="text/css" href="{{ asset('css/orders/manage.css') }}" />
   <link rel="stylesheet" type="text/css" href="{{ asset('css/ui-kit/product_selection_block.css') }}" />
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/ui-kit/payment_selection_block.css') }}" />
 {% endblock %}
