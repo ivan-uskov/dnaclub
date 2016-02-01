@@ -230,4 +230,10 @@ class Reward
         $em->persist($this);
         $em->flush();
     }
+
+    public function getName()
+    {
+        setlocale(LC_TIME, "ru_RU");
+        return strftime("%B %Y", $this->getDate()->getTimestamp()) . " ({$this->getRemainingSum()}/{$this->getSum()})";
+    }
 }

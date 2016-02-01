@@ -1,7 +1,12 @@
+.payment_selection_block .sum_container input
+{
+    width: 160px;
+}
+
 .payment_selection_block .sum_container input,
 .payment_selection_block .sum_container select
 {
-    width: 160px;
+    width: 100%;
 }
 
 .payment_selection_block .add_reward_button

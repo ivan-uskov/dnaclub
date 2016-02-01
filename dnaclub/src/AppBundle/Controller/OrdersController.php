@@ -6,6 +6,8 @@ use AppBundle\config\OrderStatus;
 use AppBundle\config\PaymentType;
 use AppBundle\lib\OrderItemPeer;
 use AppBundle\Entity\OrderItem;
+use AppBundle\Entity\Reward;
+use AppBundle\Entity\Repository\RewardRepository;
 use AppBundle\Form\OrderSearchForm;
 use AppBundle\Form\PreOrderSearchForm;
 use AppBundle\utils\ArrayUtils;
@@ -69,6 +71,8 @@ class OrdersController extends Controller
         $products = $this->prepareProductsList();
         $payments = $this->getOrderPayments($order);
         $clients    = $doctrine->getRepository('AppBundle:Client')->findAll();
+        $rewardsRepository = $this->getDoctrine()->getRepository('AppBundle:Reward'); /** @var $rewardsRepository RewardRepository */
+        $rewards = $rewardsRepository->findNotDeletedByClient($order->getClient());
 
         $params = [
             'order'            => $order,
@@ -80,8 +84,9 @@ class OrdersController extends Controller
                 'products'   => json_encode($products)
             ],
             'paymentBlockVars' => [
-                'id'         => 'paidByCash',
-                'payments'   => $payments
+                'clientRewards' => $rewards,
+                'id'            => 'paidByCash',
+                'payments'      => $payments
             ]
         ];
 

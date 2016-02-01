@@ -6,9 +6,14 @@ $(function()
         $('#debt').text(result >= 0 ? 0 : result);
     }
 
+    var clientSelect = $('#userName');
     var discount = new NumberFormField('discount', update);
     var productsBlock = new ProductSelectionBlock('productsSelection', update);
     var paymentBlock = new PaymentSelectionBlock('paidByCash', update);
+    paymentBlock.updateRewardsList(clientSelect.find('option:selected').val());
+    clientSelect.change(function() {
+        paymentBlock.updateRewardsList(clientSelect.val());
+    });
     update();
 
     $('#submit').click(function(){

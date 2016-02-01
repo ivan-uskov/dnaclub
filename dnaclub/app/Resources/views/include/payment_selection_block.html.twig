@@ -1,4 +1,5 @@
 <div class="payment_selection_block" id="{{ id }}">
+  <input type="hidden" id="rewardsListUrl" value="{{ path('clientRewardsAjax', {'clientId': 'ORDER_ID'}) }}" />
   <input type="hidden" name="paidByCash" id="paidByCash" />
   <label>Оплата - долг <span id="debt">0</span> руб.</label>
   <a id="{{ id }}AddByReword" class="btn btn-default btn-add-top float_right add_reward_button">Вознаграждением</a>
@@ -14,17 +15,19 @@
       </tr>
     </thead>
     <tbody id="{{ id }}List">
-      <tr role="row" data-payment-id="" class="cash hidden" id="{{ id }}StubCashRow">
+      <tr role="row" data-payment-id="" class="cash new hidden" id="{{ id }}StubCashRow">
         <td><input class="form-control date date_picker" type="text" value="{{ "now"|date('d.m.Y') }}" /></td>
         <td class="sum"><input class="form-control sum sum_holder" autocomplete="off" spellcheck="false" type="text" id="{{ id }}Inserter" data-rewords="" placeholder="Введите сумму платежа" /></td>
         <td class="type">Наличными</td>
         <td><span class="glyphicon glyphicon-remove remove_payment"></span></td>
       </tr>
-      <tr role="row" data-payment-id="" class="reword hidden" id="{{ id }}StubRewordRow">
+      <tr role="row" data-payment-id="" class="reword new hidden" id="{{ id }}StubRewordRow">
         <td><input class="form-control date date_picker" type="text" value="{{ "now"|date('d.m.Y') }}" /></td>
         <td class="sum_container">
           <input class="form-control sum" autocomplete="off" spellcheck="false" type="text" data-rewords="" placeholder="Введите сумму платежа" />
-          <select name="user_name" class="form-control current_reward"></select>
+          <select name="user_name" class="form-control current_reward">
+            <option value="0" disabled selected>Выберите вознаграждение</option>
+          </select>
           <div class="clear"></div>
         </td>
         <td class="type" data-value="1">Вознаграждением</td>
@@ -43,11 +46,15 @@
             <td><input class="form-control date date_picker" type="text" value="{{ payment.getCreatedAt()|date('d.m.Y') }}" readonly /></td>
             <td class="sum_container">
               <input readonly class="form-control sum" autocomplete="off" value="{{ payment.getReward().getRemainingSum() }}" spellcheck="false" type="text" data-rewords="" placeholder="Введите сумму платежа" />
-              <select name="user_name" class="form-control current_reward" readonly></select>
+              <select name="user_name" class="form-control current_reward" readonly>
+                {% for reward in clientRewards %}
+                  <option value="{{ reward.getRewardId() }}" {% if (reward.getRewardId() == payment.getReward().getRewardId()) %}selected="selected"{% endif %} disabled>{{ reward.getName() }}</option>
+                {% endfor %}
+              </select>
               <div class="clear"></div>
             </td>
             <td class="type" data-value="1">{{ payment.getName() }}</td>
-            <td><span class="glyphicon glyphicon-remove remove_payment"></span></td>
+            <td></td>
           </tr>
         {% endif %}
       {% endfor %}

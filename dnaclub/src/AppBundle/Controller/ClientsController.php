@@ -3,10 +3,13 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Client;
+use AppBundle\Entity\Reward;
 use AppBundle\Entity\DiseaseHistory;
+use AppBundle\Entity\Repository\RewardRepository;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
@@ -99,6 +102,29 @@ class ClientsController extends Controller
 
             return $this->redirectToRoute('clientsList');
         }
+    }
+
+    /**
+     * @Route("/client/{clientId}/ajax/rewards", name="clientRewardsAjax")
+     */
+    public function clientRewardsAjaxAction(Request $request, $clientId)
+    {
+        $rewardsJson = [];
+        $client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
+        $rewardsRepository = $this->getDoctrine()->getRepository('AppBundle:Reward'); /** @var $rewardsRepository RewardRepository */
+        $rewards = $rewardsRepository->findNotDeletedByClient($client); /** @var Reward $reward */
+
+        foreach ($rewards as $reward)
+        {
+            $rewardsJson[] = [
+                'id'        => $reward->getRewardId(),
+                'sum'       => $reward->getSum(),
+                'name'      => $reward->getName(),
+                'remaining' => $reward->getRemainingSum()
+            ];
+        }
+
+        return new JsonResponse(['rewards' => $rewardsJson]);
     }
 
     /**

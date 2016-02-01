@@ -435,4 +435,9 @@ class Order
     {
         return $this->getStatus() == OrderStatus::OPEN;
     }
+
+    public function isNotOpen()
+    {
+        return $this->getStatus() != OrderStatus::OPEN;
+    }
 }
