@@ -21,4 +21,32 @@ class ClientRepository extends \Doctrine\ORM\EntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    function getFilteredByCheckboxes($isSubscribed, $isSchoolLearner, $isOnlineLearner)
+    {
+        $qb = $this->getEntityManager()
+            ->createQueryBuilder()
+            ->select('c')
+            ->from('AppBundle\Entity\Client', 'c');
+
+        if ($isSubscribed)
+        {
+            $qb->orWhere('c.isSubscribed = 1');
+        }
+        if ($isSchoolLearner)
+        {
+            $qb->orWhere('c.isSchoolLearner = 1');
+        }
+        if ($isOnlineLearner)
+        {
+            $qb->orWhere('c.isOnlineLearner = 1');
+        }
+
+        $qb->andWhere('c.isDeleted = 0');
+
+        return $qb
+            ->orderBy('c.lastName, c.firstName, c.middleName','asc')
+            ->getQuery()
+            ->getResult();
+    }
 }
