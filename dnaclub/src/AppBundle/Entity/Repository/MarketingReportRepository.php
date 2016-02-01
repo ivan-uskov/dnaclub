@@ -34,7 +34,7 @@ class MarketingReportRepository extends EntityRepository
             $endSum = $releaseSum - $reportRow->getContractSum() - $reportRow->getMaintenanceSum();
             $client = $reportRow->getClient();
 
-            $row = array(
+            $result[$client->getClientId()] = array(
                 'clientId' => $client->getClientId(),
                 'name'     => $client->getFullName(),
                 'startSum' => $startSum,
@@ -43,7 +43,6 @@ class MarketingReportRepository extends EntityRepository
                 'subscrInfo' => $reportRow->getSubscriptionsInfo(),
                 'endSum'      => $endSum
             );
-            array_push($result, $row);
         }
 
         return $result;
