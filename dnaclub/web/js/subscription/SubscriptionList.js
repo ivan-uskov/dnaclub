@@ -1,5 +1,9 @@
 $(function()
 {
+    var subscriptionForm = $("#add_form");
+    var buttonAddTop = $("#button_add_top");
+    subscriptionForm.hide();
+
     var PAGE_LENGTH = 25;
 
     var commonColumnDefs = [
@@ -9,12 +13,10 @@ $(function()
         {type: 'formatted-num', targets: [4]}
     ];
 
-    var clientColumnDefs = [{visible: false, targets: 0 }];
+    var clientColumnDefs = [{visible: false, targets: 0}];
 
     if ($("#template_mode").val() == "subscriptions")
     {
-
-
         $("#subscription_list").DataTable({
             pageLength: PAGE_LENGTH,
             order: [[0, "asc"]],
@@ -29,4 +31,11 @@ $(function()
             columnDefs: commonColumnDefs.concat(clientColumnDefs)
         });
     }
+
+    buttonAddTop.click(function(event)
+    {
+        event.preventDefault();
+        subscriptionForm.removeClass("hidden").show();
+        buttonAddTop.addClass("hidden");
+    })
 });
