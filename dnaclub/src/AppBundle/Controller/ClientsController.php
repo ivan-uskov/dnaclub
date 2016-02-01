@@ -17,46 +17,43 @@ class ClientsController extends Controller
      */
     public function clientsListAction(Request $request)
     {
-        $clients = $this->getDoctrine()->getRepository('AppBundle:Client')->findBy(
-            ['isDeleted' => 0],
-            ['lastName' => "ASC"]
-        );
+        $filters = array();
+        $keyIsSubscribed = "checkbox_is_subscribed";
+        $keyIsSchoolLearner = "checkbox_is_school_learner";
+        $keyIsOnlineLearner = "checkbox_is_online_learner";
 
-        return $this->render('clients/clients_list.html.twig', ['clients' => $clients]);
-    }
+        if ($request->isMethod("post")) {
+            $postKeys = $request->request->keys();
+            $isSubscribed = in_array($keyIsSubscribed, $postKeys);
+            $isSchoolLearner = in_array($keyIsSchoolLearner, $postKeys);
+            $isOnlineLearner = in_array($keyIsOnlineLearner, $postKeys);
 
-    /**
-     * @Route("/clients-search-ajax", name="clientsListSearchAjax")
-     */
-    public function clientsListSearchAjaxAction(Request $request)
-    {
-        if (!$request->isXmlHttpRequest())
-        {
-            return $this->redirectToRoute('clientsList');
+            if ($isSubscribed)
+            {
+                array_push($filters, $keyIsSubscribed);
+            }
+            if ($isSchoolLearner)
+            {
+                array_push($filters, $keyIsSchoolLearner);
+            }
+            if ($isOnlineLearner)
+            {
+                array_push($filters, $keyIsOnlineLearner);
+            }
+            $clients = $this->getDoctrine()->getRepository('AppBundle:Client')->getFilteredByCheckboxes($isSubscribed, $isSchoolLearner, $isOnlineLearner);
         }
-        $queryStr = trim($request->get('query'));
-        if (!$queryStr)
+        else
         {
-            die();
+            $clients = $this->getDoctrine()->getRepository('AppBundle:Client')->findBy(
+                ['isDeleted' => 0],
+                ['lastName' => "ASC"]
+            );
         }
 
-        $clientsRepository = $this->getDoctrine()->getRepository('AppBundle:Client');
-        $queryBuilder = $clientsRepository
-            ->createQueryBuilder('AppBundle:Client')
-            ->from('AppBundle:Client', 'c');
-        $queryBuilder
-            ->where(
-                $queryBuilder->expr()->orX(
-                    $queryBuilder->expr()->like('c.firstName', ':query'),
-                    $queryBuilder->expr()->like('c.middleName', ':query'),
-                    $queryBuilder->expr()->like('c.lastName', ':query')
-                )
-            )
-            ->setParameter('query', '%' . $queryStr . '%');
-        $query = $queryBuilder->getQuery();
-        $clients = $query->getResult();
-
-        return $this->render('clients/clients_list_ajax.html.twig', ['clients' => $clients]);
+        return $this->render('clients/clients_list.html.twig', [
+            'clients' => $clients,
+            'filters' => $filters
+        ]);
     }
 
     /**
