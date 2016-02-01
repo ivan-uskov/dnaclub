@@ -225,7 +225,7 @@ class Reward
         $this->setClient($client);
         if ($isNew)
         {
-            $this->setRemainingSum(0);
+            $this->setRemainingSum($post->get('sum'));
         }
         $em->persist($this);
         $em->flush();
