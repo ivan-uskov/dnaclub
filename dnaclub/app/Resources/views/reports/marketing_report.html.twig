@@ -43,18 +43,18 @@
         </thead>
         <tbody>
         {% for reportRow in reportRows %}
-          {% set clientId = reportRow.getClient().getClientId() %}
-          {% set result =  reportRow.getStartSum() + reportRow.getOrderSum() - reportRow.getContractSum() - reportRow.getMaintenanceSum%}
+          {% set clientId = reportRow['clientId'] %}
+          {% set result =  reportRow['endSum'] %}
           <tr>
             <td>
               <a href="{{ path('editClient', {'clientId': clientId}) }}">
-                {{ reportRow.getClient().getFullName() }}
+                {{ reportRow['name'] }}
               </a>
             </td>
-            <td class="text-right">{{ reportRow.getStartSum()|localizedcurrency('RUB') }}</td>
-            <td class="text-right">{{ reportRow.getOrderSum()|localizedcurrency('RUB') }}</td>
-            <td class="text-right">{{ (reportRow.getStartSum() + reportRow.getOrderSum())|localizedcurrency('RUB') }}</td>
-            <td class="text-center">{{ reportRow.getSubscriptionsInfo() }}</td>
+            <td class="text-right">{{ reportRow['startSum']|localizedcurrency('RUB') }}</td>
+            <td class="text-right">{{ reportRow['orderSum']|localizedcurrency('RUB') }}</td>
+            <td class="text-right">{{ reportRow['releaseSum']|localizedcurrency('RUB') }}</td>
+            <td class="text-center">{{ reportRow['subscrInfo'] }}</td>
             <td class="text-center">
               <input type="number" class="small-counter form-control" autofocus min="0" id="{{ clientId }}_add_contract" name="add_new_subscription" value="0">
             </td>
