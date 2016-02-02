@@ -1,18 +1,28 @@
 {% extends 'layout.html.twig' %}
-{% block pageH1 %}Товары{% endblock %}
+{% block pageH1 %}
+  Товары
+  <a id="button_add_top" class="btn btn-success btn-add-top" href="javascript:void(0);">Добавить</a>
+{% endblock %}
+{% block stylesheets %}
+  {{ parent() }}
+  <link href="{{ asset('css/common/forms_common.css') }}" type="text/css" rel="stylesheet"/>
+  <link href="{{ asset('css/common/lists_common.css') }}" type="text/css" rel="stylesheet"/>
+{% endblock %}
 {% block content %}
   <div class="panel-body">
-    {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
-    {{ form_start(form) }}
-    <div class="row">
-      <div class="col-md-8 col-sm-12">
-        {{ form_row(form.name) }}
-        {{ form_row(form.price) }}
-        {{ form_row(form.pieceName) }}
-        {{ form_row(form.save) }}
+      <div id="add_form" class="hidden">
+      {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+      {{ form_start(form) }}
+      <div class="row">
+        <div class="col-md-8 col-sm-12">
+          {{ form_row(form.name) }}
+          {{ form_row(form.price) }}
+          {{ form_row(form.pieceName) }}
+          {{ form_row(form.save) }}
+        </div>
       </div>
+      {{ form_end(form) }}
     </div>
-    {{ form_end(form) }}
   </div>
   <div class="panel-body">
     <div class="table-responsive">
@@ -56,6 +66,16 @@
           { type: 'formatted-num', targets: [1] }
         ]
       });
+    });
+
+    var subscriptionForm = $("#add_form");
+    var buttonAddTop = $("#button_add_top");
+
+    buttonAddTop.click(function(event)
+    {
+      event.preventDefault();
+      subscriptionForm.removeClass("hidden");
+      buttonAddTop.addClass("hidden");
     });
   </script>
 {% endblock %}
