@@ -12,7 +12,7 @@ $(document).ready(function()
             pageLength: 25,
             order: [[3, "desc"]],
             columnDefs: [
-                {searchable: false, targets: [1, 2, 3, 4, 5, 6]},
+                {searchable: false, targets: [1, 2, 3, 4, 5, 6, 7]},
                 {orderable: false, targets: [-5, -4, -3]},
                 {type: 'formatted-num', targets: [1, 2, 3, 6]}
             ]
@@ -36,6 +36,8 @@ $(document).ready(function()
 
                 needSaveData = true;
                 $('#submit_subscriptions').show();
+                $('#alert-success').hide();
+                $('#alert-danger').hide();
             }
 
             function getValue(id, name, isText)
