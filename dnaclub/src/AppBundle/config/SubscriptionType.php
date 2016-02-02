@@ -43,4 +43,20 @@ class SubscriptionType
     {
         return ArrayUtils::getParameter(self::$prices, $type, $default);
     }
+
+    public static function formatSubscriptionInfo($contractCnt, $maintenanceCnt)
+    {
+        $result = '';
+        if ($contractCnt)
+        {
+            $result = $contractCnt . self::getShortName(self::CONTRACT) . ' ';
+        }
+
+        if ($maintenanceCnt)
+        {
+            $result .= $maintenanceCnt . self::getShortName(self::MAINTENANCE);
+        }
+
+        return $result;
+    }
 }

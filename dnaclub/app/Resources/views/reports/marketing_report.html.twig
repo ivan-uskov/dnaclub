@@ -15,12 +15,14 @@
       {{ form_widget(form.months, {'attr': {'class': 'monthSelect', 'onchange': "this.form.submit()"}}) }}
     {{ form_end(form) }}
     </div>
-    <div class="col-md-6 text-right">
-      {% form_theme updateReportForm 'bootstrap_3_horizontal_layout.html.twig' %}
-      {{ form_start(updateReportForm) }}
-        {{ form_widget(updateReportForm.update) }}
-      {{ form_end(updateReportForm) }}
-    </div>
+    {% if showUpdateButton %}
+      <div class="col-md-6 text-right">
+        {% form_theme updateReportForm 'bootstrap_3_horizontal_layout.html.twig' %}
+        {{ form_start(updateReportForm) }}
+          {{ form_widget(updateReportForm.update) }}
+        {{ form_end(updateReportForm) }}
+      </div>
+    {% endif %}
   </div>
   {% if successMessage %}<div class="alert alert-success">{{ successMessage }}</div>{% endif %}
   {% if errorMessage %}<div class="alert alert-danger">{{ errorMessage }}</div>{% endif %}

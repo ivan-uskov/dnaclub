@@ -33,7 +33,7 @@ class ReportsController extends Controller
             ->setAction($this->generateUrl('updateMarketingReport'))
             ->setMethod('POST')
             ->add('date', 'hidden', array('data' => $date))
-            ->add('update', 'submit', array('label' => 'Обновить отчет'))
+            ->add('update', 'submit', array('label' => 'Пересчитать отчет'))
             ->getForm()
         ;
         $updateReportForm->handleRequest($request);
@@ -61,7 +61,8 @@ class ReportsController extends Controller
             'contractPrice' => SubscriptionType::getPrice(SubscriptionType::CONTRACT),
             'maintenancePrice' => SubscriptionType::getPrice(SubscriptionType::MAINTENANCE),
             'successMessage' => $successMessage,
-            'errorMessage' => $errorMessage
+            'errorMessage' => $errorMessage,
+            'showUpdateButton' => ($defaultDate != $date)
         ]);
     }
 

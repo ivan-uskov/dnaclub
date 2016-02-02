@@ -257,17 +257,6 @@ class MarketingReport
 
     public function getSubscriptionsInfo()
     {
-        $result = '';
-        if ($this->getContract())
-        {
-            $result = $this->getContract() . SubscriptionType::getShortName(SubscriptionType::CONTRACT) . ' ';
-        }
-
-        if ($this->getMaintenance())
-        {
-            $result .= $this->getMaintenance() . SubscriptionType::getShortName(SubscriptionType::MAINTENANCE);
-        }
-
-        return $result;
+        return SubscriptionType::formatSubscriptionInfo($this->getContract(), $this->getMaintenance());
     }
 }
