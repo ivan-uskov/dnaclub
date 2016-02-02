@@ -23,7 +23,7 @@ class RewardsController extends Controller
      */
     public function clientsRewardsListAction(Request $request, $clientId)
     {
-        return $this->rewardsListImpl($request, $clientId);
+        return $this->rewardsListImpl($request, null, $clientId);
     }
 
     /**
@@ -47,7 +47,14 @@ class RewardsController extends Controller
      */
     public function editRewardAction(Request $request, $rewardId)
     {
-        return $this->editRewardImpl($request, $rewardId);
+        if ($request->isMethod(Request::METHOD_GET))
+        {
+            return $this->rewardsListImpl($request, $rewardId, null);
+        }
+        else
+        {
+            return $this->editRewardImpl($request, $rewardId, null);
+        }
     }
 
     /**
@@ -55,7 +62,14 @@ class RewardsController extends Controller
      */
     public function editClientsRewardAction(Request $request, $clientId, $rewardId)
     {
-        return $this->editRewardImpl($request, $rewardId, $clientId);
+        if ($request->isMethod(Request::METHOD_GET))
+        {
+            return $this->rewardsListImpl($request, $rewardId, $clientId);
+        }
+        else
+        {
+            return $this->editRewardImpl($request, $rewardId, $clientId);
+        }
     }
 
     /**
@@ -87,7 +101,7 @@ class RewardsController extends Controller
     /**
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    private function rewardsListImpl(Request $request, $clientId = null)
+    private function rewardsListImpl(Request $request, $rewardId = null, $clientId = null)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -103,6 +117,10 @@ class RewardsController extends Controller
         {
             $client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
         }
+        $clients = $this->getDoctrine()->getRepository("AppBundle:Client")->findBy(
+            ['isDeleted' => 0],
+            ['lastName' => 'ASC']
+        );
         $isClientPredefined = (($clientId != null) && ($client != null));
         if ($isClientPredefined)
         {
@@ -114,12 +132,20 @@ class RewardsController extends Controller
             $rewards = $this->getDoctrine()->getRepository('AppBundle:Reward')->getRewardsByMonth($date);
             $templateMode = 'rewards';
         }
+        $reward = null;
+        if ($rewardId != null)
+        {
+            $reward = $this->getDoctrine()->getRepository('AppBundle:Reward')->find($rewardId);
+        }
 
         return $this->render('payment/rewards_list.html.twig', [
             'rewards' => $rewards,
-            'client'  => $client,
+            'reward'  => $reward,
             'mode'    => $templateMode,
-            'form'    => $form->createView()
+            'form'    => $form->createView(),
+            'clients' => $clients,
+            'client'  => $client,
+            'isNew'   => ($rewardId == null)
         ]);
     }
 

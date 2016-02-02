@@ -2,7 +2,6 @@ $(function()
 {
     var subscriptionForm = $("#add_form");
     var buttonAddTop = $("#button_add_top");
-    subscriptionForm.hide();
 
     var PAGE_LENGTH = 25;
 
@@ -35,7 +34,7 @@ $(function()
     buttonAddTop.click(function(event)
     {
         event.preventDefault();
-        subscriptionForm.removeClass("hidden").show();
+        subscriptionForm.removeClass("hidden");
         buttonAddTop.addClass("hidden");
-    })
+    });
 });

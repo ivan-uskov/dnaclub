@@ -1,81 +1,179 @@
 {% extends 'layout.html.twig' %}
 {% block stylesheets %}
   {{ parent() }}
-  <link href="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css') }}" type="text/css" rel="stylesheet" />
-  <link href="{{ asset('css/reward/reward.css') }}" type="text/css" rel="stylesheet" />
-  <link href="{{ asset('css/common/forms_common.css') }}" type="text/css" rel="stylesheet" />
-  <link href="{{ asset('css/common/lists_common.css') }}" type="text/css" rel="stylesheet" />
+  <link href="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css') }}"
+        type="text/css" rel="stylesheet"/>
+  <link href="{{ asset('css/reward/reward.css') }}" type="text/css" rel="stylesheet"/>
+  <link href="{{ asset('css/common/forms_common.css') }}" type="text/css" rel="stylesheet"/>
+  <link href="{{ asset('css/common/lists_common.css') }}" type="text/css" rel="stylesheet"/>
 {% endblock %}
 {% block pageH1 %}
   Вознаграждения
-  {% if (mode == 'clientsRewards') %}
-    <a class="btn btn-success btn-add-top" target="_blank" href="{{ path('createClientsReward', {'clientId': client.getClientId()}) }}">Добавить</a>
-  {% else %}
-    <a class="btn btn-success btn-add-top" target="_blank" href="{{ path('createReward') }}">Добавить</a>
+  {% if isNew %}
+    <a id="button_add_top" class="btn btn-success btn-add-top" href="javascript:void(0);">Добавить</a>
   {% endif %}
 {% endblock %}
 {% block content %}
-
   {% if (mode == 'clientsRewards') %}
     <h3 class="header-client-fullname">{{ client.getFullName() }}</h3>
-    {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'clientsRewards'} %}
   {% endif %}
+  <div class="panel-body">
+    {% if (mode == 'clientsRewards') %}
+      {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'clientsRewards'} %}
+    {% endif %}
 
+    {% if (isNew) %}
+      {% if (mode == 'clientsRewards') %}
+        {% set rewardFormAction = path('createClientsReward', {'clientId': client.getClientId()}) %}
+      {% else %}
+        {% set rewardFormAction = path('createReward') %}
+      {% endif %}
+    {% else %}
+      {% if (mode == 'clientsRewards') %}
+        {% set rewardFormAction = path('editClientsReward', {'clientId': client.getClientId(), 'rewardId': reward.getRewardId()}) %}
+      {% else %}
+        {% set rewardFormAction = path('editReward', {'rewardId': reward.getRewardId()}) %}
+      {% endif %}
+    {% endif %}
+    <div id="add_form" class="{% if isNew %}hidden{% endif %}">
+      <form class="form-horizontal" action="{{ rewardFormAction }}" method="post">
+        <div class="row">
+          <div class="col-md-8 col-sm-12">
+            {% if (mode == 'clientsReward') %}
+              <select name="client" id="client" class="hidden">
+                <option value="{{ client.getClientId() }}"
+                        selected="selected"
+                ></option>
+              </select>
+            {% else %}
+              <div class="form-group">
+                {% if (mode == 'rewards') %}
+                  <label class="col-sm-2 control-label" for="client">Клиент</label>
+                {% endif %}
+                <div class="col-md-10">
+                  <select name="client" id="client"
+                          class="form-control{% if (mode == 'clientsRewards') %} hidden{% endif %}">
+                    {% if not isNew %}
+                      {% set currentClientId = reward.getClient().getClientId() %}
+                    {% endif %}
+                    {% if (mode == 'clientsRewards') %}
+                      <option value="{{ client.getClientId() }}" selected="selected">{{ client.getFullName() }}</option>
+                    {% else %}
+                      {% for c in clients %}
+                        <option value="{{ c.getClientId() }}"
+                            {% if (not isNew) and (c.getClientId() == currentClientId) %}
+                              selected="selected"
+                            {% endif %}
+                        >{{ c.getFullName() }}</option>
+                      {% endfor %}
+                    {% endif %}
+                  </select>
+                </div>
+              </div>
+            {% endif %}
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label" for="sum">Сумма</label>
+
+              <div class="col-md-10">
+                <input class="form-control" type="text" name="sum" id="sum"
+                    {% if not isNew %}
+                      value="{{ reward.getSum() }}"
+                    {% endif %}
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="col-sm-2 control-label" for="date">Дата</label>
+
+              <div class="col-md-10">
+                <input class="form-control datepicker" type="text" name="date" id="date"
+                    {% if not isNew and (not reward.getDate() == null) %}
+                      value="{{ reward.getDate().format("d.m.Y") }}"
+                    {% endif %}
+                />
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-md-9 col-md-push-2">
+                <button type="submit" id="submit" class="btn btn-success">
+                  {% if isNew %}
+                    Добавить
+                  {% else %}
+                    Сохранить
+                  {% endif %}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
   {% if (mode == 'rewards') %}
     {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
-      {{ form_start(form) }}
-      {{ form_widget(form.months, {'attr': {'class': 'monthSelect', 'onchange': "this.form.submit()"}}) }}
+    {{ form_start(form) }}
+    {{ form_widget(form.months, {'attr': {'class': 'monthSelect', 'onchange': "this.form.submit()"}}) }}
     {{ form_end(form) }}
   {% endif %}
 
-  <input type="hidden" id="template_mode" value="{{ mode }}" />
-  <table class="table table-striped table-bordered table-hover" id="rewards_list">
-    <thead>
-    <tr>
-      <th>ФИО</th>
-      <th>Дата</th>
-      <th>Начислено</th>
-      <th>Остаток</th>
-      <th>Выдано</th>
-      <th></th>
-      <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    {% for reward in rewards %}
+  <input type="hidden" id="template_mode" value="{{ mode }}"/>
+  <div id="add_form" class="panel-body">
+    <table class="table table-striped table-bordered table-hover" id="rewards_list">
+      <thead>
       <tr>
-        <td>
-          <a href="{{ path('editClient', {'clientId': reward.getClient().getClientId()}) }}">
-            {{ reward.getClient().getFullName() }}
-          </a>
-        </td>
-        <td class="text-right">{{ reward.getDate()|date('d.m.Y') }}</td>
-        <td class="text-right">{{ reward.getSum()|localizedcurrency('RUB') }}</td>
-        <td class="text-right remaining-sum">{{ reward.getRemainingSum()|localizedcurrency('RUB') }}</td>
-        <td>
-          {% set payments = reward.getPayments() %}
-          {% if payments %}
-            {% for payment in payments %}
-              {{ payment.getSum()|localizedcurrency('RUB') }} - {{ payment.getCreatedAt()|date('d.m.Y') }}<br />
-            {% endfor %}
-          {% endif %}
-        </td>
-        {% if (mode == 'rewards') %}
-          <td><a href="{{ path('editReward', {'rewardId': reward.getRewardId()}) }}" class="glyphicon glyphicon-pencil"></a></td>
-          <td><a href="{{ path('deleteReward', {'rewardId': reward.getRewardId()}) }}" class="glyphicon glyphicon-remove delete-link"></a></td>
-        {% else %}
-          <td><a href="{{ path('editClientsReward', {'clientId': reward.getClient.getClientId(), 'rewardId': reward.getRewardId()}) }}" class="glyphicon glyphicon-pencil"></a></td>
-          <td><a href="{{ path('deleteClientsReward', {'clientId': reward.getClient.getClientId(), 'rewardId': reward.getRewardId()}) }}" class="glyphicon glyphicon-remove delete-link"></a></td>
-        {% endif %}
+        <th>ФИО</th>
+        <th>Дата</th>
+        <th>Начислено</th>
+        <th>Остаток</th>
+        <th>Выдано</th>
+        <th></th>
+        <th></th>
       </tr>
-    {% endfor %}
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+      {% for reward in rewards %}
+        <tr>
+          <td>
+            <a href="{{ path('editClient', {'clientId': reward.getClient().getClientId()}) }}">
+              {{ reward.getClient().getFullName() }}
+            </a>
+          </td>
+          <td class="text-right">{{ reward.getDate()|date('d.m.Y') }}</td>
+          <td class="text-right">{{ reward.getSum()|localizedcurrency('RUB') }}</td>
+          <td class="text-right remaining-sum">{{ reward.getRemainingSum()|localizedcurrency('RUB') }}</td>
+          <td>
+            {% set payments = reward.getPayments() %}
+            {% if payments %}
+              {% for payment in payments %}
+                {{ payment.getSum()|localizedcurrency('RUB') }} - {{ payment.getCreatedAt()|date('d.m.Y') }}<br/>
+              {% endfor %}
+            {% endif %}
+          </td>
+          {% if (mode == 'rewards') %}
+            <td><a href="{{ path('editReward', {'rewardId': reward.getRewardId()}) }}"
+                   class="glyphicon glyphicon-pencil"></a></td>
+            <td><a href="{{ path('deleteReward', {'rewardId': reward.getRewardId()}) }}"
+                   class="glyphicon glyphicon-remove delete-link"></a></td>
+          {% else %}
+            <td><a
+                  href="{{ path('editClientsReward', {'clientId': reward.getClient.getClientId(), 'rewardId': reward.getRewardId()}) }}"
+                  class="glyphicon glyphicon-pencil"></a></td>
+            <td><a
+                  href="{{ path('deleteClientsReward', {'clientId': reward.getClient.getClientId(), 'rewardId': reward.getRewardId()}) }}"
+                  class="glyphicon glyphicon-remove delete-link"></a></td>
+          {% endif %}
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
 {% endblock %}
 {% block javascripts %}
   {{ parent() }}
   <script src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
-  <script src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js') }}"></script>
+  <script
+      src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js') }}"></script>
   <script src="{{ asset('js/data-table/sorting-date-ru.js') }}"></script>
   <script src="{{ asset('js/data-table/sorting-formatted-number.js') }}"></script>
   <script src="{{ asset('js/rewards/RewardsList.js') }}"></script>

@@ -60,4 +60,13 @@ $(function()
             });
         }
     }
+
+    var subscriptionForm = $("#add_form");
+    var buttonAddTop = $("#button_add_top");
+    buttonAddTop.click(function(event)
+    {
+        event.preventDefault();
+        subscriptionForm.removeClass("hidden");
+        buttonAddTop.addClass("hidden");
+    });
 });
