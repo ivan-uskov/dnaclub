@@ -39,8 +39,7 @@ class OrderRepository extends EntityRepository
             ->createQueryBuilder()
             ->select('o')
             ->from('AppBundle\Entity\Order', 'o')
-            ->where('o.isPreOrder = 0')
-            ->andWhere('o.client = :client')
+            ->where('o.client = :client')
             ->setParameter('client', $client)
             ->orderBy('o.createdAt', 'desc')
             ->getQuery()
@@ -57,7 +56,6 @@ class OrderRepository extends EntityRepository
             ->createQueryBuilder()
             ->select('o')
             ->from('AppBundle\Entity\Order', 'o')
-            ->where('o.isPreOrder = 0')
             ->orderBy('o.createdAt', 'desc');
 
         if ($searchForm)
