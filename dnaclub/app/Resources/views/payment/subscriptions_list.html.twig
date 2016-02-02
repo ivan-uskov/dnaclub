@@ -62,8 +62,8 @@
         <tr>
           <th>Фио клиента</th>
           <th>Дата</th>
+          <th>Кол-во</th>
           <th>Тип подписки</th>
-          <th>Количество</th>
           <th>Сумма</th>
           <th></th>
         </tr>
@@ -77,8 +77,8 @@
               </a>
             </td>
             <td>{{ subscription.getDate()|date('d.m.Y') }}</td>
+            <td class="text-center">{{ subscription.getCount() }}</td>
             <td>{{ subscription.getTypeName() }}</td>
-            <td class="text-right">{{ subscription.getCount() }}</td>
             <td class="text-right">{{ subscription.getSum()|localizedcurrency('RUB') }}</td>
             {% if (mode == 'subscriptions') %}
               <td class="text-center"><a

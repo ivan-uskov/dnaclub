@@ -7,7 +7,7 @@ $(function()
 
     var commonColumnDefs = [
         {orderable: false, targets: [5]},
-        {searchable: false, targets: [1, 3, 4, 5]},
+        {searchable: false, targets: [1, 2, 4, 5]},
         {type: 'date-ru', targets: [1]},
         {type: 'formatted-num', targets: [4]}
     ];
