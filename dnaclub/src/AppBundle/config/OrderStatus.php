@@ -27,4 +27,9 @@ class OrderStatus
     {
         return ArrayUtils::getParameter(self::$names, $status, $default);
     }
+
+    public static function getPaidStatuses()
+    {
+        return [self::PROCESSING, self::PAID];
+    }
 }

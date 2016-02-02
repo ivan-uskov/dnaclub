@@ -67,4 +67,27 @@ class SubscriptionRepository extends EntityRepository
 
         return DateUtils::getMonthsSelectFromTimestamp($dates);
     }
+
+    public function findByMonthGroupedByClient($firstDayOfMonth)
+    {
+        $endDate = DateUtils::getFirstDayOfNextMonth($firstDayOfMonth);
+        $result = $this->getEntityManager()
+            ->createQueryBuilder()
+            ->select('c.clientId')
+            ->addSelect('SUM(CASE s.type WHEN 0 THEN s.sum ELSE 0 END) contractSum')
+            ->addSelect('SUM(CASE s.type WHEN 0 THEN s.count ELSE 0 END) contractCnt')
+            ->addSelect('SUM(CASE s.type WHEN 1 THEN s.sum ELSE 0 END) maintenanceSum')
+            ->addSelect('SUM(CASE s.type WHEN 1 THEN s.count ELSE 0 END) maintenanceCnt')
+            ->from('AppBundle:Subscription', 's')
+            ->innerJoin('s.client', 'c')
+            ->andWhere('s.date >= :startDate')
+            ->andWhere('s.date < :endDate')
+            ->setParameter('startDate',$firstDayOfMonth)
+            ->setParameter('endDate', $endDate)
+            ->groupBy('c')
+            ->getQuery()
+            ->getArrayResult();
+
+        return $result;
+    }
 }
