@@ -19,3 +19,8 @@ textarea
     width: 40px !important;
     padding: 6px 3px;
 }
+
+.subscription-column
+{
+    width: 95px;
+}
