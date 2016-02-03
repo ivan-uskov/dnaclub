@@ -1,7 +1,5 @@
 {% extends 'layout.html.twig' %}
-{% block pageH1 %}Добавление продажи
-
-{% endblock %}
+{% block pageH1 %}Добавление продажи <button type="submit" id="submit" class="btn btn-success float_right">Создать</button>{% endblock %}
 {% block content %}
   <form action="{{ path('createOrderAjax') }}" method="post" id="createOrderForm">
     <div class="col-md-6 half_block">
@@ -13,7 +11,7 @@
         <label for="userName">ФИО</label>
         <select id="userName" name="user_name" class="form-control">
           {% for client in clients %}
-            <option value="{{ client.getClientId() }}">{{ client.getName() }}</option>
+            <option value="{{ client.getClientId() }}">{{ client.getFullName() }}</option>
           {% endfor %}
         </select>
       </div>
@@ -49,7 +47,6 @@
       <input type="hidden" id="productsInfo" name="products_info" value="" />
       <input type="hidden" id="cost" name="cost" value="" />
       <input type="hidden" id="debtField" name="debt" value="" />
-      <button type="submit" id="submit" class="btn btn-success">Добавить</button>
     </div>
   </form>
 {% endblock %}

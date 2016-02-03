@@ -6,6 +6,8 @@ use AppBundle\config\OrderStatus;
 use AppBundle\config\PaymentType;
 use AppBundle\lib\OrderItemPeer;
 use AppBundle\Entity\OrderItem;
+use AppBundle\Entity\Reward;
+use AppBundle\Entity\Repository\RewardRepository;
 use AppBundle\Form\OrderSearchForm;
 use AppBundle\Form\PreOrderSearchForm;
 use AppBundle\utils\ArrayUtils;
@@ -53,7 +55,7 @@ class OrdersController extends Controller
     {
         $order = new Order();
         $this->saveOrderFromRequest($request->request, $order);
-        return $this->redirectToRoute('ordersList');
+        return $this->redirectToRoute('editOrder', ['orderId' => $order->getOrderId()]);
     }
 
     /**
@@ -69,6 +71,8 @@ class OrdersController extends Controller
         $products = $this->prepareProductsList();
         $payments = $this->getOrderPayments($order);
         $clients    = $doctrine->getRepository('AppBundle:Client')->findAll();
+        $rewardsRepository = $this->getDoctrine()->getRepository('AppBundle:Reward'); /** @var $rewardsRepository RewardRepository */
+        $rewards = $rewardsRepository->findNotDeletedByClient($order->getClient());
 
         $params = [
             'order'            => $order,
@@ -80,8 +84,9 @@ class OrdersController extends Controller
                 'products'   => json_encode($products)
             ],
             'paymentBlockVars' => [
-                'id'         => 'paidByCash',
-                'payments'   => $payments
+                'clientRewards' => $rewards,
+                'id'            => 'paidByCash',
+                'payments'      => $payments
             ]
         ];
 
@@ -96,13 +101,21 @@ class OrdersController extends Controller
         /** @var Order $order */
         $order = $this->getDoctrine()->getRepository("AppBundle:Order")->find($orderId);
         $this->saveOrderFromRequest($request->request, $order, false);
-        return $this->redirectToRoute('ordersList');
+        return $this->redirectToRoute('editOrder', ['orderId' => $order->getOrderId()]);
     }
 
-    private function saveOrder(Order $order)
+    private function saveOrder(Order $order, $isNew)
     {
         $em = $this->getDoctrine()->getManager();
-        $em->persist($order);
+        if ($isNew)
+        {
+            $em->persist($order);
+        }
+        else
+        {
+            $em->merge($order);
+        }
+
         $em->flush();
     }
 
@@ -114,26 +127,49 @@ class OrdersController extends Controller
         $order->setDebt(abs((float)$post->get('debt')));
         $order->setDiscount((float)$post->get('discount'));
         $order->setSum((float)$post->get('cost'));
-        $order->setClient($client);
 
-       if ($post->get('is_pre_order'))
-       {
-           $order->setIsPreOrder(true);
-           $plannedDate = $post->get('planned_product_date') ? new \DateTime($post->get('planned_product_date')) : null;
-           $actualDate = $post->get('actual_product_date') ? new \DateTime($post->get('actual_product_date')) : null;
-           $order->setPlannedProductDate($plannedDate);
-           $order->setActualProductDate($actualDate);
-       }
+        if ($post->get('is_pre_order'))
+        {
+            $order->setIsPreOrder(true);
+            $plannedDate = $post->get('planned_product_date') ? new \DateTime($post->get('planned_product_date')) : null;
+            $actualDate = $post->get('actual_product_date') ? new \DateTime($post->get('actual_product_date')) : null;
+            $order->setPlannedProductDate($plannedDate);
+            $order->setActualProductDate($actualDate);
+        }
 
         if (!$isNew)
         {
-            $this->deleteOrderItems($order);
+            if ($order->getStatus() == OrderStatus::OPEN)
+            {
+                $this->deleteOrderItems($order);
+            }
+        }
+        else
+        {
+            $order->setClient($client);
             $order->setStatus(OrderStatus::OPEN);
+            $order->setCreatedAt(new \DateTime($post->get('orderCreatedDate')));
         }
 
-        $this->saveOrder($order);
+        if ($order->getStatus() == OrderStatus::OPEN)
+        {
+            if ($client->getClientId() != $order->getClient()->getClientId())
+            {
+                $order->setClient($client);
+            }
+            $date = new \DateTime($post->get('orderCreatedDate'));
+            if ($order->getCreatedAt() != $date)
+            {
+                $order->setCreatedAt($date);
+            }
+        }
+
+        $this->saveOrder($order, $isNew);
         $this->updateOrderPaymentInfo($order, $post->get('payment_info'));
-        $this->fillOrderItems($order, $post);
+        if ($order->getStatus() == OrderStatus::OPEN)
+        {
+            $this->fillOrderItems($order, $post);
+        }
     }
 
     private function fillOrderItems(Order $order, ParameterBag $post)
@@ -199,33 +235,49 @@ class OrdersController extends Controller
 
     private function updateOrderPaymentInfo(Order $order, $paymentInfoJson)
     {
+        $em = $this->getDoctrine()->getManager();
         $paymentInfo = ArrayUtils::fromJson($paymentInfoJson);
         $cashPayments = ArrayUtils::getParameter($paymentInfo, 'cash');
-        if (!is_array($cashPayments))
-        {
-            return;
-        }
+        $rewardPayments = ArrayUtils::getParameter($paymentInfo, 'reward');
 
-        $em = $this->getDoctrine()->getManager();
-        $payments = $this->getOrderPayments($order);
-
-        foreach ($cashPayments as $cashPaymentInfo)
+        if (is_array($cashPayments))
         {
-            /** @var OrderPayment $orderPayment */
-            if (array_key_exists($cashPaymentInfo['id'], $payments))
-            {
-                $orderPayment = $payments[$cashPaymentInfo['id']];
-            }
-            else
+            foreach ($cashPayments as $cashPaymentInfo)
             {
                 $orderPayment = new OrderPayment();
+                $orderPayment->setOrder($order);
+                $orderPayment->setPaymentType(PaymentType::CASH);
+                $orderPayment->setCreatedAt(new \DateTime($cashPaymentInfo['date']));
+                $orderPayment->setSum($cashPaymentInfo['sum']);
+                $em->persist($orderPayment);
             }
+        }
 
-            $orderPayment->setOrder($order);
-            $orderPayment->setPaymentType(PaymentType::CASH);
-            $orderPayment->setCreatedAt(new \DateTime($cashPaymentInfo['date']));
-            $orderPayment->setSum($cashPaymentInfo['sum']);
-            $em->persist($orderPayment);
+        if (is_array($rewardPayments))
+        {
+            foreach ($rewardPayments as $rewardPaymentInfo)
+            {
+                $sum = (float)$rewardPaymentInfo['sum'];
+                $reward = $this->getDoctrine()->getRepository("AppBundle:Reward")->find($rewardPaymentInfo['reward_id']); /** @var Reward $reward */
+                if (!$reward)
+                {
+                    continue;
+                }
+
+                $remaining = ((float)$reward->getRemainingSum()) - $sum;
+                if ((int)$remaining < 0) continue;
+
+                $reward->setRemainingSum($remaining);
+                $em->merge($reward);
+
+                $orderPayment = new OrderPayment();
+                $orderPayment->setOrder($order);
+                $orderPayment->setPaymentType(PaymentType::REWARD);
+                $orderPayment->setCreatedAt(new \DateTime($rewardPaymentInfo['date']));
+                $orderPayment->setSum($sum);
+                $orderPayment->setReward($reward);
+                $em->persist($orderPayment);
+            }
         }
 
         $em->flush();
@@ -234,13 +286,14 @@ class OrdersController extends Controller
         if ($sum > 0)
         {
             $order->setStatus(OrderStatus::PROCESSING);
-            $em->persist($order);
+            $em->merge($order);
         }
 
-        if ($order->getSum() <= ($sum + (float)$order->getDiscount()))
+        $fullSum = ($sum + (float)$order->getDiscount());
+        if ($fullSum > 0 && $order->getSum() <= $fullSum)
         {
             $order->setStatus(OrderStatus::PAID);
-            $em->persist($order);
+            $em->merge($order);
         }
 
         $em->flush();

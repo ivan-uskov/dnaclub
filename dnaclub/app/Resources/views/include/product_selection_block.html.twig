@@ -8,9 +8,11 @@
     </li>
     {% for orderItem in orderItems %}
       <li class="list-group-item product" data-product-id="{{ orderItem.getProduct().getProductId() }}">{{ orderItem.getProduct().getName() }}
-        <span class="product_count_block">Количество: <input type="text" class="form-control count" value="{{ orderItem.getCount() }}" /></span>
+        <span class="product_count_block">Количество: <input type="text" {% if orderItem.getOrder().isNotOpen() %}readonly{% endif %} class="form-control count" value="{{ orderItem.getCount() }}" /></span>
         <span>Цена: <span class="price">{{ orderItem.getProduct().getPrice() }}</span></span>
+        {% if not orderItem.getOrder().isNotOpen() %}
         <span class="glyphicon glyphicon-remove remove_product"></span>
+        {% endif %}
       </li>
     {% endfor %}
   </ul>

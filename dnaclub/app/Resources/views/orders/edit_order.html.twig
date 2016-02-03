@@ -8,7 +8,17 @@
     <div class="col-md-6 half_block">
       <div class="form-group">
         <label for="orderCreatedDate">Дата</label>
-        <input type="text" id="orderCreatedDate" class="form-control date_picker form-control" data-provide="datepicker" value="{{ order.getCreatedAt()|date('d.m.Y') }}">
+        <input
+          type="text"
+          id="orderCreatedDate"
+          class="form-control date_picker form-control"
+          {% if order.isNotOpen() %}
+            readonly
+          {% else %}
+            data-provide="datepicker"
+          {% endif %}
+          value="{{ order.getCreatedAt()|date('d.m.Y') }}"
+        >
       </div>
       <div class="form-group">
         <label for="userName">ФИО</label>
@@ -19,8 +29,11 @@
               {% if client.getClientId() == order.getClient().getClientId() %}
                 selected
               {% endif %}
+              {% if order.isNotOpen() %}
+                disabled
+              {% endif %}
             >
-              {{ client.getName() }}
+              {{ client.getFullName() }}
             </option>
           {% endfor %}
         </select>
@@ -47,7 +60,7 @@
         <input class="form-control" type="text" name="discount" id="discount" placeholder="Введите скидку" value="{{ order.getDiscount() }}" />
       </div>
       <div class="form-group">
-        {% include 'include/payment_selection_block.html.twig' with {'id': paymentBlockVars['id'], 'payments': paymentBlockVars['payments']} %}
+        {% include 'include/payment_selection_block.html.twig' with {'id': paymentBlockVars['id'], 'payments': paymentBlockVars['payments'], 'clientRewards': paymentBlockVars['clientRewards']} %}
       </div>
       <input type="hidden" id="paymentInfo" name="payment_info" value="" />
       <input type="hidden" id="productsInfo" name="products_info" value="" />

@@ -1,9 +1,13 @@
 var PaymentSelectionBlock = function(id, updateHandler)
 {
     var cashItemInputs = [];
+    var rewordItemInputs = [];
     var list = $('#' + id + 'List');
     var stubCashItem = $('#' + id + 'StubCashRow');
     var stubRewordItem = $('#' + id + 'StubRewordRow');
+    var clientRewardsAjaxUrlPattern = $('#rewardsListUrl').val();
+    var rewards = [];
+    var addByRewardButtonDisabled;
 
     $('#' + id + 'AddByCash').click(function(){
         var newItem = insertClone(stubCashItem);
@@ -15,7 +19,19 @@ var PaymentSelectionBlock = function(id, updateHandler)
     });
 
     $('#' + id + 'AddByReword').click(function(){
-        insertClone(stubRewordItem);
+        if (addByRewardButtonDisabled)
+        {
+            alert('Подождите пару секунд, данные обновляются');
+            return false;
+        }
+        var newItem = insertClone(stubRewordItem);
+        var select = newItem.find('select').first();
+        if (select.length)
+        {
+            $.each(rewards, function(i, rewardInfo) {
+                select.append('<option value="' + rewardInfo.id +'" data-remainig="' + rewardInfo.remaining + '" data-sum="' + rewardInfo.sum + '">' + rewardInfo.name +  '</option>');
+            });
+        }
     });
 
     function insertClone(item)
@@ -39,12 +55,50 @@ var PaymentSelectionBlock = function(id, updateHandler)
         });
     }
 
+    function removeRow(row)
+    {
+        var id = row.find('.sum').attr('id');
+        deleteNumberField(id);
+        row.remove();
+    }
+
+    function removeNewRewardPayments()
+    {
+        list.find('.reword.new').each(function()
+        {
+            removeRow($(this));
+        });
+
+        updateHandler();
+    }
+
+    this.updateRewardsList = function(clientId)
+    {
+        removeNewRewardPayments();
+        var url = clientRewardsAjaxUrlPattern.replace('ORDER_ID', clientId);
+        addByRewardButtonDisabled = true;
+        $.post(url).done(function(response) {
+            addByRewardButtonDisabled = false;
+            rewards = response.rewards;
+        }).fail(function() {
+            alert('Произошла ошибка, перезагрузите страницу!');
+        });
+    };
+
     this.getSum = function()
     {
         var value = 0;
 
-        $.each(cashItemInputs, function(i, field){
-            value += field.getValue();
+        list.find('tr').each(function() {
+            var row = $(this);
+            if (!row.hasClass('hidden'))
+            {
+                var input = row.find('input.sum');
+                if (input.length)
+                {
+                    value += + input.val();
+                }
+            }
         });
 
         return value;
@@ -52,21 +106,33 @@ var PaymentSelectionBlock = function(id, updateHandler)
 
     this.getValue = function()
     {
+        var rewardValue = [];
         var cashValue = [];
 
-        list.find('tr.cash').each(function() {
+        list.find('tr.cash.new').each(function() {
             var row = $(this);
             if (!row.hasClass('hidden'))
             {
                 cashValue.push({
-                    id: row.attr('data-payment-id'),
                     date: row.find('.date').first().val(),
                     sum: row.find('.sum_holder').first().val()
                 });
             }
         });
 
-        return $.toJSON({cash: cashValue});
+        list.find('tr.reword.new').each(function() {
+            var row = $(this);
+            if (!row.hasClass('hidden'))
+            {
+                rewardValue.push({
+                    reward_id: row.find('select').first().val(),
+                    sum: row.find('.sumHolder').first().val(),
+                    date: row.find('.date').first().val()
+                });
+            }
+        });
+
+        return $.toJSON({cash: cashValue, reward: rewardValue});
     };
 
     function getCoast()
@@ -81,7 +147,7 @@ var PaymentSelectionBlock = function(id, updateHandler)
         $.each(cashItemInputs, function(i, field) {
             if (field.getId() == id)
             {
-
+                delete cashItemInputs[i];
             }
         });
     }
@@ -90,26 +156,8 @@ var PaymentSelectionBlock = function(id, updateHandler)
     {
         list.on('click', '.remove_payment', function()
         {
-            var row = $(this).parents('tr');
-            var id = row.find('.sum').attr('id');
-            deleteNumberField(id);
-            row.remove();
+            removeRow($(this).parents('tr'));
             updateHandler();
-        });
-    }
-
-    function initializeCashItemInputs()
-    {
-        $('#' + id + 'List').find('tr.cash').each(function() {
-            var row = $(this);
-            if (!row.hasClass('hidden'))
-            {
-                var uniqId = 'id' + (new Date()).getTime();
-                var input = row.find('input.sum').attr('id', uniqId);
-                var field = new NumberFormField(uniqId, updateHandler);
-                cashItemInputs.push(field);
-                initDatePicker(row.find('.date_picker'));
-            }
         });
     }
 
@@ -118,6 +166,5 @@ var PaymentSelectionBlock = function(id, updateHandler)
     (function()
     {
         initializeHandlers();
-        initializeCashItemInputs();
     })();
 };
