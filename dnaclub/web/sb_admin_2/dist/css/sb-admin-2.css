@@ -384,7 +384,12 @@ a {
     text-decoration: none;
 }
 
-.nav>li>a:focus,
+.nav>li>a:focus
+{
+    text-decoration: none;
+    background-color: #FCEBB6;
+}
+
 .nav>li>a:hover {
     text-decoration: none;
     background-color: #F9DD9C;
@@ -753,4 +758,9 @@ hr {
 .navbar-static-top {
     z-index: 9;
     border-width: 0 0 1px;
+}
+
+table.dataTable thead > tr > th {
+    padding-left: 10px;
+    padding-right: 5px;
 }

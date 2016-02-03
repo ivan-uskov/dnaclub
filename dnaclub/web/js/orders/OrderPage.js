@@ -19,4 +19,17 @@ $(function()
 
         $('#createOrderForm').submit();
     });
+
+    $('#isPreOrder').change(function(){
+        if (this.checked)
+        {
+            $('#plannedDate').show();
+            $('#actualDate').show();
+        }
+        else
+        {
+            $('#plannedDate').hide();
+            $('#actualDate').hide();
+        }
+    });
 });

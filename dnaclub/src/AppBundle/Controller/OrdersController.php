@@ -116,6 +116,14 @@ class OrdersController extends Controller
         $order->setSum((float)$post->get('cost'));
         $order->setClient($client);
 
+       if ($post->get('is_pre_order'))
+       {
+           $order->setIsPreOrder(true);
+           $plannedDate = $post->get('planned_product_date') ? new \DateTime($post->get('planned_product_date')) : null;
+           $actualDate = $post->get('actual_product_date') ? new \DateTime($post->get('actual_product_date')) : null;
+           $order->setPlannedProductDate($plannedDate);
+           $order->setActualProductDate($actualDate);
+       }
 
         if (!$isNew)
         {

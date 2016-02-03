@@ -33,7 +33,7 @@ class DateUtils
      */
     public static function getFirstDayOfThisMonth($date)
     {
-        return (new \DateTime($date))->modify('first day of this month');
+        return (new \DateTime($date))->modify('first day of this month midnight');
     }
 
     /**
@@ -42,6 +42,6 @@ class DateUtils
      */
     public static function getFirstDayOfNextMonth($date)
     {
-        return (new \DateTime($date))->modify('first day of next month');
+        return (new \DateTime($date))->modify('first day of next month midnight');
     }
 }

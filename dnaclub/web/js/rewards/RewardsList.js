@@ -33,7 +33,7 @@ $(function()
     {
         var commonColumnDefs = [
             {orderable: false, targets: [-1, -2, -3]},
-            {searchable: false, targets: [-1, -2, -3]},
+            {searchable: false, targets: [-1, -2, -3, -4, -5, -6]},
             {type: 'date-ru', targets: [1]},
             {type: 'formatted-num', targets: [2, 3]}
         ];
@@ -60,4 +60,13 @@ $(function()
             });
         }
     }
+
+    var subscriptionForm = $("#add_form");
+    var buttonAddTop = $("#button_add_top");
+    buttonAddTop.click(function(event)
+    {
+        event.preventDefault();
+        subscriptionForm.removeClass("hidden");
+        buttonAddTop.addClass("hidden");
+    });
 });

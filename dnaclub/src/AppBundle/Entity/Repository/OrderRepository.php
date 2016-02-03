@@ -2,10 +2,12 @@
 
 namespace AppBundle\Entity\Repository;
 
+use AppBundle\utils\DateUtils;
 use Doctrine\ORM\EntityRepository;
 use AppBundle\Form\OrderSearchForm;
 use AppBundle\Form\PreOrderSearchForm;
 use AppBundle\Entity\Client;
+use AppBundle\config\OrderStatus;
 
 /**
  * OrderRepository
@@ -37,8 +39,7 @@ class OrderRepository extends EntityRepository
             ->createQueryBuilder()
             ->select('o')
             ->from('AppBundle\Entity\Order', 'o')
-            ->where('o.isPreOrder = 0')
-            ->andWhere('o.client = :client')
+            ->where('o.client = :client')
             ->setParameter('client', $client)
             ->orderBy('o.createdAt', 'desc')
             ->getQuery()
@@ -55,7 +56,6 @@ class OrderRepository extends EntityRepository
             ->createQueryBuilder()
             ->select('o')
             ->from('AppBundle\Entity\Order', 'o')
-            ->where('o.isPreOrder = 0')
             ->orderBy('o.createdAt', 'desc');
 
         if ($searchForm)
@@ -121,5 +121,26 @@ class OrderRepository extends EntityRepository
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function findByMonth($firstDayOfMonth)
+    {
+        $endDate = DateUtils::getFirstDayOfNextMonth($firstDayOfMonth);
+        $result = $this->getEntityManager()
+            ->createQueryBuilder()
+            ->select('c.clientId, SUM(o.sum) orderSum')
+            ->from('AppBundle:Order', 'o')
+            ->innerJoin('o.client', 'c')
+            ->andWhere('o.status IN (:paidStatuses)')
+            ->setParameter('paidStatuses', OrderStatus::getPaidStatuses())
+            ->andWhere('o.createdAt >= :startDate')
+            ->andWhere('o.createdAt < :endDate')
+            ->setParameter('startDate',$firstDayOfMonth)
+            ->setParameter('endDate', $endDate)
+            ->groupBy('c')
+            ->getQuery()
+            ->getArrayResult();
+
+        return $result;
     }
 }

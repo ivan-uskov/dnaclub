@@ -1,5 +1,8 @@
 {% extends 'layout.html.twig' %}
-{% block pageH1 %}Редактирование продажи <button type="submit" id="submit" class="btn btn-success float_right">Сохранить</button>{% endblock %}
+{% block pageH1 %}
+  Редактирование {% if order.getIsPreOrder() %}предзаказа{% else %}продажи{% endif %}
+  <button type="submit" id="submit" class="btn btn-success float_right">Сохранить</button>
+{% endblock %}
 {% block content %}
   <form action="{{ path('editOrderAjax', {'orderId': order.getOrderId()}) }}" method="post" id="createOrderForm">
     <div class="col-md-6 half_block">
@@ -22,6 +25,18 @@
           {% endfor %}
         </select>
       </div>
+      {% if order.getIsPreOrder() %}
+        <div class="form-group row">
+          <div class="col-md-6" id="plannedDate">
+            <label for="plannedProductDate">План. дата выдачи</label>
+            <input type="text" name="planned_product_date" id="plannedProductDate" class="form-control date_picker" data-provide="datepicker" {% if (not order.getPlannedProductDate() == null) %}value="{{ order.getPlannedProductDate()|date('d.m.Y') }}"{% endif %}>
+          </div>
+          <div class="col-md-6" id="actualDate">
+            <label for="actualProductDate">Реальная дата выдачи</label>
+            <input type="text" name="actual_product_date" id="actualProductDate" class="form-control date_picker" data-provide="datepicker" {% if (not order.getActualProductDate() == null) %}value="{{ order.getActualProductDate()|date('d.m.Y') }}"{% endif %}>
+          </div>
+        </div>
+      {% endif %}
       <div class="form-group">
         {% include 'include/product_selection_block.html.twig' with {'id': productBlockVars['id'], 'isEditable': order.isProductsEditable(), 'products': productBlockVars['products'], 'orderItems': productBlockVars['orderItems']} %}
       </div>

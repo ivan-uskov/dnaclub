@@ -13,3 +13,14 @@ textarea
     width: 200px;
     margin-bottom: 10px;
 }
+
+.small-counter
+{
+    width: 40px !important;
+    padding: 6px 3px;
+}
+
+.subscription-column
+{
+    width: 95px;
+}

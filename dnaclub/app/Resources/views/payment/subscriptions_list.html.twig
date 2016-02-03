@@ -1,11 +1,14 @@
 {% extends 'layout.html.twig' %}
 {% block pageH1 %}
   Лидерские и контракты
+  <a id="button_add_top" class="btn btn-success btn-add-top" href="javascript:void(0);">Добавить</a>
 {% endblock %}
 {% block stylesheets %}
   {{ parent() }}
-  <link href="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css') }}" type="text/css" rel="stylesheet" />
-  <link href="{{ asset('css/common/forms_common.css') }}" type="text/css" rel="stylesheet" />
+  <link href="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css') }}"
+        type="text/css" rel="stylesheet"/>
+  <link href="{{ asset('css/common/forms_common.css') }}" type="text/css" rel="stylesheet"/>
+  <link href="{{ asset('css/common/lists_common.css') }}" type="text/css" rel="stylesheet"/>
 {% endblock %}
 {% block content %}
   {% if (mode == 'clientsSubscriptions') %}
@@ -15,9 +18,11 @@
     {% if (mode == 'clientsSubscriptions') %}
       {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'clientsSubscriptions'} %}
     {% endif %}
-    <input type="hidden" id="template_mode" value="{{ mode }}" />
-    {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
-    {{ form_start(form) }}
+    <input type="hidden" id="template_mode" value="{{ mode }}"/>
+
+    <div id="add_form" class="hidden">
+      {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+      {{ form_start(form) }}
       <div class="row" style="padding-bottom: 10px;">
         <div class="col-md-8 col-sm-12">
           <div class="form-group">
@@ -39,13 +44,14 @@
           </div>
         </div>
       </div>
-    {{ form_end(form) }}
+      {{ form_end(form) }}
+    </div>
   </div>
 
   {% if (mode == 'subscriptions') %}
     {% form_theme searchForm 'bootstrap_3_horizontal_layout.html.twig' %}
     {{ form_start(searchForm) }}
-      {{ form_widget(searchForm.months, {'attr': {'style': 'width: 200px;', 'onchange': "this.form.submit()"}}) }}
+    {{ form_widget(searchForm.months, {'attr': {'style': 'width: 200px;', 'onchange': "this.form.submit()"}}) }}
     {{ form_end(searchForm) }}
   {% endif %}
 
@@ -56,8 +62,8 @@
         <tr>
           <th>Фио клиента</th>
           <th>Дата</th>
+          <th>Кол-во</th>
           <th>Тип подписки</th>
-          <th>Количество</th>
           <th>Сумма</th>
           <th></th>
         </tr>
@@ -71,13 +77,19 @@
               </a>
             </td>
             <td>{{ subscription.getDate()|date('d.m.Y') }}</td>
+            <td class="text-center">{{ subscription.getCount() }}</td>
             <td>{{ subscription.getTypeName() }}</td>
-            <td class="text-right">{{ subscription.getCount() }}</td>
             <td class="text-right">{{ subscription.getSum()|localizedcurrency('RUB') }}</td>
             {% if (mode == 'subscriptions') %}
-              <td class="text-center"><a href="{{ path('deleteSubscription', {'subscriptionId': subscription.getSubscriptionId()}) }}" class="glyphicon glyphicon-remove" onclick="return confirm('Вы уверены, что хотите удалить запись?')"></a></td>
+              <td class="text-center"><a
+                    href="{{ path('deleteSubscription', {'subscriptionId': subscription.getSubscriptionId()}) }}"
+                    class="glyphicon glyphicon-remove"
+                    onclick="return confirm('Вы уверены, что хотите удалить запись?')"></a></td>
             {% else %}
-              <td class="text-center"><a href="{{ path('deleteClientsSubscription', {'clientId': subscription.getClient().getClientId(), 'subscriptionId': subscription.getSubscriptionId()}) }}" class="glyphicon glyphicon-remove" onclick="return confirm('Вы уверены, что хотите удалить запись?')"></a></td>
+              <td class="text-center"><a
+                    href="{{ path('deleteClientsSubscription', {'clientId': subscription.getClient().getClientId(), 'subscriptionId': subscription.getSubscriptionId()}) }}"
+                    class="glyphicon glyphicon-remove"
+                    onclick="return confirm('Вы уверены, что хотите удалить запись?')"></a></td>
             {% endif %}
           </tr>
         {% endfor %}
