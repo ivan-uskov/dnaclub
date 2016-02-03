@@ -15,15 +15,17 @@
       {{ form_widget(form.months, {'attr': {'class': 'monthSelect', 'onchange': "this.form.submit()"}}) }}
     {{ form_end(form) }}
     </div>
-    <div class="col-md-6 text-right">
-      {% form_theme updateReportForm 'bootstrap_3_horizontal_layout.html.twig' %}
-      {{ form_start(updateReportForm) }}
-        {{ form_widget(updateReportForm.update) }}
-      {{ form_end(updateReportForm) }}
-    </div>
+    {% if showUpdateButton %}
+      <div class="col-md-6 text-right">
+        {% form_theme updateReportForm 'bootstrap_3_horizontal_layout.html.twig' %}
+        {{ form_start(updateReportForm) }}
+          {{ form_widget(updateReportForm.update) }}
+        {{ form_end(updateReportForm) }}
+      </div>
+    {% endif %}
   </div>
-  {% if successMessage %}<div class="alert alert-success">{{ successMessage }}</div>{% endif %}
-  {% if errorMessage %}<div class="alert alert-danger">{{ errorMessage }}</div>{% endif %}
+  {% if successMessage %}<div class="alert alert-success" id="alert-success">{{ successMessage }}</div>{% endif %}
+  {% if errorMessage %}<div class="alert alert-danger" id="alert-danger">{{ errorMessage }}</div>{% endif %}
 
   <div class="panel-body">
     <div class="table-responsive">
@@ -35,34 +37,29 @@
           <th>Сумма покупок</th>
           <th>Сумма к реализации</th>
           <th>ЛиК</th>
-          <th>+ контр.</th>
-          <th>+ лид.</th>
+          <th>Добавить контр./лидер.</th>
           <th>Остаток на конец месяца</th>
           <th class="hidden"></th>
         </tr>
         </thead>
         <tbody>
-        {% for reportRow in reportRows %}
-          {% set clientId = reportRow.getClient().getClientId() %}
-          {% set result =  reportRow.getStartSum() + reportRow.getOrderSum() - reportRow.getContractSum() - reportRow.getMaintenanceSum%}
+        {% for clientId, reportRow in reportRows %}
           <tr>
             <td>
               <a href="{{ path('editClient', {'clientId': clientId}) }}">
-                {{ reportRow.getClient().getFullName() }}
+                {{ reportRow['name'] }}
               </a>
             </td>
-            <td class="text-right">{{ reportRow.getStartSum()|localizedcurrency('RUB') }}</td>
-            <td class="text-right">{{ reportRow.getOrderSum()|localizedcurrency('RUB') }}</td>
-            <td class="text-right">{{ (reportRow.getStartSum() + reportRow.getOrderSum())|localizedcurrency('RUB') }}</td>
-            <td class="text-center">{{ reportRow.getSubscriptionsInfo() }}</td>
-            <td class="text-center">
+            <td class="text-right">{{ reportRow['startSum']|localizedcurrency('RUB') }}</td>
+            <td class="text-right">{{ reportRow['orderSum']|localizedcurrency('RUB') }}</td>
+            <td class="text-right">{{ reportRow['releaseSum']|localizedcurrency('RUB') }}</td>
+            <td class="text-center">{{ reportRow['subscrInfo'] }}</td>
+            <td class="text-center subscription-column">
               <input type="number" class="small-counter form-control" autofocus min="0" id="{{ clientId }}_add_contract" name="add_new_subscription" value="0">
-            </td>
-            <td class="text-center">
               <input type="number" class="small-counter form-control" autofocus min="0" id="{{ clientId }}_add_maintenance" name="add_new_subscription" value="0">
             </td>
-            <td class="text-right" id="{{ clientId }}_result_sum">{{ result|localizedcurrency('RUB') }}</td>
-            <td class="hidden" id="{{ clientId }}_initial_result">{{ result }}</td>
+            <td class="text-right" id="{{ clientId }}_result_sum">{{ reportRow['endSum']|localizedcurrency('RUB') }}</td>
+            <td class="hidden" id="{{ clientId }}_initial_result">{{ reportRow['endSum'] }}</td>
           </tr>
         {% endfor %}
         </tbody>
