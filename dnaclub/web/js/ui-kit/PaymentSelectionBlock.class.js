@@ -120,14 +120,14 @@ var PaymentSelectionBlock = function(id, updateHandler)
             }
         });
 
-        list.find('tr.reward.new').each(function() {
+        list.find('tr.reword.new').each(function() {
             var row = $(this);
             if (!row.hasClass('hidden'))
             {
                 rewardValue.push({
-                    id: row.find('select').first().val(),
-                    date: row.find('.date').first().val(),
-                    sum: row.find('.sum_holder').first().val()
+                    reward_id: row.find('select').first().val(),
+                    sum: row.find('.sumHolder').first().val(),
+                    date: row.find('.date').first().val()
                 });
             }
         });

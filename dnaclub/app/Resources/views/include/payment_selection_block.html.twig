@@ -24,7 +24,7 @@
       <tr role="row" data-payment-id="" class="reword new hidden" id="{{ id }}StubRewordRow">
         <td><input class="form-control date date_picker" type="text" value="{{ "now"|date('d.m.Y') }}" /></td>
         <td class="sum_container">
-          <input class="form-control sum" autocomplete="off" spellcheck="false" type="text" data-rewords="" placeholder="Введите сумму платежа" />
+          <input class="form-control sum sumHolder" autocomplete="off" spellcheck="false" type="text" data-rewords="" placeholder="Введите сумму платежа" />
           <select name="user_name" class="form-control current_reward">
             <option value="0" disabled selected>Выберите вознаграждение</option>
           </select>
@@ -45,7 +45,7 @@
           <tr role="row" data-payment-id="{{ payment.getOrderPaymentId() }}" class="reword">
             <td><input class="form-control date date_picker" type="text" value="{{ payment.getCreatedAt()|date('d.m.Y') }}" readonly /></td>
             <td class="sum_container">
-              <input readonly class="form-control sum" autocomplete="off" value="{{ payment.getReward().getRemainingSum() }}" spellcheck="false" type="text" data-rewords="" placeholder="Введите сумму платежа" />
+              <input readonly class="form-control sum sumHolder" autocomplete="off" value="{{ payment.getSum() }}" spellcheck="false" type="text" data-rewords="" placeholder="Введите сумму платежа" />
               <select name="user_name" class="form-control current_reward" readonly>
                 {% for reward in clientRewards %}
                   <option value="{{ reward.getRewardId() }}" {% if (reward.getRewardId() == payment.getReward().getRewardId()) %}selected="selected"{% endif %} disabled>{{ reward.getName() }}</option>

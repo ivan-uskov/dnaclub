@@ -25,6 +25,10 @@
     vertical-align: middle;
 }
 
+.payment_selection_block .reword .type
+{
+    vertical-align: top;
+}
 
 .payment_selection_block .sum_container select
 {
