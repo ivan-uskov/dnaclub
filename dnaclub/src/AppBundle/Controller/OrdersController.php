@@ -44,7 +44,7 @@ class OrdersController extends Controller
     public function createOrderAction(Request $request)
     {
         $products = $this->prepareProductsList();
-        $clients = $this->getDoctrine()->getRepository('AppBundle:Client')->findAll();
+        $clients = $this->getDoctrine()->getRepository('AppBundle:Client')->getSortedClients();
         return $this->render('orders/create_order.html.twig', ['clients' => $clients, 'products' => json_encode($products)]);
     }
 
@@ -70,7 +70,7 @@ class OrdersController extends Controller
         $orderPayment = $this->getOrderPayment($order);
         $products = $this->prepareProductsList();
         $payments = $this->getOrderPayments($order);
-        $clients    = $doctrine->getRepository('AppBundle:Client')->findAll();
+        $clients    = $doctrine->getRepository('AppBundle:Client')->getSortedClients();
         $rewardsRepository = $this->getDoctrine()->getRepository('AppBundle:Reward'); /** @var $rewardsRepository RewardRepository */
         $rewards = $rewardsRepository->findNotDeletedByClient($order->getClient());
 
