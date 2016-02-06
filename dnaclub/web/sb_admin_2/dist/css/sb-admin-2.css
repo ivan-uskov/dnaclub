@@ -764,3 +764,10 @@ table.dataTable thead > tr > th {
     padding-left: 10px;
     padding-right: 5px;
 }
+
+.nav .open > a,
+.nav .open > a:hover,
+.nav .open > a:focus {
+    background-color: #F9DD9C;
+    border-color: #337ab7;
+}

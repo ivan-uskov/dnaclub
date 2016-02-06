@@ -62,7 +62,7 @@ class ReportsController extends Controller
             'maintenancePrice' => SubscriptionType::getPrice(SubscriptionType::MAINTENANCE),
             'successMessage' => $successMessage,
             'errorMessage' => $errorMessage,
-            'showUpdateButton' => ($defaultDate != $date)
+            'isCurrentMonth' => ($defaultDate == $date)
         ]);
     }
 

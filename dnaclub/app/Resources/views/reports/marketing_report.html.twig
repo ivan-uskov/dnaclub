@@ -15,7 +15,7 @@
       {{ form_widget(form.months, {'attr': {'class': 'monthSelect', 'onchange': "this.form.submit()"}}) }}
     {{ form_end(form) }}
     </div>
-    {% if showUpdateButton %}
+    {% if not isCurrentMonth %}
       <div class="col-md-6 text-right">
         {% form_theme updateReportForm 'bootstrap_3_horizontal_layout.html.twig' %}
         {{ form_start(updateReportForm) }}
@@ -37,7 +37,9 @@
           <th>Сумма покупок</th>
           <th>Сумма к реализации</th>
           <th>ЛиК</th>
-          <th>Добавить контр./лидер.</th>
+          {% if isCurrentMonth %}
+            <th>Добавить контр./лидер.</th>
+          {% endif %}
           <th>Остаток на конец месяца</th>
           <th class="hidden"></th>
         </tr>
@@ -54,10 +56,12 @@
             <td class="text-right">{{ reportRow['orderSum']|localizedcurrency('RUB') }}</td>
             <td class="text-right">{{ reportRow['releaseSum']|localizedcurrency('RUB') }}</td>
             <td class="text-center">{{ reportRow['subscrInfo'] }}</td>
-            <td class="text-center subscription-column">
-              <input type="number" class="small-counter form-control" autofocus min="0" id="{{ clientId }}_add_contract" name="add_new_subscription" value="0">
-              <input type="number" class="small-counter form-control" autofocus min="0" id="{{ clientId }}_add_maintenance" name="add_new_subscription" value="0">
-            </td>
+            {% if isCurrentMonth %}
+              <td class="text-center subscription-column">
+                <input type="number" class="small-counter form-control" autofocus min="0" id="{{ clientId }}_add_contract" name="add_new_subscription" value="0">
+                <input type="number" class="small-counter form-control" autofocus min="0" id="{{ clientId }}_add_maintenance" name="add_new_subscription" value="0">
+              </td>
+            {% endif %}
             <td class="text-right" id="{{ clientId }}_result_sum">{{ reportRow['endSum']|localizedcurrency('RUB') }}</td>
             <td class="hidden" id="{{ clientId }}_initial_result">{{ reportRow['endSum'] }}</td>
           </tr>
