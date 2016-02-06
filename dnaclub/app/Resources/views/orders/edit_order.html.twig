@@ -8,7 +8,16 @@
     <div class="col-md-6 half_block">
       <div class="form-group">
         <label for="orderCreatedDate">Дата</label>
-        <input type="text" id="orderCreatedDate" class="form-control date_picker form-control" data-provide="datepicker" value="{{ order.getCreatedAt()|date('d.m.Y') }}">
+        <input
+          type="text"
+          id="orderCreatedDate"
+          name="orderCreatedDate"
+          class="form-control date_picker  form-control {% if not order.isNotOpen() %} datepicker {% endif %}"
+          {% if order.isNotOpen() %}
+            readonly
+          {% endif %}
+          value="{{ order.getCreatedAt()|date('d.m.Y') }}"
+        >
       </div>
       <div class="form-group">
         <label for="userName">ФИО</label>
@@ -19,8 +28,11 @@
               {% if client.getClientId() == order.getClient().getClientId() %}
                 selected
               {% endif %}
+              {% if order.isNotOpen() %}
+                disabled
+              {% endif %}
             >
-              {{ client.getName() }}
+              {{ client.getFullName() }}
             </option>
           {% endfor %}
         </select>
@@ -29,11 +41,11 @@
         <div class="form-group row">
           <div class="col-md-6" id="plannedDate">
             <label for="plannedProductDate">План. дата выдачи</label>
-            <input type="text" name="planned_product_date" id="plannedProductDate" class="form-control date_picker" data-provide="datepicker" {% if (not order.getPlannedProductDate() == null) %}value="{{ order.getPlannedProductDate()|date('d.m.Y') }}"{% endif %}>
+            <input type="text" name="planned_product_date" id="plannedProductDate" class="form-control date_picker datepicker" {% if (not order.getPlannedProductDate() == null) %}value="{{ order.getPlannedProductDate()|date('d.m.Y') }}"{% endif %}>
           </div>
           <div class="col-md-6" id="actualDate">
             <label for="actualProductDate">Реальная дата выдачи</label>
-            <input type="text" name="actual_product_date" id="actualProductDate" class="form-control date_picker" data-provide="datepicker" {% if (not order.getActualProductDate() == null) %}value="{{ order.getActualProductDate()|date('d.m.Y') }}"{% endif %}>
+            <input type="text" name="actual_product_date" id="actualProductDate" class="form-control date_picker  datepicker" {% if (not order.getActualProductDate() == null) %}value="{{ order.getActualProductDate()|date('d.m.Y') }}"{% endif %}>
           </div>
         </div>
       {% endif %}
@@ -47,7 +59,7 @@
         <input class="form-control" type="text" name="discount" id="discount" placeholder="Введите скидку" value="{{ order.getDiscount() }}" />
       </div>
       <div class="form-group">
-        {% include 'include/payment_selection_block.html.twig' with {'id': paymentBlockVars['id'], 'payments': paymentBlockVars['payments']} %}
+        {% include 'include/payment_selection_block.html.twig' with {'id': paymentBlockVars['id'], 'payments': paymentBlockVars['payments'], 'clientRewards': paymentBlockVars['clientRewards']} %}
       </div>
       <input type="hidden" id="paymentInfo" name="payment_info" value="" />
       <input type="hidden" id="productsInfo" name="products_info" value="" />
@@ -60,6 +72,7 @@
   {{ parent() }}
   <script src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
   <script src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js') }}"></script>
+  <script src="{{ asset('js/datepicker/standard-datepicker.js') }}"></script>
   <script src="{{ asset('js/lib/bootstrap.typeahead.js') }}"></script>
   <script src="{{ asset('js/lib/jquery.json.min.js') }}"></script>
   <script src="{{ asset('js/ui-kit/NumberFormField.class.js') }}"></script>

@@ -91,6 +91,7 @@ var ProductSelectionBlock = function(id, updateHandler)
             {
                 obj.val(1);
             }
+            $('#coast').text(getCoast());
             updateHandler(getCoast());
         });
 
