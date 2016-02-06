@@ -1,0 +1,33 @@
+AppBundle\Entity\Role:
+    type: entity
+    table: role
+    repositoryClass: AppBundle\Entity\Repository\RoleRepository
+    id:
+        roleId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: true
+            id: true
+            column: role_id
+            generator:
+                strategy: IDENTITY
+    fields:
+        name:
+            type: string
+            nullable: false
+            length: 255
+            options:
+                fixed: false
+    manyToOne:
+        user_id:
+            targetEntity: User
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: roles
+            joinColumns:
+                user_id:
+                    referencedColumnName: user_id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

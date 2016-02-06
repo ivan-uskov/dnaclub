@@ -1,11 +1,13 @@
 <?php
 
 namespace AppBundle\Entity;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * User
  */
-class User
+class User implements UserInterface
 {
     /**
      * @var integer
@@ -37,6 +39,23 @@ class User
      */
     private $updatedAt;
 
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $roles;
+
+    /**
+     * @ORM\Column(type="string", length="255")
+     *
+     * @var string salt
+     */
+    protected $salt;
+
+    public function __construct()
+    {
+        $this->userRoles = new ArrayCollection();
+        $this->createdAt = new \DateTime();
+    }
 
     /**
      * Get userId
@@ -167,5 +186,83 @@ class User
     {
         return $this->updatedAt;
     }
-}
 
+    /**
+     * Сброс прав пользователя.
+     */
+    public function eraseCredentials()
+    {
+    }
+
+    /**
+     * Геттер для ролей пользователя.
+     *
+     * @return ArrayCollection A Doctrine ArrayCollection
+     */
+    public function getUserRoles()
+    {
+        return $this->roles;
+    }
+
+    /**
+     * Геттер для массива ролей.
+     *
+     * @return array An array of Role objects
+     */
+    public function getRoles()
+    {
+        file_put_contents('/usr/local/www/log/1.txt', var_export($this->getUserRoles()->toArray(), true));
+
+        return $this->getUserRoles()->toArray();
+    }
+
+    public function getUsername()
+    {
+        return $this->getLogin();
+    }
+
+    /**
+     * @return string The salt.
+     */
+    public function getSalt()
+    {
+        return $this->salt;
+    }
+
+    /**
+     * @param string $value The salt.
+     */
+    public function setSalt($value)
+    {
+        $this->salt = $value;
+    }
+
+    public function equals(UserInterface $user)
+    {
+        return md5($this->getUsername()) == md5($user->getUsername());
+    }
+
+    /**
+     * Add role
+     *
+     * @param \AppBundle\Entity\Role $role
+     *
+     * @return User
+     */
+    public function addRole(\AppBundle\Entity\Role $role)
+    {
+        $this->roles[] = $role;
+
+        return $this;
+    }
+
+    /**
+     * Remove role
+     *
+     * @param \AppBundle\Entity\Role $role
+     */
+    public function removeRole(\AppBundle\Entity\Role $role)
+    {
+        $this->roles->removeElement($role);
+    }
+}
