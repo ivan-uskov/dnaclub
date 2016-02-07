@@ -8,7 +8,7 @@ textarea
     margin-top: 0;
 }
 
-.monthSelect
+.month-select
 {
     width: 200px;
     margin-bottom: 10px;
@@ -23,4 +23,9 @@ textarea
 .subscription-column
 {
     width: 95px;
+}
+
+.default-margin-right
+{
+    margin-right: 15px;
 }

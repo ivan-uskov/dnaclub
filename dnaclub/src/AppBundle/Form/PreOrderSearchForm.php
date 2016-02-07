@@ -18,12 +18,14 @@ class PreOrderSearchForm extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add(self::IS_RELEASED_SEARCH_FIELD, 'checkbox', array(
-            'label' => 'Выданные'
-        ))
-        ->add(self::IS_NOT_RELEASED_SEARCH_FIELD, 'checkbox', array(
-            'label' => 'Невыданные'
-        ));
+        $builder
+            ->setMethod('GET')
+            ->add(self::IS_RELEASED_SEARCH_FIELD, 'checkbox', array(
+                'label' => 'Выданные'
+            ))
+            ->add(self::IS_NOT_RELEASED_SEARCH_FIELD, 'checkbox', array(
+                'label' => 'Невыданные'
+            ));
     }
 
     public function configureOptions(OptionsResolver $resolver)

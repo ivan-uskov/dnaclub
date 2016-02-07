@@ -73,9 +73,7 @@ class ReportsController extends Controller
             }
         }
 
-        $referer = $request->headers->get('referer');
-        return new RedirectResponse($referer);
-        //return $this->redirectToRoute('marketingReport');
+        return new RedirectResponse($request->headers->get('referer'));
     }
 
     /**

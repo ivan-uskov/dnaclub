@@ -15,6 +15,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use AppBundle\Entity\Order;
 use AppBundle\Entity\Product;
 use AppBundle\Entity\OrderPayment;
@@ -373,13 +374,24 @@ class OrdersController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $order = $em->getRepository("AppBundle:Order")->find($orderId);
+
+        $flashBag = $this->get('session')->getFlashBag();
         if ($order)
         {
-            $order->setActualProductDate(new \DateTime());
-            $em->merge($order);
-            $em->flush();
+            try
+            {
+                $order->setActualProductDate(new \DateTime());
+                $em->merge($order);
+                $em->flush();
+                $flashBag->add('success', 'Предзаказ выдан сегодняшним днем');
+            }
+            catch(\Exception $e)
+            {
+                $flashBag->add('error', 'Произошла ошибка!');
+            }
         }
-        return $this->redirectToRoute('preOrdersList');
+
+        return new RedirectResponse($request->headers->get('referer'));
     }
 
     /**

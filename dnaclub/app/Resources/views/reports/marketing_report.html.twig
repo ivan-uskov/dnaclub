@@ -12,7 +12,7 @@
     <div class="col-md-6">
     {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
     {{ form_start(form) }}
-      {{ form_widget(form.months, {'attr': {'class': 'monthSelect', 'onchange': "this.form.submit()"}}) }}
+      {{ form_widget(form.months, {'attr': {'class': 'month-select', 'onchange': "this.form.submit()"}}) }}
     {{ form_end(form) }}
     </div>
     {% if not isCurrentMonth %}
