@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use AppBundle\Entity\Client;
 use AppBundle\Entity\MarketingReport;
 use AppBundle\Form\MonthSearchForm;
@@ -38,30 +39,12 @@ class ReportsController extends Controller
         ;
         $updateReportForm->handleRequest($request);
 
-        $saveResult = $request->query->get('save_result');
-        $successMessage = '';
-        $errorMessage = '';
-
-        if (!is_null($saveResult))
-        {
-            if ((bool)$saveResult)
-            {
-                $successMessage = "Изменения успешно сохранены";
-            }
-            else
-            {
-                $errorMessage = "При сохранении произошла ошибка";
-            }
-        }
-
         return $this->render('reports/marketing_report.html.twig', [
             'reportRows' => $reportRows,
             'form' => $form->createView(),
             'updateReportForm' => $updateReportForm->createView(),
             'contractPrice' => SubscriptionType::getPrice(SubscriptionType::CONTRACT),
             'maintenancePrice' => SubscriptionType::getPrice(SubscriptionType::MAINTENANCE),
-            'successMessage' => $successMessage,
-            'errorMessage' => $errorMessage,
             'isCurrentMonth' => ($defaultDate == $date)
         ]);
     }
@@ -73,13 +56,26 @@ class ReportsController extends Controller
     {
         $form = $request->request->get('form');
         $date = $form['date'];
+
+        $flashBag = $this->get('session')->getFlashBag();
         if ($date)
         {
-            $em = $this->getDoctrine()->getManager()->getConnection();
-            $em->prepare("CALL fill_marketing_report('" . $date . "')")->execute();
+            try
+            {
+                $em = $this->getDoctrine()->getManager()->getConnection();
+                $em->prepare("CALL fill_marketing_report('" . $date . "')")->execute();
+                $dt = (new \DateTime($date))->format('d.m.Y');
+                $flashBag->add('success', 'Данные отчета пересчитаны с ' . $dt);
+            }
+            catch(\Exception $e)
+            {
+                $flashBag->add('error', 'Данные не пересчитаны, произошла ошибка!');
+            }
         }
 
-        return $this->redirectToRoute('marketingReport');
+        $referer = $request->headers->get('referer');
+        return new RedirectResponse($referer);
+        //return $this->redirectToRoute('marketingReport');
     }
 
     /**
@@ -95,10 +91,19 @@ class ReportsController extends Controller
             return $this->redirectToRoute('marketingReport');
         }
 
-        $this->insertSubscriptions($contractArr, SubscriptionType::CONTRACT);
-        $this->insertSubscriptions($maintenanceArr, SubscriptionType::MAINTENANCE);
+        $flashBag = $this->get('session')->getFlashBag();
+        try
+        {
+            $this->insertSubscriptions($contractArr, SubscriptionType::CONTRACT);
+            $this->insertSubscriptions($maintenanceArr, SubscriptionType::MAINTENANCE);
+            $flashBag->add('success', 'Изменения были успешно сохранены');
+        }
+        catch (\Exception $e)
+        {
+            $flashBag->add('error', 'Изменения не сохранены, произошла ошибка!');
+        }
 
-        return $this->redirectToRoute('marketingReport', ['save_result' => true]);
+        return $this->redirectToRoute('marketingReport');
     }
 
     private function insertSubscriptions($subscriptions, $type)

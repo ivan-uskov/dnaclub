@@ -18,6 +18,7 @@ class MonthSearchForm extends AbstractType
         $dates = $options['dates'];
 
         $builder
+            ->setMethod('GET')
             ->add('months', 'choice',
                 array('choices' => $dates,
                     'choices_as_values' => false

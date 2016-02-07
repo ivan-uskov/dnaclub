@@ -24,8 +24,13 @@
       </div>
     {% endif %}
   </div>
-  {% if successMessage %}<div class="alert alert-success" id="alert-success">{{ successMessage }}</div>{% endif %}
-  {% if errorMessage %}<div class="alert alert-danger" id="alert-danger">{{ errorMessage }}</div>{% endif %}
+
+  {% for flashMessage in app.session.flashbag.get('success') %}
+    <div class="alert alert-success" id="alert-success">{{ flashMessage }}</div>
+  {% endfor %}
+  {% for flashMessage in app.session.flashbag.get('error') %}
+    <div class="alert alert-danger" id="alert-danger">{{ flashMessage }}</div>
+  {% endfor %}
 
   <div class="panel-body">
     <div class="table-responsive">
