@@ -12,9 +12,9 @@ $(document).ready(function()
             pageLength: 25,
             order: [[3, "desc"]],
             columnDefs: [
-                {searchable: false, targets: [1, 2, 3, 4, 5, 6, -1]},
+                {searchable: false, targets: [1, 2, 3, 4, 5, 6, -2]},
                 {orderable: false, targets: [4, -3]},
-                {type: 'formatted-num', targets: [1, 2, 3, -1]}
+                {type: 'formatted-num', targets: [1, 2, 3, -2]}
             ]
         });
     }
