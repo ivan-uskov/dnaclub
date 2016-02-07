@@ -11,8 +11,6 @@ use AppBundle\config\SubscriptionType;
 
 class NewSubscriptionForm extends AbstractType
 {
-    private $client = null;
-
     public function getName()
     {
         return 'new_subscription_form';
@@ -24,37 +22,17 @@ class NewSubscriptionForm extends AbstractType
          * @var EntityManager $em
          */
         $em = $options['em'];
-        $isClientPredefined = ($this->client != null);
-        if ($isClientPredefined)
-        {
-            $builder
-                ->add('client', 'entity', array(
-                    'label' => false,
-                    'class' => 'AppBundle:Client',
-                    'choice_label' => 'fullName',
-                    'choices' => array($this->client),
-                    'data' => $this->client,
-                    'attr' => array(
-                        'class' => 'hidden'
-                    )
-                ));
-        }
-        else
-        {
-            $clients = $em->getRepository('AppBundle:Client')->getSortedClients();
-            $builder
-                ->add('client', 'entity', array(
-                    'label' => 'Клиент',
-                    'class' => 'AppBundle:Client',
-                    'choice_label' => 'fullName',
-                    'choices' => $clients,
-                    'placeholder' => ''
-                ));
-        }
-
         $types = SubscriptionType::getNames();
 
+        $clients = $em->getRepository('AppBundle:Client')->getSortedClients();
         $builder
+            ->add('client', 'entity', array(
+                'label' => 'Клиент',
+                'class' => 'AppBundle:Client',
+                'choice_label' => 'fullName',
+                'choices' => $clients,
+                'placeholder' => ''
+            ))
             ->add('date', 'date', array(
                 'label' => 'Дата',
                 'widget' => 'single_text',
@@ -85,10 +63,5 @@ class NewSubscriptionForm extends AbstractType
             'data_class' => 'AppBundle\Entity\Subscription',
             'em' => null
         ));
-    }
-
-    public function setClient($client)
-    {
-        $this->client = $client;
     }
 }

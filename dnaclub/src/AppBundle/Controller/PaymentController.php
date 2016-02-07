@@ -63,30 +63,24 @@ class PaymentController extends Controller
     private function subscriptionsListImpl(Request $request, $clientId = null)
     {
         $em = $this->getDoctrine()->getManager();
+        $subscriptionRepository = $em->getRepository('AppBundle:Subscription');
 
         $client = null;
-        if ($clientId != null)
+        if ($clientId)
         {
             $client = $em->getRepository('AppBundle:Client')->find($clientId);
         }
         $isClientPredefined = (($clientId != null) && ($client != null));
-        if ($isClientPredefined)
-        {
-            $templateMode = 'clientsSubscriptions';
-        }
-        else
-        {
-            $templateMode = 'subscriptions';
-        }
+        $templateMode = $isClientPredefined ? 'clientsSubscriptions' : 'subscriptions';
 
         $subscription = new Subscription();
         $subscription->setCount(1);
         $subscription->setDate(new \DateTime());
+        $subscription->setClient($client);
         $subscriptionForm = new NewSubscriptionForm();
-        $subscriptionForm->setClient($client);
         $newSubscriptionForm = $this->createForm($subscriptionForm, $subscription, array('em' => $em));
 
-        $dates = $em->getRepository('AppBundle:Subscription')->getMonthsForSelect();
+        $dates = $subscriptionRepository->getMonthsForSelect();
         $searchForm = $this->createForm(new MonthSearchForm(), array('months' => ''), array('dates' => $dates));
 
         $searchForm->handleRequest($request);
@@ -112,14 +106,10 @@ class PaymentController extends Controller
 
         $data = $searchForm->getData();
         $date = $data["months"] ?: key($dates);
-        if ($isClientPredefined)
-        {
-            $subscriptions = $em->getRepository('AppBundle:Subscription')->findByClient($client);
-        }
-        else
-        {
-            $subscriptions = $em->getRepository('AppBundle:Subscription')->findByMonth($date);
-        }
+
+        $subscriptions = $isClientPredefined
+            ? $subscriptionRepository->findByClient($client)
+            : $subscriptionRepository->findByMonth($date);
 
         return $this->render('payment/subscriptions_list.html.twig',
             [
