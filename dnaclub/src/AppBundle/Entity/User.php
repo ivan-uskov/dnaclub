@@ -211,9 +211,8 @@ class User implements UserInterface
      */
     public function getRoles()
     {
-        file_put_contents('/usr/local/www/log/1.txt', var_export($this->getUserRoles()->toArray(), true));
-
-        return $this->getUserRoles()->toArray();
+        //TODO: add fetch roles from db
+        return ['IS_AUTHENTICATED_ANONYMOUSLY', 'ROLE_ADMIN'];
     }
 
     public function getUsername()
@@ -226,7 +225,8 @@ class User implements UserInterface
      */
     public function getSalt()
     {
-        return $this->salt;
+        //TODO: add fetch salt from db
+        return 'wpDw2d2OB8fpG5ePfTAFJi8H9kLtcvyLZKDcu78k';
     }
 
     /**
@@ -234,7 +234,7 @@ class User implements UserInterface
      */
     public function setSalt($value)
     {
-        $this->salt = $value;
+        //$this->salt = $value;
     }
 
     public function equals(UserInterface $user)

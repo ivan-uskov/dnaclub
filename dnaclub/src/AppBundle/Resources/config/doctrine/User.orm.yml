@@ -45,15 +45,4 @@ AppBundle\Entity\User:
             gedmo:
                 timestampable:
                     on: update
-    oneToMany:
-        roles:
-            targetEntity: Role
-            cascade: {  }
-            fetch: LAZY
-            mappedBy: user
-            inversedBy: null
-            joinColumns:
-                role_id:
-                    referencedColumnName: user_id
-            orphanRemoval: false
     lifecycleCallbacks: {  }
