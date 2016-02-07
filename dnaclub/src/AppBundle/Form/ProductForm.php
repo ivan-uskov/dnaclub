@@ -15,6 +15,9 @@ class ProductForm extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $isNew = $options['isNew'];
+        $buttonName = $isNew ? 'Добавить' : 'Сохранить';
+
         $builder
             ->add('name', 'text', array(
                 'label' => 'Наименование',
@@ -29,7 +32,7 @@ class ProductForm extends AbstractType
                 'trim' => true
             ))
             ->add('save', 'submit', array(
-                'label' => 'Сохранить',
+                'label' => $buttonName,
                 'attr' => array('class' => 'btn-success')
             ));
     }
@@ -37,7 +40,8 @@ class ProductForm extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\Product'
+            'data_class' => 'AppBundle\Entity\Product',
+            'isNew' => false
         ));
     }
 }

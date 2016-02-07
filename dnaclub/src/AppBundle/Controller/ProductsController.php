@@ -19,7 +19,7 @@ class ProductsController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $product = new Product();
-        $newProductForm = $this->createForm(new ProductForm(), $product);
+        $newProductForm = $this->createForm(new ProductForm(), $product, array('isNew' => true));
         $newProductForm->handleRequest($request);
 
         if ($newProductForm->isSubmitted() && $newProductForm->isValid())
