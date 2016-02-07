@@ -8,6 +8,7 @@ use AppBundle\Form\OrderSearchForm;
 use AppBundle\Form\PreOrderSearchForm;
 use AppBundle\Entity\Client;
 use AppBundle\config\OrderStatus;
+use AppBundle\config\PaymentType;
 
 /**
  * OrderRepository
@@ -96,6 +97,43 @@ class OrderRepository extends EntityRepository
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    public function getPayments($orderId)
+    {
+        $payments = $this->getEntityManager()
+            ->createQueryBuilder()
+            ->select('p.paymentType, r.date, SUM(p.sum) paymentSum')
+            ->from('AppBundle\Entity\Order', 'o')
+            ->innerJoin('o.payments', 'p')
+            ->leftJoin('p.reward', 'r')
+            ->where('o.orderId = :orderId')
+            ->setParameter('orderId', $orderId)
+            ->orderBy('p.paymentType, r.date', 'asc')
+            ->groupBy('p.paymentType, r.date')
+            ->getQuery()
+            ->getArrayResult();
+
+        $formatter = new \IntlDateFormatter(\Locale::getDefault(), \IntlDateFormatter::NONE, \IntlDateFormatter::NONE, 'UTC');
+        $formatter->setPattern('LLL yy');
+
+        $formattedPayments = [];
+        foreach($payments as $payment)
+        {
+            $type = PaymentType::getShortName($payment["paymentType"]);
+            if ($payment["paymentType"] == PaymentType::REWARD)
+            {
+                $month = $formatter->format($payment["date"]);
+                $type .= " (" . $month . ")";
+            }
+
+            $formattedPayments[] = [
+                "sum" => $payment["paymentSum"],
+                "type" =>  $type
+            ];
+        }
+
+        return $formattedPayments;
     }
 
     public function getPreOrders($searchForm)

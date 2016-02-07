@@ -3,10 +3,10 @@ $(function()
     var PAGE_LENGTH = 10;
 
     var commonColumnDefs = [
-        { orderable: false, targets: [1, 6] },
-        { searchable: false, targets: [2, 4, 5] },
+        { orderable: false, targets: [1, 7] },
+        { searchable: false, targets: [2, 4, 5, 6, 7] },
         { type: 'date-ru', targets: [2] },
-        { type: 'formatted-num', targets: [4, 5] }
+        { type: 'formatted-num', targets: [4, 7] }
     ];
 
     var clientColumnDefs = [{visible: false, targets: 0 }];

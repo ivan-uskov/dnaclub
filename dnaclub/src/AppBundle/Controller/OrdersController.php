@@ -413,17 +413,18 @@ class OrdersController extends Controller
             ['em' => $this->getDoctrine()->getManager()]
         );
 
+        $orderRepository = $this->getDoctrine()->getRepository('AppBundle:Order');
         $isClientPredefined = (($clientId != null) && ($client != null));
         if ($isClientPredefined)
         {
             $templateMode = 'clientsOrders';
-            $orders = $this->getDoctrine()->getRepository('AppBundle:Order')->getOrdersByClient($client);
+            $orders = $orderRepository->getOrdersByClient($client);
         }
         else
         {
             $templateMode = 'orders';
             $searchForm->handleRequest($request);
-            $orders = $this->getDoctrine()->getRepository('AppBundle:Order')->getOrders($searchForm->getData());
+            $orders = $orderRepository->getOrders($searchForm->getData());
         }
 
         $orderInfo = [];
@@ -435,7 +436,7 @@ class OrdersController extends Controller
             $orderInfo[] = [
                 'order' => $order,
                 'orderItems' => $this->getDoctrine()->getRepository("AppBundle:OrderItem")->findBy(['order' => $order]),
-                'paymentSum' => $this->getOrderPaymentSum($order)
+                'payments' => $orderRepository->getPayments($order->getOrderId())
             ];
         }
 
