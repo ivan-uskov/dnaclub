@@ -51,7 +51,10 @@
         "symfony-web-dir": "dnaclub/web",
         "symfony-assets-install": "relative",
         "incenteev-parameters": {
-            "file": "dnaclub/app/config/parameters.yml"
+            "file": "dnaclub/app/config/parameters.yml",
+            "env-map": {
+                "database_url": "DATABASE_URL"
+            }
         }
     }
 }
