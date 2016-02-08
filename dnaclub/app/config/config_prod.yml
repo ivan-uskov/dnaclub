@@ -9,7 +9,7 @@ imports:
 
 doctrine:
     dbal:
-        database_url: %database_url%
+        url: %database_url%
         charset:  UTF8
 
     orm:
