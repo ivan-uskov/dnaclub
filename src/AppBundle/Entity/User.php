@@ -241,28 +241,4 @@ class User implements UserInterface
     {
         return md5($this->getUsername()) == md5($user->getUsername());
     }
-
-    /**
-     * Add role
-     *
-     * @param \AppBundle\Entity\Role $role
-     *
-     * @return User
-     */
-    public function addRole(\AppBundle\Entity\Role $role)
-    {
-        $this->roles[] = $role;
-
-        return $this;
-    }
-
-    /**
-     * Remove role
-     *
-     * @param \AppBundle\Entity\Role $role
-     */
-    public function removeRole(\AppBundle\Entity\Role $role)
-    {
-        $this->roles->removeElement($role);
-    }
 }
