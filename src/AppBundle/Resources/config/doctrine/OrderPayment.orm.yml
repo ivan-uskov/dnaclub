@@ -1,0 +1,60 @@
+AppBundle\Entity\OrderPayment:
+    type: entity
+    table: order_payment
+    repositoryClass: AppBundle\Entity\Repository\OrderPaymentRepository
+    indexes:
+        order_payment_order:
+            columns:
+                - order_id
+        fk_order_payment_reward:
+            columns:
+                - reward_id
+    id:
+        orderPaymentId:
+            type: integer
+            nullable: false
+            options:
+                unsigned: true
+            id: true
+            column: order_payment_id
+            generator:
+                strategy: IDENTITY
+    fields:
+        paymentType:
+            type: integer
+            nullable: false
+            column: payment_type
+        createdAt:
+            type: datetime
+            nullable: false
+            column: created_at
+            gedmo:
+                timestampable:
+                    on: create
+        sum:
+            type: decimal
+            nullable: false
+            precision: 10
+            scale: 2
+    manyToOne:
+        order:
+            targetEntity: Order
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: payments
+            joinColumns:
+                order_id:
+                    referencedColumnName: order_id
+            orphanRemoval: false
+        reward:
+            targetEntity: Reward
+            cascade: {  }
+            fetch: LAZY
+            mappedBy: null
+            inversedBy: payments
+            joinColumns:
+                reward_id:
+                    referencedColumnName: reward_id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

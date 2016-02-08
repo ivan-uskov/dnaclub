@@ -1,0 +1,41 @@
+.payment_selection_block .sum_container input
+{
+    width: 160px;
+}
+
+.payment_selection_block .sum_container input,
+.payment_selection_block .sum_container select
+{
+    width: 100%;
+}
+
+.payment_selection_block .add_reward_button
+{
+    margin-left: 10px;
+}
+
+.payment_selection_block label
+{
+    margin-top: 7px;
+}
+
+
+.payment_selection_block .type
+{
+    vertical-align: middle;
+}
+
+.payment_selection_block .reword .type
+{
+    vertical-align: top;
+}
+
+.payment_selection_block .sum_container select
+{
+    margin-top: 4px;
+}
+
+.payment_selection_block .remove_payment
+{
+    top: 9px;
+}

@@ -1,0 +1,19 @@
+.clear
+{
+    clear: both;
+}
+
+.table-hover>tbody>tr:hover
+{
+    cursor: pointer;
+}
+
+.float_right
+{
+    float: right;
+}
+
+.half_block
+{
+    min-width: 500px;
+}

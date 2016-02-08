@@ -1,0 +1,103 @@
+{% extends 'layout.html.twig' %}
+{% block pageH1 %}
+  Продажи
+  <a class="btn btn-success btn-add-top" target="_blank" href="{{ path('createOrder') }}">Добавить</a>
+{% endblock %}
+{% block content %}
+  {% if (mode == 'clientsOrders') %}
+    <h3 class="header-client-fullname">{{ client.getFullName() }}</h3>
+    {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'clientsOrders'} %}
+  {% endif %}
+  <input id="template_mode" type="hidden" value="{{ mode }}" />
+
+  {% if (mode == 'orders') %}
+    <div class="panel-body">
+      {% form_theme searchForm 'bootstrap_3_horizontal_layout.html.twig' %}
+      {{ form_start(searchForm) }}
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="form-group">
+            {{ form_label(searchForm.client) }}
+            <div class="col-md-4">{{ form_widget(searchForm.client) }}</div>
+            {{ form_label(searchForm.startDate) }}
+            <div class="col-md-4">{{ form_widget(searchForm.startDate) }}</div>
+          </div>
+          <div class="form-group">
+            {{ form_label(searchForm.status) }}
+            <div class="col-md-4">{{ form_widget(searchForm.status) }}</div>
+            {{ form_label(searchForm.endDate) }}
+            <div class="col-md-4">{{ form_widget(searchForm.endDate) }}</div>
+          </div>
+          <div class="form-group text-right">
+            <div class="default-margin-right">{{ form_widget(searchForm.search) }}</div>
+          </div>
+        </div>
+      </div>
+      {{ form_end(searchForm) }}
+    </div>
+  {% endif %}
+  <div class="panel-body">
+    <div class="table-responsive">
+      <table class="table table-hover table-striped table-bordered" id="ordersList">
+        <thead>
+          <tr>
+            <th>Клиент</th>
+            <th width="200">Товары</th>
+            <th>Дата</th>
+            <th>Статус</th>
+            <th>Стоимость</th>
+            <th>Оплачено</th>
+            <th>Долг</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for orderInfo in orders %}
+            <tr onclick="location.href = '{{ path('editOrder', {'orderId': orderInfo['order'].getOrderId()}) }}'">
+              <td>
+                <a href="{{ path('editClient', {'clientId': orderInfo['order'].getClient().getClientId()}) }}">
+                  {{ orderInfo['order'].getClient().getFullName() }}
+                </a>
+              </td>
+              <td>
+                {% for orderItem in orderInfo['orderItems'] %}
+                  <span class="text-nowrap">{{ orderItem.getProduct().getName() }}<span class="right_float">{{ orderItem.getCount() }} {{ orderItem.getProduct().getPieceName() }}</span></span><br />
+                {% endfor %}
+              </td>
+              <td>{{ orderInfo['order'].getCreatedAt()|date('d.m.Y') }}</td>
+              <td>{{ orderInfo['order'].getStatus() }}</td>
+              <td class="right_text_align">{{ orderInfo['order'].getSum()|localizedcurrency('RUB') }}</td>
+              <td>
+                {% for payment in orderInfo['payments'] %}
+                  <span class="text-nowrap">{{ payment['sum'] }} - {{ payment['type'] }}</span>
+                  <br>
+                {% endfor %}
+              </td>
+              <td class="right_text_align">{{ orderInfo['order'].getDebt()|localizedcurrency('RUB') }}</td>
+              {% if (mode == 'orders') %}
+                <td><a href="{{ path('deleteOrder', {'orderId': orderInfo['order'].getOrderId()}) }}" class="glyphicon glyphicon-remove remove_order_button"></a></td>
+              {% else %}
+                <td><a href="{{ path('deleteClientsOrder', {'clientId': client.getClientId(), 'orderId': orderInfo['order'].getOrderId()}) }}" class="glyphicon glyphicon-remove remove_order_button"></a></td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+{% block javascripts %}
+  <script src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
+  <script src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js') }}"></script>
+  <script src="{{ asset('js/datepicker/standard-datepicker.js') }}"></script>
+  <script src="{{ asset('js/data-table/sorting-date-ru.js') }}"></script>
+  <script src="{{ asset('js/data-table/sorting-formatted-number.js') }}"></script>
+  <script src="{{ asset('js/orders/OrdersListPage.js') }}"></script>
+{% endblock %}
+{% block stylesheets %}
+  {{ parent() }}
+  <link href="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css') }}" type="text/css" rel="stylesheet" />
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/orders/manage.css') }}" />
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/common/lists_common.css') }}" />
+  <link href="{{ asset('css/common/forms_common.css') }}" type="text/css" rel="stylesheet" />
+{% endblock %}

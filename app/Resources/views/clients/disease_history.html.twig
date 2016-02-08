@@ -1,0 +1,99 @@
+{% extends 'layout.html.twig' %}
+{% block stylesheets %}
+  {{ parent() }}
+  <link href="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css') }}"
+        type="text/css" rel="stylesheet"/>
+  <link href="{{ asset('css/common/forms_common.css') }}" type="text/css" rel="stylesheet"/>
+  <link href="{{ asset('css/common/lists_common.css') }}" type="text/css" rel="stylesheet"/>
+{% endblock %}
+{% block pageH1 %}
+  История болезни
+  {% if not isNew %}
+    <a class="btn btn-success btn-add-top"
+       href="{{ path('diseaseHistory', {'clientId': currentDiseaseHistory.getClient().getClientId()}) }}">Добавить
+      запись</a>
+  {% endif %}
+{% endblock %}
+{% block content %}
+  <h3 class="header-client-fullname">{{ client.getFullName() }}</h3>
+  {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'diseaseHistory'} %}
+
+    <form action="" method="post">
+      <div class="row">
+        <div class="form-group col-md-2">
+          <label for="date">Дата</label>
+
+          <div>
+            <input class="form-control {% if isNew %} datepicker{% endif %}" type="text" name="date" id="date"
+                {% if isNew %}
+                  value="{{ 'now'|date("d.m.Y") }}"
+                {% else %}
+                  disabled="disabled"
+                  value="{{ currentDiseaseHistory.getDate().format("d.m.Y") }}"
+                {% endif %}
+            />
+          </div>
+        </div>
+        <div class="form-group col-md-5">
+          <label for="healthState">Состояние здоровья</label>
+            <textarea class="form-control" name="health_state" id="healthState"
+                      rows="3">{% if not isNew %}{{ currentDiseaseHistory.getHealthState() }}{% endif %}</textarea>
+        </div>
+        <div class="form-group col-md-5">
+          <label for="treatment">Курс</label>
+            <textarea class="form-control" name="treatment" id="treatment"
+                      rows="3">{% if not isNew %}{{ currentDiseaseHistory.getTreatment() }}{% endif %}</textarea>
+        </div>
+      </div>
+
+      <div class="text-right">
+        <button type="submit" id="submit" class="btn btn-success">
+          {% if isNew %}
+            Добавить
+          {% else %}
+            Сохранить
+          {% endif %}
+        </button>
+      </div>
+    </form>
+
+  <div class="clearfix"></div>
+  <br>
+  <h3 class="disease-history-h3">Записи:</h3>
+
+  <table class="table table-hover table-striped table-bordered" id="disease_histories_list">
+    <thead>
+    <tr>
+      <th>Дата</th>
+      <th>Состояние здоровья</th>
+      <th>Курс</th>
+      <th></th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for diseaseHistory in diseaseHistories %}
+      <tr>
+        <td>{{ diseaseHistory.getDate().format("d.m.Y") }}</td>
+        <td>{{ diseaseHistory.getHealthState() }}</td>
+        <td>{{ diseaseHistory.getTreatment() }}</td>
+        <td><a
+              href="{{ path('editDiseaseHistory', {'clientId': diseaseHistory.getClient().getClientId(), 'diseaseHistoryId': diseaseHistory.getDiseaseHistoryId()}) }}"
+              class="glyphicon glyphicon-pencil"></a></td>
+        <td><a
+              href="{{ path('deleteDiseaseHistory', {'diseaseHistoryId': diseaseHistory.getDiseaseHistoryId()}) }}"
+              class="glyphicon glyphicon-remove delete-link"></a></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
+{% block javascripts %}
+  {{ parent() }}
+  <script src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js') }}"></script>
+  <script
+      src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js') }}"></script>
+  <script src="{{ asset('js/data-table/sorting-date-ru.js') }}"></script>
+  <script src="{{ asset('js/data-table/sorting-formatted-number.js') }}"></script>
+  <script src="{{ asset('js/disease_history/DiseaseHistory.js') }}"></script>
+{% endblock %}

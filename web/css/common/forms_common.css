@@ -1,0 +1,31 @@
+textarea
+{
+    resize: none;
+}
+
+.header-client-fullname
+{
+    margin-top: 0;
+}
+
+.month-select
+{
+    width: 200px;
+    margin-bottom: 10px;
+}
+
+.small-counter
+{
+    width: 40px !important;
+    padding: 6px 3px;
+}
+
+.subscription-column
+{
+    width: 95px;
+}
+
+.default-margin-right
+{
+    margin-right: 15px;
+}

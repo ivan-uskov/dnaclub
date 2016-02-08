@@ -1,0 +1,101 @@
+{% extends 'layout.html.twig' %}
+{% block pageH1 %}
+  Клиенты
+  <a class="btn btn-success btn-add-top" target="_blank" href="{{ path('createClient') }}">Добавить</a>
+{% endblock %}
+{% block stylesheets %}
+  <link href="{{ asset('css/common/lists_common.css') }}" type="text/css" rel="stylesheet"/>
+{% endblock %}
+{% block content %}
+  <form action="" method="POST">
+    <div class="checkbox">
+      <label class="required">
+        <input
+            class="clients-filter-checkbox"
+            type="checkbox"
+            id="checkbox_is_subscribed"
+            name="checkbox_is_subscribed"
+            {% if ("checkbox_is_subscribed" in filters) %}
+              checked="checked"
+            {% endif %}
+            onclick="submit()"
+        />
+        Участвует в маркетинге
+      </label>
+    </div>
+    <div class="checkbox">
+      <label class="required">
+        <input
+            class="clients-filter-checkbox"
+            type="checkbox"
+            id="checkbox_is_school_learner"
+            name="checkbox_is_school_learner"
+            {% if ("checkbox_is_school_learner" in filters) %}
+              checked="checked"
+            {% endif %}
+            onclick="submit()"
+        />
+        Обучается в школе
+      </label>
+    </div>
+    <div class="checkbox">
+      <label class="required">
+        <input
+            class="clients-filter-checkbox"
+            type="checkbox"
+            id="checkbox_is_online_learner"
+            name="checkbox_is_online_learner"
+            {% if ("checkbox_is_online_learner" in filters) %}
+              checked="checked"
+            {% endif %}
+            onclick="submit()"
+        />
+        Обучается онлайн
+      </label>
+    </div>
+  </form>
+  <div class="panel-body">
+    <div class="table-responsive">
+      <table class="table table-hover" id="clients_list">
+        <thead>
+        <tr>
+          <th>ФИО</th>
+          <th>Город</th>
+          <th>Телефон</th>
+          <th>E-mail</th>
+          <th>Последняя покупка</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody id="table_body">
+        {% for client in clients %}
+          <tr>
+            <td>
+              <a href="{{ path('editClient', {'clientId': client.getClientId()}) }}">
+                {{ client.getFullName() }}
+              </a>
+            </td>
+            <td>{{ client.getCity() }}</td>
+            <td>{{ client.getPhone() }}</td>
+            <td>{{ client.getEmail() }}</td>
+            {% set lastOrderDate = client.getLastOrderDate() %}
+            {% if lastOrderDate %}
+              <td>{{ lastOrderDate|date('d.m.Y') }}</td>
+            {% else %}
+              <td></td>
+            {% endif %}
+            <td><a href="{{ path('deleteClient', {'clientId': client.getClientId()}) }}"
+                   class="glyphicon glyphicon-remove delete-link"></a></td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
+{% block javascripts %}
+  {{ parent() }}
+  <script src="{{ asset('js/data-table/sorting-date-ru.js') }}"></script>
+  <script src="{{ asset('js/data-table/sorting-formatted-number.js') }}"></script>
+  <script src="{{ asset('js/clients/ClientsListPage.js') }}"></script>
+{% endblock %}

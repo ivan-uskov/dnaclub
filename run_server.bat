@@ -1,0 +1,1 @@
+call php app/console server:run
