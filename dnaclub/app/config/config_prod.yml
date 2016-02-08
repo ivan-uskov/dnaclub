@@ -1,6 +1,8 @@
 imports:
     - { resource: config.yml }
 
+parameters:
+    locale: ru
 #framework:
 #    validation:
 #        cache: validator.mapping.cache.apc
