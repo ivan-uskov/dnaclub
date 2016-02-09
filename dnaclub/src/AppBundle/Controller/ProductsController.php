@@ -24,8 +24,7 @@ class ProductsController extends Controller
 
         if ($newProductForm->isSubmitted() && $newProductForm->isValid())
         {
-            $newProduct = $newProductForm->getData();
-            $em->persist($newProduct);
+            $em->persist($newProductForm->getData());
             $em->flush();
             return $this->redirectToRoute('productsList');
         }

@@ -5,6 +5,7 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Reward
@@ -18,6 +19,9 @@ class Reward
 
     /**
      * @var string
+     * @Assert\GreaterThan(
+     *     value = 0
+     * )
      */
     private $sum;
 
