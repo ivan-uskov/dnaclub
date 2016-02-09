@@ -39,7 +39,7 @@ class RewardRepository extends EntityRepository
         return $result;
     }
 
-    public function getRewardsByMonth($date)
+    public function findByMonth($date)
     {
         $startDate = DateUtils::getFirstDayOfThisMonth($date);
         $endDate = DateUtils::getFirstDayOfNextMonth($date);

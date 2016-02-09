@@ -5,6 +5,8 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Reward
@@ -18,6 +20,9 @@ class Reward
 
     /**
      * @var string
+     * @Assert\GreaterThan(
+     *     value = 0
+     * )
      */
     private $sum;
 
@@ -55,6 +60,38 @@ class Reward
     }
 
     /**
+     * @Assert\Callback
+     */
+    public function validate(ExecutionContextInterface $context)
+    {
+        if ($this->getPayments() && $this->getSum() < ($this->getRemainingSum() + $this->getPaymentSum()))
+        {
+            $context->buildViolation('Нельзя уменьшать сумму начислений в меньшую сторону')
+                ->atPath('sum')
+                ->addViolation();
+        }
+    }
+
+    public function actualizeRemainingSum()
+    {
+        $this->setRemainingSum($this->getSum() - $this->getPaymentSum());
+    }
+
+    public function getPaymentSum()
+    {
+        $paymentSum = 0;
+        if ($this->payments)
+        {
+            foreach($this->payments as $payment)
+            {
+                $paymentSum += $payment->getSum();
+            }
+        }
+
+        return $paymentSum;
+    }
+
+    /**
      * Get rewardId
      *
      * @return integer
@@ -67,7 +104,7 @@ class Reward
     /**
      * Set sum
      *
-     * @param string $sum
+     * @param double $sum
      *
      * @return Reward
      */
@@ -81,7 +118,7 @@ class Reward
     /**
      * Get sum
      *
-     * @return string
+     * @return double
      */
     public function getSum()
     {
@@ -91,7 +128,7 @@ class Reward
     /**
      * Set remainingSum
      *
-     * @param string $remainingSum
+     * @param double $remainingSum
      *
      * @return Reward
      */
@@ -105,7 +142,7 @@ class Reward
     /**
      * Get remainingSum
      *
-     * @return string
+     * @return double
      */
     public function getRemainingSum()
     {
