@@ -45,7 +45,7 @@ class RewardsController extends Controller
         if ($rewardForm->isSubmitted() && $rewardForm->isValid())
         {
             $reward = $rewardForm->getData();
-
+            $reward->actualizeRemainingSum();
             $em->merge($reward);
             $em->flush();
 
@@ -108,7 +108,7 @@ class RewardsController extends Controller
 
         if ($rewardForm->isSubmitted() && $rewardForm->isValid())
         {
-            $reward->setRemainingSum($reward->getSum());
+            $reward->actualizeRemainingSum();
             $em->persist($reward);
             $em->flush();
             return new RedirectResponse($request->headers->get('referer'));
