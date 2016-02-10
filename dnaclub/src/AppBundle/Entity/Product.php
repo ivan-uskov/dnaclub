@@ -2,8 +2,12 @@
 
 namespace AppBundle\Entity;
 use Symfony\Component\Validator\Constraints as Assert;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+
 /**
- * Product
+ * @ORM\Entity
+ * @UniqueEntity("name")
  */
 class Product
 {
@@ -167,6 +171,16 @@ class Product
     public function getProductGroup()
     {
         return $this->productGroup;
+    }
+
+    public static function getMeasureTypes()
+    {
+        return array(
+            "к." => "капсула",
+            "б." => "банка",
+            "т." => "таблетка",
+            "шт." => "штука",
+        );
     }
 }
 

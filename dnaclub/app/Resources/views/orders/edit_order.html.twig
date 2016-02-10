@@ -50,13 +50,13 @@
         </div>
       {% endif %}
       <div class="form-group">
-        {% include 'include/product_selection_block.html.twig' with {'id': productBlockVars['id'], 'isEditable': order.isProductsEditable(), 'products': productBlockVars['products'], 'orderItems': productBlockVars['orderItems']} %}
+        {% include 'include/product_selection_block.html.twig' with {'id': productBlockVars['id'], 'isEditable': order.isProductsEditable(), 'products': productBlockVars['products'], 'orderItems': productBlockVars['orderItems'], 'order': order} %}
       </div>
     </div>
     <div class="col-md-6 half_block">
       <div class="form-group">
         <label for="discount">Скидка</label>
-        <input class="form-control" type="text" name="discount" id="discount" placeholder="Введите скидку" value="{{ order.getDiscount() }}" />
+        <input class="form-control" type="text" name="discount" id="discount" {% if order.isNotOpen() %}readonly{% endif %} placeholder="Введите скидку" value="{{ order.getDiscount() }}" />
       </div>
       <div class="form-group">
         {% include 'include/payment_selection_block.html.twig' with {'id': paymentBlockVars['id'], 'payments': paymentBlockVars['payments'], 'clientRewards': paymentBlockVars['clientRewards']} %}

@@ -440,4 +440,9 @@ class Order
     {
         return $this->getStatus() != OrderStatus::OPEN;
     }
+
+    public function isPaid()
+    {
+        return $this->getStatus() == OrderStatus::PAID;
+    }
 }

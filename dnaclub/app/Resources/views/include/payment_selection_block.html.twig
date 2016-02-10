@@ -1,9 +1,17 @@
 <div class="payment_selection_block" id="{{ id }}">
   <input type="hidden" id="rewardsListUrl" value="{{ path('clientRewardsAjax', {'clientId': 'ORDER_ID'}) }}" />
   <input type="hidden" name="paidByCash" id="paidByCash" />
-  <label>Оплата - долг <span id="debt">0</span> руб.</label>
-  <a id="{{ id }}AddByReword" class="btn btn-default btn-add-top float_right add_reward_button">Вознаграждением</a>
-  <a id="{{ id }}AddByCash" class="btn btn-default btn-add-top float_right">Наличными</a>
+  <label>
+    {% if order and order.isPaid() %}
+      Полностью оплачено
+    {% else %}
+      К оплате осталось <span id="debt">0</span> руб.
+    {% endif %}
+  </label>
+  {% if not order or not order.isPaid() %}
+    <a id="{{ id }}AddByReword" class="btn btn-default btn-add-top float_right add_reward_button">Вознаграждением</a>
+    <a id="{{ id }}AddByCash" class="btn btn-default btn-add-top float_right">Наличными</a>
+  {% endif %}
   <div class="clear"></div>
   <table class="table table-hover table-striped table-bordered dataTable no-footer" id="ordersList" role="grid" aria-describedby="ordersList_info">
     <thead>

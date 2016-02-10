@@ -2,8 +2,8 @@ $(function()
 {
     function update()
     {
-        var result = -productsBlock.getCoast() + discount.getValue() + paymentBlock.getSum();
-        $('#debt').text(result >= 0 ? 0 : result);
+        var result = productsBlock.getCoast() - discount.getValue() - paymentBlock.getSum();
+        $('#debt').text(result <= 0 ? 0 : result);
     }
 
     var clientSelect = $('#userName');

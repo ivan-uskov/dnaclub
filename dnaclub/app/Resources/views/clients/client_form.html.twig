@@ -22,7 +22,7 @@
         <label for="lastName" class="col-md-4">Фамилия</label>
 
         <div class="col-md-7">
-          <input class="form-control" type="text" name="last_name" id="lastName"
+          <input class="form-control" required type="text" name="last_name" id="lastName"
               {% if not isNew %}
                 value="{{ client.getLastName() }}"
               {% endif %}
@@ -33,7 +33,7 @@
         <label for="firstName" class="col-md-4">Имя</label>
 
         <div class="col-md-7">
-          <input class="form-control" type="text" name="first_name" id="firstName"
+          <input class="form-control" required type="text" name="first_name" id="firstName"
               {% if not isNew %}
                 value="{{ client.getFirstName() }}"
               {% endif %}
@@ -55,7 +55,7 @@
         <label for="birthday" class="col-md-4">Дата рождения</label>
 
         <div class="col-md-7">
-          <input class="form-control datepicker" type="text" name="birthday" id="birthday"
+          <input class="form-control birthdayDatepicker" type="text" name="birthday" id="birthday"
               {% if not isNew and (not client.getBirthday() == null) %}
                 value="{{ client.getBirthday()|date('d.m.Y') }}"
               {% endif %}
@@ -105,7 +105,7 @@
         <label for="email" class="col-md-4">E-mail</label>
 
         <div class="col-md-8">
-          <input class="form-control" type="text" name="email" id="email"
+          <input class="form-control" type="email" name="email" id="email"
               {% if not isNew %}
                 value="{{ client.getEmail() }}"
               {% endif %}
@@ -168,6 +168,15 @@
       src="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/locales/bootstrap-datepicker.ru.min.js') }}"></script>
 
   <script>
+    $('.birthdayDatepicker').datepicker({
+      format: 'dd.mm.yyyy',
+      startDate: '-100y',
+      startView: 'century',
+      weekStart: 1,
+      autoclose: true,
+      language: 'ru'
+    });
+
     $('.datepicker').datepicker({
       format: 'dd.mm.yyyy',
       weekStart: 1,

@@ -22,7 +22,7 @@ AppBundle\Entity\Reward:
             nullable: false
             precision: 10
             scale: 2
-        remaining_sum:
+        remainingSum:
             type: decimal
             nullable: false
             precision: 10

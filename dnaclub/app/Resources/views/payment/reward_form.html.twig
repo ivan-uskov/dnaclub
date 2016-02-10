@@ -12,58 +12,18 @@
   {% endif %}
 {% endblock %}
 {% block content %}
-  <div class="row">
-    <div class="col-md-6">
-      <form action="" method="post">
-        {% if (mode == 'editClientsReward') %}
-          <select name="client" id="client" class="hidden">
-            <option value="{{ clients[0].getClientId() }}"
-                    selected="selected"
-            ></option>
-          </select>
-        {% else %}
-          <div class="form-group">
-            <label for="client">Клиент</label>
-            <select name="client" id="client" class="form-control">
-              {% if not isNew %}
-                {% set currentClientId = reward.getClient().getClientId() %}
-              {% endif %}
-              {% for client in clients %}
-                <option value="{{ client.getClientId() }}"
-                    {% if (not isNew) and (client.getClientId() == currentClientId) %}
-                      selected="selected"
-                    {% endif %}
-                >{{ client.getFullName() }}</option>
-              {% endfor %}
-            </select>
-          </div>
-        {% endif %}
-
-        <div class="form-group">
-          <label for="sum">Начислено</label>
-          <input class="form-control" type="text" name="sum" id="sum"
-              {% if not isNew %}
-                value="{{ reward.getSum() }}"
-              {% endif %}
-          />
-        </div>
-        <div class="form-group">
-          <label for="date">Дата</label>
-          <input class="form-control datepicker" type="text" name="date" id="date"
-              {% if not isNew and (not reward.getDate() == null) %}
-                value="{{ reward.getDate().format("d.m.Y") }}"
-              {% endif %}
-          />
-        </div>
-        <button type="submit" id="submit" class="btn btn-success">
-          {% if isNew %}
-            Добавить
-          {% else %}
-            Сохранить
-          {% endif %}
-        </button>
-      </form>
+  <div id="add_form" class="{% if isNew %}hidden{% endif %}">
+    {% form_theme rewardForm 'bootstrap_3_horizontal_layout.html.twig' %}
+    {{ form_start(rewardForm) }}
+    <div class="row">
+      <div class="col-md-8 col-sm-12">
+        {{ form_row(rewardForm.client) }}
+        {{ form_row(rewardForm.sum) }}
+        {{ form_row(rewardForm.date) }}
+        {{ form_row(rewardForm.save) }}
+      </div>
     </div>
+    {{ form_end(rewardForm) }}
   </div>
 {% endblock %}
 {% block javascripts %}
@@ -77,7 +37,9 @@
       format: 'dd.mm.yyyy',
       weekStart: 1,
       autoclose: true,
-      language: 'ru'
+      language: 'ru',
+      startView: "months",
+      minViewMode: "months"
     });
   </script>
 {% endblock %}

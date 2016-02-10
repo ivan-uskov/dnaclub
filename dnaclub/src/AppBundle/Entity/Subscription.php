@@ -26,12 +26,14 @@ class Subscription
 
     /**
      * @var integer
-     * @Assert\GreaterThan(value=0)
+     * @Assert\GreaterThan(
+     *     value = 0
+     * )
      */
     private $count;
 
     /**
-     * @var string
+     * @var double
      */
     private $sum;
 
@@ -136,7 +138,7 @@ class Subscription
     /**
      * Set sum
      *
-     * @param string $sum
+     * @param double $sum
      *
      * @return Subscription
      */
@@ -150,7 +152,7 @@ class Subscription
     /**
      * Get sum
      *
-     * @return string
+     * @return double
      */
     public function getSum()
     {
