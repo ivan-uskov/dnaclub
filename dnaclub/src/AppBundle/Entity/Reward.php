@@ -19,7 +19,7 @@ class Reward
     private $rewardId;
 
     /**
-     * @var string
+     * @var double
      * @Assert\GreaterThan(
      *     value = 0
      * )
@@ -27,9 +27,9 @@ class Reward
     private $sum;
 
     /**
-     * @var string
+     * @var double
      */
-    private $remaining_sum;
+    private $remainingSum;
 
     /**
      * @var \DateTime
@@ -64,9 +64,9 @@ class Reward
      */
     public function validate(ExecutionContextInterface $context)
     {
-        if ($this->getPayments() && $this->getSum() < ($this->getRemainingSum() + $this->getPaymentSum()))
+        if ($this->getPaymentSum() != 0 && $this->getSum() < ($this->getRemainingSum() + $this->getPaymentSum()))
         {
-            $context->buildViolation('Нельзя уменьшать сумму начислений в меньшую сторону')
+            $context->buildViolation('Нельзя уменьшать сумму начислений')
                 ->atPath('sum')
                 ->addViolation();
         }
@@ -134,7 +134,7 @@ class Reward
      */
     public function setRemainingSum($remainingSum)
     {
-        $this->remaining_sum = $remainingSum;
+        $this->remainingSum = $remainingSum;
 
         return $this;
     }
@@ -146,7 +146,7 @@ class Reward
      */
     public function getRemainingSum()
     {
-        return $this->remaining_sum;
+        return $this->remainingSum;
     }
 
     /**

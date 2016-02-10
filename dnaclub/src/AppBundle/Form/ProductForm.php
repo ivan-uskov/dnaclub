@@ -5,6 +5,7 @@ namespace AppBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use AppBundle\Entity\Product;
 
 class ProductForm extends AbstractType
 {
@@ -17,6 +18,7 @@ class ProductForm extends AbstractType
     {
         $isNew = $options['isNew'];
         $buttonName = $isNew ? 'Добавить' : 'Сохранить';
+        $measureTypes = Product::getMeasureTypes();
 
         $builder
             ->add('name', 'text', array(
@@ -27,9 +29,11 @@ class ProductForm extends AbstractType
                 'label' => 'Цена',
                 'currency' => 'RUB'
             ))
-            ->add('pieceName', 'text', array(
-                'label' => 'Обозн.',
-                'trim' => true
+            ->add('pieceName', 'choice', array(
+                'label' => 'Ед.изм.',
+                //'placeholder' => '',
+                'choices' => $measureTypes,
+                'choices_as_values' => false
             ))
             ->add('save', 'submit', array(
                 'label' => $buttonName,

@@ -25,6 +25,7 @@ class RewardRepository extends EntityRepository
             ->select('r')
             ->from('AppBundle\Entity\Reward', 'r')
             ->where('r.isDeleted = 0')
+            ->andWhere('r.remainingSum > 0')
             ->orderBy('r.date', 'asc');
 
         if ($client != null)
@@ -53,7 +54,7 @@ class RewardRepository extends EntityRepository
             ->andWhere('r.isDeleted = 0')
             ->setParameter('start_date', $startDate)
             ->setParameter('end_date', $endDate)
-            ->orderBy('r.remaining_sum', 'desc')
+            ->orderBy('r.remainingSum', 'desc')
             ->getQuery()
             ->getResult();
     }

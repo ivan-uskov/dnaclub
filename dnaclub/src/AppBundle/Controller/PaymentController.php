@@ -85,6 +85,7 @@ class PaymentController extends Controller
 
         $searchForm->handleRequest($request);
 
+        $hideAddForm = true;
         $newSubscriptionForm->handleRequest($request);
         if ($newSubscriptionForm->isSubmitted() && $newSubscriptionForm->isValid())
         {
@@ -103,6 +104,10 @@ class PaymentController extends Controller
                 return $this->redirectToRoute('subscriptionsList');
             }
         }
+        if ($newSubscriptionForm->isSubmitted() && !$newSubscriptionForm->isValid())
+        {
+            $hideAddForm = false;
+        }
 
         $data = $searchForm->getData();
         $date = $data["months"] ?: key($dates);
@@ -117,7 +122,8 @@ class PaymentController extends Controller
                 'form' => $newSubscriptionForm->createView(),
                 'subscriptions' => $subscriptions,
                 'mode' => $templateMode,
-                'client' => $client
+                'client' => $client,
+                'hideAddForm' => $hideAddForm
             ]);
     }
 

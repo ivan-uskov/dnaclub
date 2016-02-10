@@ -222,7 +222,7 @@ class OrdersController extends Controller
     {
         $products = [];
         /** @var Product $product */
-        foreach ($this->getDoctrine()->getRepository('AppBundle:Product')->findAll() as $product)
+        foreach ($this->getDoctrine()->getRepository('AppBundle:Product')->getActiveProducts() as $product)
         {
             $products[$product->getName()] = [
                 'id'    => $product->getProductId(),

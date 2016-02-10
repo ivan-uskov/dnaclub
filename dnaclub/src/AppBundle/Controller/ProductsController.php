@@ -22,16 +22,25 @@ class ProductsController extends Controller
         $newProductForm = $this->createForm(new ProductForm(), $product, array('isNew' => true));
         $newProductForm->handleRequest($request);
 
+        $hideAddForm = true;
         if ($newProductForm->isSubmitted() && $newProductForm->isValid())
         {
             $em->persist($newProductForm->getData());
             $em->flush();
             return $this->redirectToRoute('productsList');
         }
+        if ($newProductForm->isSubmitted() && !$newProductForm->isValid())
+        {
+            $hideAddForm = false;
+        }
 
         $products = $em->getRepository('AppBundle:Product')->getActiveProducts();
 
-        return $this->render('products/products_list.html.twig', ['products' => $products, 'form' => $newProductForm->createView()]);
+        return $this->render('products/products_list.html.twig', [
+            'products' => $products,
+            'form' => $newProductForm->createView(),
+            'hideAddForm' => $hideAddForm
+        ]);
     }
 
     /**

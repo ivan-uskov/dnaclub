@@ -10,7 +10,7 @@
 {% endblock %}
 {% block content %}
   <div class="panel-body">
-      <div id="add_form" class="hidden">
+      <div id="add_form" class="{% if hideAddForm %}hidden{% endif %}">
       {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
       {{ form_start(form) }}
       <div class="row">
@@ -31,7 +31,7 @@
         <tr>
           <th>Наименование</th>
           <th>Цена</th>
-          <th>Обозн.</th>
+          <th>Ед. изм.</th>
           <th></th>
           <th></th>
         </tr>
