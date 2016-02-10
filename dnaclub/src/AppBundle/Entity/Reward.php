@@ -271,7 +271,7 @@ class Reward
     public function getName()
     {
         $formatter = new \IntlDateFormatter(\Locale::getDefault(), \IntlDateFormatter::NONE, \IntlDateFormatter::NONE, 'UTC');
-        $formatter->setPattern('LLLL Y');
+        $formatter->setPattern('LLLL y');
 
         return $formatter->format($this->getDate()) . " ({$this->getRemainingSum()}/{$this->getSum()})";
     }
