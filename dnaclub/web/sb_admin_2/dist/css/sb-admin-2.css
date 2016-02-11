@@ -629,7 +629,7 @@ fieldset[disabled] .btn-info.active {
     border-bottom-width: 2px;
 }
 .table-striped > tbody > tr:nth-of-type(odd) {
-    background-color: #fff;
+    background-color: #ffffef;
 }
 .table-hover > tbody > tr:hover {
     background-color: #FCFABD;
