@@ -166,11 +166,12 @@ class OrdersController extends Controller
         }
 
         $this->saveOrder($order, $isNew);
-        $this->updateOrderPaymentInfo($order, $post->get('payment_info'));
         if ($order->getStatus() == OrderStatus::OPEN)
         {
             $this->fillOrderItems($order, $post);
         }
+        $this->updateOrderPaymentInfo($order, $post->get('payment_info'));
+        $this->updateOrderPaymentStatus($order);
     }
 
     private function fillOrderItems(Order $order, ParameterBag $post)
@@ -245,11 +246,14 @@ class OrdersController extends Controller
         {
             foreach ($cashPayments as $cashPaymentInfo)
             {
+                $sum = (float) $cashPaymentInfo['sum'];
+                if ($sum <= 0) continue;
+
                 $orderPayment = new OrderPayment();
                 $orderPayment->setOrder($order);
                 $orderPayment->setPaymentType(PaymentType::CASH);
                 $orderPayment->setCreatedAt(new \DateTime($cashPaymentInfo['date']));
-                $orderPayment->setSum($cashPaymentInfo['sum']);
+                $orderPayment->setSum($sum);
                 $em->persist($orderPayment);
             }
         }
@@ -259,14 +263,17 @@ class OrdersController extends Controller
             foreach ($rewardPayments as $rewardPaymentInfo)
             {
                 $sum = (float)$rewardPaymentInfo['sum'];
-                $reward = $this->getDoctrine()->getRepository("AppBundle:Reward")->find($rewardPaymentInfo['reward_id']); /** @var Reward $reward */
-                if (!$reward)
-                {
-                    continue;
-                }
+                $rewardId = (int)$rewardPaymentInfo['reward_id'];
+
+                if ($rewardId <= 0) continue;
+
+                $reward = $this->getDoctrine()->getRepository("AppBundle:Reward")->find($rewardId); /** @var Reward $reward */
+
+                if (!$reward) continue;
 
                 $remaining = ((float)$reward->getRemainingSum()) - $sum;
                 if ((int)$remaining < 0) continue;
+                if ($sum <= 0) continue;
 
                 $reward->setRemainingSum($remaining);
                 $em->merge($reward);
@@ -282,7 +289,11 @@ class OrdersController extends Controller
         }
 
         $em->flush();
+    }
 
+    private function updateOrderPaymentStatus(Order $order)
+    {
+        $em = $this->getDoctrine()->getManager();
         $sum = $this->getOrderPaymentSum($order);
         if ($sum > 0)
         {
