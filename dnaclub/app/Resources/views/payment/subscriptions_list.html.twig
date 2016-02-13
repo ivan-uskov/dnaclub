@@ -1,6 +1,6 @@
 {% extends 'layout.html.twig' %}
 {% block pageH1 %}
-  Лидерские и контракты
+  {% if (mode == 'subscriptions') %}Лидерские и контракты{% else %}{{ client.getFullName() }}{% endif %}
   <a id="button_add_top" class="btn btn-success btn-add-top" href="javascript:void(0);">Добавить</a>
 {% endblock %}
 {% block stylesheets %}
@@ -12,48 +12,46 @@
 {% endblock %}
 {% block content %}
   {% if (mode == 'clientsSubscriptions') %}
-    <h3 class="header-client-fullname">{{ client.getFullName() }}</h3>
+    {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'clientsSubscriptions'} %}
   {% endif %}
-  <div class="panel-body">
-    {% if (mode == 'clientsSubscriptions') %}
-      {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'clientsSubscriptions'} %}
-    {% endif %}
-    <input type="hidden" id="template_mode" value="{{ mode }}"/>
 
-    <div id="add_form" class="{% if hideAddForm %}hidden{% endif %}">
-      {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
-      {{ form_start(form) }}
-      <div class="row" style="padding-bottom: 10px;">
-        <div class="col-md-8 col-sm-12">
-          <div class="form-group {% if (mode == 'clientsSubscriptions') %}hidden{% endif %}">
-            {{ form_label(form.client) }}
-            <div class="col-md-10">{{ form_widget(form.client) }}</div>
-          </div>
-          <div class="form-group">
-            {{ form_label(form.type) }}
-            <div class="col-md-10">{{ form_widget(form.type) }}</div>
-          </div>
-          <div class="form-group">
-            {{ form_label(form.count) }}
-            <div class="col-md-3">{{ form_widget(form.count) }}</div>
-            <div class="hidden-md hidden-lg">{{ form_label(form.date) }}</div>
-            <div class="col-md-7">{{ form_widget(form.date) }}</div>
-            <div class="col-md-2"></div><div class="col-md-10 has-error">{{ form_errors(form.count) }}</div>
-          </div>
-          <div class="form-group">
-            <div class="col-md-9 col-md-push-2">{{ form_widget(form.save) }}</div>
-          </div>
+  <input type="hidden" id="template_mode" value="{{ mode }}"/>
+
+  <div id="add_form" class="{% if hideAddForm %}hidden{% endif %}">
+    {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+    {{ form_start(form) }}
+    <div class="row panel-body">
+      <div class="col-md-8 col-sm-12">
+        <div class="form-group {% if (mode == 'clientsSubscriptions') %}hidden{% endif %}">
+          {{ form_label(form.client) }}
+          <div class="col-md-10">{{ form_widget(form.client) }}</div>
+        </div>
+        <div class="form-group">
+          {{ form_label(form.type) }}
+          <div class="col-md-10">{{ form_widget(form.type) }}</div>
+        </div>
+        <div class="form-group">
+          {{ form_label(form.count) }}
+          <div class="col-md-3">{{ form_widget(form.count) }}</div>
+          <div class="hidden-md hidden-lg">{{ form_label(form.date) }}</div>
+          <div class="col-md-7">{{ form_widget(form.date) }}</div>
+          <div class="col-md-2"></div><div class="col-md-10 has-error">{{ form_errors(form.count) }}</div>
+        </div>
+        <div class="form-group">
+          <div class="col-md-9 col-md-push-2">{{ form_widget(form.save) }}</div>
         </div>
       </div>
-      {{ form_end(form) }}
     </div>
+    {{ form_end(form) }}
   </div>
 
   {% if (mode == 'subscriptions') %}
-    {% form_theme searchForm 'bootstrap_3_horizontal_layout.html.twig' %}
-    {{ form_start(searchForm) }}
-    {{ form_widget(searchForm.months, {'attr': {'style': 'width: 200px;', 'onchange': "this.form.submit()"}}) }}
-    {{ form_end(searchForm) }}
+    <div class="panel-body">
+      {% form_theme searchForm 'bootstrap_3_horizontal_layout.html.twig' %}
+      {{ form_start(searchForm) }}
+      {{ form_widget(searchForm.months, {'attr': {'style': 'width: 200px;', 'onchange': "this.form.submit()"}}) }}
+      {{ form_end(searchForm) }}
+    </div>
   {% endif %}
 
   <div class="panel-body">

@@ -451,7 +451,7 @@ class OrdersController extends Controller
     /**
      * @param $orderId
      * @param $clientId
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
+     * @return RedirectResponse
      */
     private function deleteOrderImpl($orderId, $clientId = null)
     {
@@ -467,6 +467,7 @@ class OrdersController extends Controller
             $em->remove($orderItem);
         }
 
+        //todo: update remaining sum in rewards
         foreach ($orderPayments as $orderPayment)
         {
             $em->remove($orderPayment);

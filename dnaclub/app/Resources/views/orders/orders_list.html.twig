@@ -1,17 +1,16 @@
 {% extends 'layout.html.twig' %}
 {% block pageH1 %}
-  Продажи
+  {% if (mode == 'orders') %}Продажи{% else %}{{ client.getFullName() }}{% endif %}
   <a class="btn btn-success btn-add-top" target="_blank" href="{{ path('createOrder') }}">Добавить</a>
 {% endblock %}
 {% block content %}
   {% if (mode == 'clientsOrders') %}
-    <h3 class="header-client-fullname">{{ client.getFullName() }}</h3>
     {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'clientsOrders'} %}
   {% endif %}
-  <input id="template_mode" type="hidden" value="{{ mode }}" />
 
   {% if (mode == 'orders') %}
     <div class="panel-body">
+      <input id="template_mode" type="hidden" value="{{ mode }}" />
       {% form_theme searchForm 'bootstrap_3_horizontal_layout.html.twig' %}
       {{ form_start(searchForm) }}
       <div class="row">
@@ -75,9 +74,9 @@
               </td>
               <td class="right_text_align">{{ orderInfo['order'].getDebt()|localizedcurrency('RUB') }}</td>
               {% if (mode == 'orders') %}
-                <td><a href="{{ path('deleteOrder', {'orderId': orderInfo['order'].getOrderId()}) }}" class="glyphicon glyphicon-remove remove_order_button"></a></td>
+                <td class="text-center"><a href="{{ path('deleteOrder', {'orderId': orderInfo['order'].getOrderId()}) }}" class="glyphicon glyphicon-remove remove_order_button"></a></td>
               {% else %}
-                <td><a href="{{ path('deleteClientsOrder', {'clientId': client.getClientId(), 'orderId': orderInfo['order'].getOrderId()}) }}" class="glyphicon glyphicon-remove remove_order_button"></a></td>
+                <td class="text-center"><a href="{{ path('deleteClientsOrder', {'clientId': client.getClientId(), 'orderId': orderInfo['order'].getOrderId()}) }}" class="glyphicon glyphicon-remove remove_order_button"></a></td>
               {% endif %}
             </tr>
           {% endfor %}

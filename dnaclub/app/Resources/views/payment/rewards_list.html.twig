@@ -8,40 +8,37 @@
   <link href="{{ asset('css/common/lists_common.css') }}" type="text/css" rel="stylesheet"/>
 {% endblock %}
 {% block pageH1 %}
-  Вознаграждения
+  {% if (mode == 'rewards') %}Вознаграждения{% else %}{{ client.getFullName() }}{% endif %}
   {% if isNew %}
     <a id="button_add_top" class="btn btn-success btn-add-top" href="javascript:void(0);">Добавить</a>
   {% endif %}
 {% endblock %}
 {% block content %}
   {% if (mode == 'clientsRewards') %}
-    <h3 class="header-client-fullname">{{ client.getFullName() }}</h3>
+    {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'clientsRewards'} %}
   {% endif %}
 
-  <div class="panel-body">
-    {% if (mode == 'clientsRewards') %}
-      {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'clientsRewards'} %}
-    {% endif %}
-    <div id="add_form" class="{% if isNew %}hidden{% endif %}">
-      {% form_theme rewardForm 'bootstrap_3_horizontal_layout.html.twig' %}
-      {{ form_start(rewardForm) }}
-      <div class="row">
-        <div class="col-md-8 col-sm-12">
-          {{ form_row(rewardForm.client) }}
-          {{ form_row(rewardForm.sum) }}
-          {{ form_row(rewardForm.date) }}
-          {{ form_row(rewardForm.save) }}
-        </div>
+  <div id="add_form" class="{% if isNew %}hidden{% endif %}">
+    {% form_theme rewardForm 'bootstrap_3_horizontal_layout.html.twig' %}
+    {{ form_start(rewardForm) }}
+    <div class="row panel-body">
+      <div class="col-md-8 col-sm-12">
+        <div class="{% if (mode == 'clientsRewards') %}hidden{% endif %}">{{ form_row(rewardForm.client) }}</div>
+        {{ form_row(rewardForm.sum) }}
+        {{ form_row(rewardForm.date) }}
+        {{ form_row(rewardForm.save) }}
       </div>
-      {{ form_end(rewardForm) }}
     </div>
+    {{ form_end(rewardForm) }}
   </div>
 
   {% if (mode == 'rewards') %}
-    {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
-    {{ form_start(form) }}
-    {{ form_widget(form.months, {'attr': {'class': 'month-select', 'onchange': "this.form.submit()"}}) }}
-    {{ form_end(form) }}
+    <div class="panel-body">
+      {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+      {{ form_start(form) }}
+      {{ form_widget(form.months, {'attr': {'class': 'month-select', 'onchange': "this.form.submit()"}}) }}
+      {{ form_end(form) }}
+    </div>
   {% endif %}
 
   <input type="hidden" id="template_mode" value="{{ mode }}"/>
@@ -81,8 +78,8 @@
           {% if client %}
             {% set params = params|merge({'clientId': client.getClientId()}) %}
           {% endif %}
-          <td><a href="{{ path('editReward', params) }}" class="glyphicon glyphicon-pencil"></a></td>
-          <td><a href="{{ path('deleteReward', {'rewardId': reward.getRewardId()}) }}" class="glyphicon glyphicon-remove delete-link"></a></td>
+          <td class="text-center"><a href="{{ path('editReward', params) }}" class="glyphicon glyphicon-pencil"></a></td>
+          <td class="text-center"><a href="{{ path('deleteReward', {'rewardId': reward.getRewardId()}) }}" class="glyphicon glyphicon-remove delete-link"></a></td>
         </tr>
       {% endfor %}
       </tbody>
