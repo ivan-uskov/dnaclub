@@ -56,6 +56,7 @@
       </div>
     </form>
   </div>
+  {% include 'include/flash_messages.html.twig' %}
   <div class="panel-body">
     <div class="table-responsive">
       <table class="table table-hover table-striped table-bordered" id="clients_list">
@@ -86,8 +87,11 @@
             {% else %}
               <td></td>
             {% endif %}
-            <td><a href="{{ path('deleteClient', {'clientId': client.getClientId()}) }}"
-                   class="glyphicon glyphicon-remove delete-link"></a></td>
+            <td class="text-center">
+              <a href="{{ path('deleteClient', {'clientId': client.getClientId()}) }}"
+                 class="glyphicon glyphicon-remove delete-link">
+              </a>
+            </td>
           </tr>
         {% endfor %}
         </tbody>

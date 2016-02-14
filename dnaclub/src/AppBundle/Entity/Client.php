@@ -589,11 +589,11 @@ class Client
      * @return Order|null
      */
     public function getLastOrder()
-	{
-		$sortCriteria = Criteria::create()->orderBy(['createdAt' => Criteria::DESC]);
+    {
+        $sortCriteria = Criteria::create()->orderBy(['createdAt' => Criteria::DESC]);
         $lastOrder = $this->getOrders()->matching($sortCriteria)->first();
-		return $lastOrder ? $lastOrder : null ;
-	}
+        return $lastOrder ? $lastOrder : null;
+    }
 
     /**
      * @return \DateTime|null
@@ -604,11 +604,11 @@ class Client
         return $lastOrder ? $lastOrder->getCreatedAt() : null;
     }
 
-	public function getLastOrderDateStr()
-	{
-		$lastOrderDate = $this->getLastOrderDate();
-		return $lastOrderDate ? $lastOrderDate->format("Y-m-d") : "";
-	}
+    public function getLastOrderDateStr()
+    {
+        $lastOrderDate = $this->getLastOrderDate();
+        return $lastOrderDate ? $lastOrderDate->format("Y-m-d") : "";
+    }
 
     /**
      * Add reward
@@ -753,5 +753,17 @@ class Client
     public function getMarketingReport()
     {
         return $this->marketingReport;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAllowedToDelete()
+    {
+        $notDeleted = Criteria::create()->where(Criteria::expr()->eq("isDeleted", "0"));
+
+        return ($this->getOrders()->isEmpty()
+            && $this->getRewards()->matching($notDeleted)->isEmpty()
+            && $this->getSubscriptions()->matching($notDeleted)->isEmpty());
     }
 }

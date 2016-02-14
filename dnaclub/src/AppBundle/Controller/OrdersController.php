@@ -372,8 +372,8 @@ class OrdersController extends Controller
             if ($reward)
             {
                 $reward->actualizeRemainingSum();
+                $em->persist($reward);
             }
-            $em->persist($reward);
         }
 
         $em->flush();
@@ -382,6 +382,7 @@ class OrdersController extends Controller
         {
             $em->remove($order);
             $em->flush();
+            $this->get('session')->getFlashBag()->add('success', 'Данные о покупке удалены');
         }
 
         return new RedirectResponse($request->headers->get('referer'));

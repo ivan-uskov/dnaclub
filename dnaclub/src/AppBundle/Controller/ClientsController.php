@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 class ClientsController extends Controller
@@ -130,12 +131,24 @@ class ClientsController extends Controller
     public function deleteClientAction(Request $request, $clientId)
     {
         $em = $this->getDoctrine()->getManager();
-        $client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
-        $client->setIsDeleted(true);
-        $em->persist($client);
-        $em->flush();
+        /**
+         * @var Client $client
+         */
+        $client = $em->getRepository("AppBundle:Client")->find($clientId);
+        $flashBag = $this->get('session')->getFlashBag();
+        if ($client->isAllowedToDelete())
+        {
+            $client->setIsDeleted(true);
+            $em->persist($client);
+            $em->flush();
+            $flashBag->add('success', 'Данные о клиенте удалены');
+        }
+        else
+        {
+            $flashBag->add('error', 'Нельзя удалить клиента, т.к. с ним связаны денежные операции');
+        }
 
-        return $this->redirectToRoute('clientsList');
+        return new RedirectResponse($request->headers->get('referer'));
     }
 
     /**
@@ -212,8 +225,8 @@ class ClientsController extends Controller
 
     private function handleDiseaseHistoryPost(ParameterBag $post, $clientId = null, $diseaseHistoryId = null)
     {
-        $client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
         $em = $this->getDoctrine()->getManager();
+        $client = $em->getRepository("AppBundle:Client")->find($clientId);
         $isNew = ($diseaseHistoryId === null);
         if ($isNew)
         {

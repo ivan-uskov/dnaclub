@@ -23,7 +23,7 @@ $(function()
         $(".delete-link").click(function(event)
         {
             event.preventDefault();
-            var answer = confirm("Вы уверены?");
+            var answer = confirm("Вы уверены, что хотите удалить данные о вознаграждении?");
             if (answer === true)
             {
                 location.href = $(this).attr("href");

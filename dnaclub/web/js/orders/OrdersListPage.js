@@ -3,7 +3,7 @@ $(function()
     var ordersList = $('#ordersList');
     ordersList.on('click', '.remove_order_button', function()
     {
-        return confirm('Вы точно хотите удалить продажу?');
+        return confirm('Вы точно хотите удалить данные о покупке?');
     });
 
     var PAGE_LENGTH = 10;
