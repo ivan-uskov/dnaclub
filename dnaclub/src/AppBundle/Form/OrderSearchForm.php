@@ -47,6 +47,7 @@ class OrderSearchForm extends AbstractType
 
         $clients = $em->getRepository('AppBundle:Client')->getSortedClients();
         $builder
+            ->setMethod('GET')
             ->add(self::CLIENT_SEARCH_FIELD, 'entity', array(
                 'label' => 'Клиент',
                 'placeholder' => '',

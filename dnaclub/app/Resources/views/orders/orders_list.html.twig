@@ -1,7 +1,11 @@
 {% extends 'layout.html.twig' %}
 {% block pageH1 %}
   {% if (mode == 'orders') %}Продажи{% else %}{{ client.getFullName() }}{% endif %}
-  <a class="btn btn-success btn-add-top" target="_blank" href="{{ path('createOrder') }}">Добавить</a>
+  {% set params = {} %}
+  {% if client %}
+    {% set params = {'clientId': client.getClientId()} %}
+  {% endif %}
+  <a class="btn btn-success btn-add-top" href="{{ path('createOrder', params) }}">Добавить</a>
 {% endblock %}
 {% block content %}
   {% if (mode == 'clientsOrders') %}
@@ -48,11 +52,12 @@
             <th>Оплачено</th>
             <th>Долг</th>
             <th></th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           {% for orderInfo in orders %}
-            <tr onclick="location.href = '{{ path('editOrder', {'orderId': orderInfo['order'].getOrderId()}) }}'">
+            <tr>
               <td>
                 <a href="{{ path('editClient', {'clientId': orderInfo['order'].getClient().getClientId()}) }}">
                   {{ orderInfo['order'].getClient().getFullName() }}
@@ -73,11 +78,13 @@
                 {% endfor %}
               </td>
               <td class="right_text_align">{{ orderInfo['order'].getDebt()|localizedcurrency('RUB') }}</td>
-              {% if (mode == 'orders') %}
-                <td class="text-center"><a href="{{ path('deleteOrder', {'orderId': orderInfo['order'].getOrderId()}) }}" class="glyphicon glyphicon-remove remove_order_button"></a></td>
-              {% else %}
-                <td class="text-center"><a href="{{ path('deleteClientsOrder', {'clientId': client.getClientId(), 'orderId': orderInfo['order'].getOrderId()}) }}" class="glyphicon glyphicon-remove remove_order_button"></a></td>
+              {% set params = {'orderId': orderInfo['order'].getOrderId()} %}
+              {% if client %}
+                {% set params = params|merge({'clientId': client.getClientId()}) %}
               {% endif %}
+              <td class="text-center"><a href="{{ path('editOrder', params) }}" class="glyphicon glyphicon-pencil"></a></td>
+
+              <td class="text-center"><a href="{{ path('deleteOrder', {'orderId': orderInfo['order'].getOrderId()}) }}" class="glyphicon glyphicon-remove remove_order_button"></a></td>
             </tr>
           {% endfor %}
         </tbody>

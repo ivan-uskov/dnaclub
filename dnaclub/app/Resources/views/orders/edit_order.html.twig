@@ -1,11 +1,10 @@
 {% extends 'layout.html.twig' %}
 {% block pageH1 %}
   Редактирование {% if order.getIsPreOrder() %}предзаказа{% else %}продажи{% endif %}
-  <button type="submit" id="submit" class="btn btn-success float_right">Сохранить</button>
 {% endblock %}
 {% block content %}
-  <form action="{{ path('editOrderAjax', {'orderId': order.getOrderId()}) }}" method="post" id="createOrderForm">
-    <div class="col-md-6 half_block">
+  <form action="{{ path('editOrderAjax', {'orderId': order.getOrderId()}) }}" method="post" id="createOrderForm" style="margin-top: 15px;">
+    <div class="col-md-6 form-column">
       <div class="form-group">
         <label for="orderCreatedDate">Дата</label>
         <input
@@ -53,7 +52,7 @@
         {% include 'include/product_selection_block.html.twig' with {'id': productBlockVars['id'], 'isEditable': order.isProductsEditable(), 'products': productBlockVars['products'], 'orderItems': productBlockVars['orderItems'], 'order': order} %}
       </div>
     </div>
-    <div class="col-md-6 half_block">
+    <div class="col-md-6  form-column">
       <div class="form-group">
         <label for="discount">Скидка</label>
         <input class="form-control" type="text" name="discount" id="discount" {% if order.isNotOpen() %}readonly{% endif %} placeholder="Введите скидку" value="{{ order.getDiscount() }}" />
@@ -65,6 +64,7 @@
       <input type="hidden" id="productsInfo" name="products_info" value="" />
       <input type="hidden" id="cost" name="cost" value="" />
       <input type="hidden" id="debtField" name="debt" value="" />
+      <button type="submit" id="submit" class="btn btn-success float_right">Сохранить</button>
     </div>
   </form>
 {% endblock %}

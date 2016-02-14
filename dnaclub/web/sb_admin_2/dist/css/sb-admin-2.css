@@ -855,3 +855,12 @@ table.dataTable thead > tr > th {
     //border-top: 3px solid rgba(245, 220, 180, 0.47);
     text-decoration: none;
 }
+
+.form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+    background-color: #F6F2DC;
+    opacity: 1;
+}
+
+.panel-body {
+    padding: 15px 15px 0;
+}

@@ -46,7 +46,8 @@ class OrdersController extends Controller
     {
         $products = $this->prepareProductsList();
         $clients = $this->getDoctrine()->getRepository('AppBundle:Client')->getSortedClients();
-        return $this->render('orders/create_order.html.twig', ['clients' => $clients, 'products' => json_encode($products)]);
+        $clientId = $request->query->get('clientId');
+        return $this->render('orders/create_order.html.twig', ['clients' => $clients, 'currentClientId'  => $clientId, 'products' => json_encode($products)]);
     }
 
     /**
@@ -348,15 +349,42 @@ class OrdersController extends Controller
      */
     public function deleteOrderAction(Request $request, $orderId)
     {
-        return $this->deleteOrderImpl($orderId);
-    }
+        $doctrine = $this->getDoctrine();
+        $em = $doctrine->getManager();
 
-    /**
-     * @Route("/delete-clients-order/{clientId}/{orderId}", name="deleteClientsOrder")
-     */
-    public function deleteClientsOrderAction(Request $request, $clientId, $orderId)
-    {
-        return $this->deleteOrderImpl($orderId, $clientId);
+        $order = $doctrine->getRepository("AppBundle:Order")->find($orderId);
+        $orderItems = $doctrine->getRepository("AppBundle:OrderItem")->findBy(['order' => $orderId]);
+        $orderPayments = $this->getDoctrine()->getRepository('AppBundle:OrderPayment')->findBy(['order' => $orderId]);
+
+        foreach ($orderItems as $orderItem)
+        {
+            $em->remove($orderItem);
+        }
+
+        /**
+         * @var OrderPayment $orderPayment
+         */
+        foreach ($orderPayments as $orderPayment)
+        {
+            $reward = $orderPayment->getReward();
+            $em->remove($orderPayment);
+            $em->flush();
+            if ($reward)
+            {
+                $reward->actualizeRemainingSum();
+            }
+            $em->persist($reward);
+        }
+
+        $em->flush();
+
+        if ($order)
+        {
+            $em->remove($order);
+            $em->flush();
+        }
+
+        return new RedirectResponse($request->headers->get('referer'));
     }
 
     /**
@@ -457,48 +485,5 @@ class OrdersController extends Controller
             'mode' => $templateMode,
             'client' => $client
         ]);
-    }
-
-    /**
-     * @param $orderId
-     * @param $clientId
-     * @return RedirectResponse
-     */
-    private function deleteOrderImpl($orderId, $clientId = null)
-    {
-        $doctrine = $this->getDoctrine();
-        $em = $doctrine->getManager();
-
-        $order = $doctrine->getRepository("AppBundle:Order")->find($orderId);
-        $orderItems = $doctrine->getRepository("AppBundle:OrderItem")->findBy(['order' => $orderId]);
-        $orderPayments = $this->getDoctrine()->getRepository('AppBundle:OrderPayment')->findBy(['order' => $orderId]);
-
-        foreach ($orderItems as $orderItem)
-        {
-            $em->remove($orderItem);
-        }
-
-        //todo: update remaining sum in rewards
-        foreach ($orderPayments as $orderPayment)
-        {
-            $em->remove($orderPayment);
-        }
-
-        $em->flush();
-
-        if ($order)
-        {
-            $em->remove($order);
-            $em->flush();
-        }
-
-        if ($clientId == null)
-        {
-            return $this->redirectToRoute('ordersList');
-        }
-        else
-        {
-            return $this->redirectToRoute('clientsOrdersList', ['clientId', $clientId]);
-        }
     }
 }

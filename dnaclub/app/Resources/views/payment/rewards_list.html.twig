@@ -63,7 +63,7 @@
               {{ reward.getClient().getFullName() }}
             </a>
           </td>
-          <td class="text-right">{{ reward.getDate()|date('d.m.Y') }}</td>
+          <td>{{ reward.getDate()|date('d.m.Y') }}</td>
           <td class="text-right">{{ reward.getSum()|localizedcurrency('RUB') }}</td>
           <td class="text-right remaining-sum">{{ reward.getRemainingSum()|localizedcurrency('RUB') }}</td>
           <td>

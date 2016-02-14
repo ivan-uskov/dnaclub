@@ -12,18 +12,20 @@
   {% endif %}
 {% endblock %}
 {% block content %}
-  <div id="add_form" class="{% if isNew %}hidden{% endif %}">
-    {% form_theme rewardForm 'bootstrap_3_horizontal_layout.html.twig' %}
-    {{ form_start(rewardForm) }}
-    <div class="row">
-      <div class="col-md-8 col-sm-12">
-        {{ form_row(rewardForm.client) }}
-        {{ form_row(rewardForm.sum) }}
-        {{ form_row(rewardForm.date) }}
-        {{ form_row(rewardForm.save) }}
+  <div class="panel-body">
+    <div id="add_form" class="{% if isNew %}hidden{% endif %}">
+      {% form_theme rewardForm 'bootstrap_3_horizontal_layout.html.twig' %}
+      {{ form_start(rewardForm) }}
+      <div class="row">
+        <div class="col-md-8 col-sm-12">
+          {{ form_row(rewardForm.client) }}
+          {{ form_row(rewardForm.sum) }}
+          {{ form_row(rewardForm.date) }}
+          {{ form_row(rewardForm.save) }}
+        </div>
       </div>
+      {{ form_end(rewardForm) }}
     </div>
-    {{ form_end(rewardForm) }}
   </div>
 {% endblock %}
 {% block javascripts %}

@@ -7,56 +7,58 @@
   <link href="{{ asset('css/common/lists_common.css') }}" type="text/css" rel="stylesheet"/>
 {% endblock %}
 {% block content %}
-  <form action="" method="POST">
-    <div class="checkbox">
-      <label class="required">
-        <input
-            class="clients-filter-checkbox"
-            type="checkbox"
-            id="checkbox_is_subscribed"
-            name="checkbox_is_subscribed"
-            {% if ("checkbox_is_subscribed" in filters) %}
-              checked="checked"
-            {% endif %}
-            onclick="submit()"
-        />
-        Участвует в маркетинге
-      </label>
-    </div>
-    <div class="checkbox">
-      <label class="required">
-        <input
-            class="clients-filter-checkbox"
-            type="checkbox"
-            id="checkbox_is_school_learner"
-            name="checkbox_is_school_learner"
-            {% if ("checkbox_is_school_learner" in filters) %}
-              checked="checked"
-            {% endif %}
-            onclick="submit()"
-        />
-        Обучается в школе
-      </label>
-    </div>
-    <div class="checkbox">
-      <label class="required">
-        <input
-            class="clients-filter-checkbox"
-            type="checkbox"
-            id="checkbox_is_online_learner"
-            name="checkbox_is_online_learner"
-            {% if ("checkbox_is_online_learner" in filters) %}
-              checked="checked"
-            {% endif %}
-            onclick="submit()"
-        />
-        Обучается онлайн
-      </label>
-    </div>
-  </form>
+  <div class="panel-body">
+    <form action="" method="POST">
+      <div class="checkbox">
+        <label class="required">
+          <input
+              class="clients-filter-checkbox"
+              type="checkbox"
+              id="checkbox_is_subscribed"
+              name="checkbox_is_subscribed"
+              {% if ("checkbox_is_subscribed" in filters) %}
+                checked="checked"
+              {% endif %}
+              onclick="submit()"
+          />
+          Участвует в маркетинге
+        </label>
+      </div>
+      <div class="checkbox">
+        <label class="required">
+          <input
+              class="clients-filter-checkbox"
+              type="checkbox"
+              id="checkbox_is_school_learner"
+              name="checkbox_is_school_learner"
+              {% if ("checkbox_is_school_learner" in filters) %}
+                checked="checked"
+              {% endif %}
+              onclick="submit()"
+          />
+          Обучается в школе
+        </label>
+      </div>
+      <div class="checkbox">
+        <label class="required">
+          <input
+              class="clients-filter-checkbox"
+              type="checkbox"
+              id="checkbox_is_online_learner"
+              name="checkbox_is_online_learner"
+              {% if ("checkbox_is_online_learner" in filters) %}
+                checked="checked"
+              {% endif %}
+              onclick="submit()"
+          />
+          Обучается онлайн
+        </label>
+      </div>
+    </form>
+  </div>
   <div class="panel-body">
     <div class="table-responsive">
-      <table class="table table-hover" id="clients_list">
+      <table class="table table-hover table-striped table-bordered" id="clients_list">
         <thead>
         <tr>
           <th>ФИО</th>

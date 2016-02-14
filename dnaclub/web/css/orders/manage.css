@@ -12,3 +12,8 @@
 {
     float: right;
 }
+
+.form-column
+{
+    min-width: 600px;
+}
