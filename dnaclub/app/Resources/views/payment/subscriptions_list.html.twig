@@ -14,7 +14,7 @@
   {% if (mode == 'clientsSubscriptions') %}
     {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'clientsSubscriptions'} %}
   {% endif %}
-
+  {% include 'include/flash_messages.html.twig' %}
   <input type="hidden" id="template_mode" value="{{ mode }}"/>
 
   <div id="add_form" class="{% if hideAddForm %}hidden{% endif %}">

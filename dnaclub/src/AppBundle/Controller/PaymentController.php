@@ -143,6 +143,7 @@ class PaymentController extends Controller
             $subscription->setIsDeleted(true);
             $em->merge($subscription);
             $em->flush();
+            $this->get('session')->getFlashBag()->add('success', 'Данные о подписке удалены');
         }
 
         if ($clientId == null)
