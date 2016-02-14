@@ -1,7 +1,7 @@
 {% extends 'layout.html.twig' %}
 {% block pageH1 %}Добавление продажи{% endblock %}
 {% block content %}
-  <form action="{{ path('createOrderAjax') }}" method="post" id="createOrderForm">
+  <form action="{{ path('createOrderAjax') }}" method="post" id="createOrderForm" style="margin-top: 15px;">
     <div class="col-md-6 form-column">
       <div class="form-group">
         <label for="orderCreatedDate">Дата</label>
