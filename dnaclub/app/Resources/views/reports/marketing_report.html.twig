@@ -25,12 +25,7 @@
     {% endif %}
   </div>
 
-  {% for flashMessage in app.session.flashbag.get('success') %}
-    <div class="alert alert-success" id="alert-success">{{ flashMessage }}</div>
-  {% endfor %}
-  {% for flashMessage in app.session.flashbag.get('error') %}
-    <div class="alert alert-danger" id="alert-danger">{{ flashMessage }}</div>
-  {% endfor %}
+  {% include 'include/flash_messages.html.twig' %}
 
   <div class="panel-body">
     <div class="table-responsive">

@@ -51,11 +51,19 @@ class ProductsController extends Controller
         $em = $this->getDoctrine()->getManager();
         $product = $em->getRepository('AppBundle:Product')->find($productId);
 
-        if ($product)
+        $isUsedInOrders = (bool)$em->getRepository('AppBundle:OrderItem')->findBy(['product' => $product]);
+
+        $flashBag = $this->get('session')->getFlashBag();
+        if ($isUsedInOrders)
+        {
+            $flashBag->add('error', 'Нельзя удалить продукт "'. $product->getName() .'", т.к. он уже используется в покупках');
+        }
+        else if ($product)
         {
             $product->setIsDeleted(true);
             $em->merge($product);
             $em->flush();
+            $flashBag->add('success', 'Продукт "'. $product->getName() .'" удален');
         }
 
         return $this->redirectToRoute('productsList');

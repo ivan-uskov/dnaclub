@@ -68,10 +68,25 @@ class RewardsController extends Controller
     public function deleteRewardAction(Request $request, $rewardId)
     {
         $em = $this->getDoctrine()->getManager();
+        /**
+         * @var Reward $reward
+         */
         $reward = $em->getRepository("AppBundle:Reward")->find($rewardId);
-        $reward->setIsDeleted(true);
-        $em->persist($reward);
-        $em->flush();
+        $isUsedInOrders = (bool)$reward->getPaymentSum();
+
+        $flashBag = $this->get('session')->getFlashBag();
+        if ($isUsedInOrders)
+        {
+            $flashBag->add('error', 'Нельзя удалить вознаграждение, т.к. оно уже используется в покупках');
+        }
+        else if ($reward)
+        {
+            $reward->setIsDeleted(true);
+            $em->persist($reward);
+            $em->flush();
+            $flashBag->add('success', 'Вознаграждение удалено');
+        }
+
         return new RedirectResponse($request->headers->get('referer'));
     }
 

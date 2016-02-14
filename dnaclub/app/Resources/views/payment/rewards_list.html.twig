@@ -17,7 +17,7 @@
   {% if (mode == 'clientsRewards') %}
     {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'clientsRewards'} %}
   {% endif %}
-
+  {% include 'include/flash_messages.html.twig' %}
   <div id="add_form" class="{% if isNew %}hidden{% endif %}">
     {% form_theme rewardForm 'bootstrap_3_horizontal_layout.html.twig' %}
     {{ form_start(rewardForm) }}

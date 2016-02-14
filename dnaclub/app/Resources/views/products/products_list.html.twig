@@ -9,6 +9,7 @@
   <link href="{{ asset('css/common/lists_common.css') }}" type="text/css" rel="stylesheet"/>
 {% endblock %}
 {% block content %}
+  {% include 'include/flash_messages.html.twig' %}
   <div class="panel-body">
       <div id="add_form" class="{% if hideAddForm %}hidden{% endif %}">
       {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
