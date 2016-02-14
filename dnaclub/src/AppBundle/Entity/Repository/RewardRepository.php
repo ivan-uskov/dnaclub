@@ -65,6 +65,7 @@ class RewardRepository extends EntityRepository
             ->createQueryBuilder()
             ->select('DISTINCT r.date')
             ->from('AppBundle\Entity\Reward', 'r')
+            ->where('r.isDeleted = 0')
             ->orderBy('r.date', 'desc')
             ->getQuery()
             ->getResult();

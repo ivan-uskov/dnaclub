@@ -61,6 +61,7 @@ class SubscriptionRepository extends EntityRepository
             ->createQueryBuilder()
             ->select('DISTINCT s.date')
             ->from('AppBundle\Entity\Subscription', 's')
+            ->where('s.isDeleted = 0')
             ->orderBy('s.date', 'desc')
             ->getQuery()
             ->getResult();
