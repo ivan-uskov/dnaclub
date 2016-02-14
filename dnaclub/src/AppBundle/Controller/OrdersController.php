@@ -72,7 +72,7 @@ class OrdersController extends Controller
         $orderPayment = $this->getOrderPayment($order);
         $products = $this->prepareProductsList();
         $payments = $this->getOrderPayments($order);
-        $clients    = $doctrine->getRepository('AppBundle:Client')->getSortedClients();
+        $clients = $doctrine->getRepository('AppBundle:Client')->getSortedClients();
         $rewardsRepository = $this->getDoctrine()->getRepository('AppBundle:Reward'); /** @var $rewardsRepository RewardRepository */
         $rewards = $rewardsRepository->findNotDeletedByClient($order->getClient());
 
@@ -130,7 +130,7 @@ class OrdersController extends Controller
         $order->setDiscount((float)$post->get('discount'));
         $order->setSum((float)$post->get('cost'));
 
-        if ($post->get('is_pre_order'))
+        if ($post->get('is_pre_order') || $order->getIsPreOrder())
         {
             $order->setIsPreOrder(true);
             $plannedDate = $post->get('planned_product_date') ? new \DateTime($post->get('planned_product_date')) : null;
