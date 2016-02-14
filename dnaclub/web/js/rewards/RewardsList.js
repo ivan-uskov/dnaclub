@@ -45,8 +45,6 @@ $(function()
 
         if ($("#template_mode").val() == "rewards")
         {
-
-
             $("#rewards_list").DataTable({
                 pageLength: PAGE_LENGTH,
                 order: [[3, "desc"]],
@@ -58,6 +56,8 @@ $(function()
             $("#rewards_list").DataTable({
                 pageLength: PAGE_LENGTH,
                 order: [[3, "desc"]],
+                bFilter: false,
+                bLengthChange: false,
                 columnDefs: commonColumnDefs.concat(clientColumnDefs)
             });
         }

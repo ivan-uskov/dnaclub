@@ -27,6 +27,8 @@ $(function()
         $("#subscription_list").DataTable({
             pageLength: PAGE_LENGTH,
             order: [[1, "desc"]],
+            bFilter: false,
+            bLengthChange: false,
             columnDefs: commonColumnDefs.concat(clientColumnDefs)
         });
     }

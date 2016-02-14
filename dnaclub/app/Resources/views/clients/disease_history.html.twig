@@ -7,10 +7,6 @@
 {% endblock %}
 {% block pageH1 %}
   {{ client.getFullName() }}
-  {% if not isNew %}
-    <a class="btn btn-success btn-add-top"
-       href="{{ path('diseaseHistory', {'clientId': currentDiseaseHistory.getClient().getClientId()}) }}">Добавить запись</a>
-  {% endif %}
 {% endblock %}
 {% block content %}
   {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'diseaseHistory'} %}
@@ -55,7 +51,6 @@
     </form>
     <div class="clearfix"></div>
     <br>
-    <h3 class="disease-history-h3">Записи:</h3>
 
     <table class="table table-hover table-striped table-bordered" id="disease_histories_list">
       <thead>
