@@ -86,7 +86,7 @@
                     onclick="return confirm('Вы уверены, что хотите удалить запись?')"></a></td>
             {% else %}
               <td class="text-center"><a
-                    href="{{ path('deleteClientsSubscription', {'clientId': subscription.getClient().getClientId(), 'subscriptionId': subscription.getSubscriptionId()}) }}"
+                    href="{{ path('deleteSubscription', {'subscriptionId': subscription.getSubscriptionId()}) }}"
                     class="glyphicon glyphicon-remove"
                     onclick="return confirm('Вы уверены, что хотите удалить запись?')"></a></td>
             {% endif %}

@@ -9,6 +9,7 @@ use AppBundle\Form\NewSubscriptionForm;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 class PaymentController extends Controller
@@ -45,15 +46,19 @@ class PaymentController extends Controller
      */
     public function deleteSubscriptionAction(Request $request, $subscriptionId)
     {
-        return $this->deleteSubscriptionImpl($subscriptionId);
-    }
+        $em = $this->getDoctrine()->getManager();
 
-    /**
-     * @Route("/clients-subscription/{clientId}/delete/{subscriptionId}", name="deleteClientsSubscription")
-     */
-    public function deleteClientsSubscriptionAction(Request $request, $clientId, $subscriptionId)
-    {
-        return $this->deleteSubscriptionImpl($subscriptionId, $clientId);
+        $subscription = $em->getRepository('AppBundle:Subscription')->find($subscriptionId);
+
+        if ($subscription)
+        {
+            $subscription->setIsDeleted(true);
+            $em->merge($subscription);
+            $em->flush();
+            $this->get('session')->getFlashBag()->add('success', 'Данные о подписке удалены');
+        }
+
+        return new RedirectResponse($request->headers->get('referer'));
     }
 
     /**
@@ -125,34 +130,5 @@ class PaymentController extends Controller
                 'client' => $client,
                 'hideAddForm' => $hideAddForm
             ]);
-    }
-
-    /**
-     * @param $subscriptionId
-     * @param $clientId
-     * @return \Symfony\Component\HttpFoundation\RedirectResponse
-     */
-    private function deleteSubscriptionImpl($subscriptionId, $clientId = null)
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $subscription = $em->getRepository('AppBundle:Subscription')->find($subscriptionId);
-
-        if ($subscription)
-        {
-            $subscription->setIsDeleted(true);
-            $em->merge($subscription);
-            $em->flush();
-            $this->get('session')->getFlashBag()->add('success', 'Данные о подписке удалены');
-        }
-
-        if ($clientId == null)
-        {
-            return $this->redirectToRoute('subscriptionsList');
-        }
-        else
-        {
-            return $this->redirectToRoute('clientsSubscriptionsList', ['clientId' => $clientId]);
-        }
     }
 }
