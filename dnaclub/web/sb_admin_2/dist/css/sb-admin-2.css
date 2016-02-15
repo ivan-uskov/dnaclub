@@ -16,7 +16,7 @@ body {
 #page-wrapper {
     padding: 0 15px;
     min-height: 568px;
-    background-color: #FFFED4;
+    background-color: #FDFCE0;
 }
 
 @media(min-width:768px) {
@@ -428,7 +428,7 @@ a:focus, a:hover {
 
 .btn-default {
     color: #333;
-    background-color: #FCEC8C;
+    background-color: #FFF096;
     border-color: #F5DCB4;
 }
 
@@ -574,7 +574,7 @@ fieldset[disabled] .btn-info.active {
 .pagination>.disabled>span:hover {
     color: #CAB9B9;
     cursor: not-allowed;
-    background-color: #FFFED4;
+    background-color: #FDFCE0;
     border-color: rgba(245, 220, 180, 0.47);
 }
 
@@ -817,7 +817,7 @@ table.dataTable thead > tr > th {
 .client-navbar-element:focus,
 .client-navbar-element.focus {
 
-    color: rgb(179, 138, 53);
+    color: rgb(165, 118, 20);
     background-color: rgba(255, 244, 190, 0.85);
     display: inline-block;
     padding: 6px 12px;
@@ -835,13 +835,11 @@ table.dataTable thead > tr > th {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-    border-left: 1px solid rgba(245, 220, 180, 0.47);
-    border-right: 1px solid rgba(245, 220, 180, 0.47);
-    border-bottom: 1px solid rgba(245, 220, 180, 0.47);
-
+    border-left: 1px solid rgba(245, 220, 180, 0.8);
+    border-right: 1px solid rgba(245, 220, 180, 0.8);
+    border-bottom: 1px solid rgba(245, 220, 180, 0.8);
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
-
 }
 
 .client-navbar-element:hover,
@@ -850,8 +848,8 @@ table.dataTable thead > tr > th {
 .client-navbar-element.active,
 .open > .dropdown-toggle.client-navbar-element {
     color: #6F4350;
-    background-color: #FFFED4;
-    border-color: #FFFED4;
+    background-color: #FDFCE0;
+    border-color: #FDFCE0;
     //border-top: 3px solid rgba(245, 220, 180, 0.47);
     text-decoration: none;
 }
@@ -870,4 +868,13 @@ table.dataTable thead > tr > th {
     margin: 15px 15px 0;
     border: 1px solid transparent;
     border-radius: 4px;
+}
+
+.list-group-item {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    margin-bottom: -1px;
+    background-color: #FFFFEF;
+    border: 1px solid #ddd;
 }

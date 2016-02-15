@@ -74,7 +74,7 @@ class OrdersController extends Controller
         $payments = $this->getOrderPayments($order);
         $clients = $doctrine->getRepository('AppBundle:Client')->getSortedClients();
         $rewardsRepository = $this->getDoctrine()->getRepository('AppBundle:Reward'); /** @var $rewardsRepository RewardRepository */
-        $rewards = $rewardsRepository->findNotDeletedByClient($order->getClient());
+        $rewards = $rewardsRepository->findNotDeletedByClient($order->getClient(), true);
 
         $params = [
             'order'            => $order,

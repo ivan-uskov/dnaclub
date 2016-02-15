@@ -13,12 +13,7 @@ use AppBundle\utils\DateUtils;
  */
 class RewardRepository extends EntityRepository
 {
-    public function findNotDeleted()
-    {
-        return $this->findNotDeletedByClient();
-    }
-
-    public function findNotDeletedByClient($client = null)
+    public function findNotDeletedByClient($client = null, $excludeUsed = false)
     {
         $result = $this->getEntityManager()
             ->createQueryBuilder()
@@ -26,6 +21,11 @@ class RewardRepository extends EntityRepository
             ->from('AppBundle\Entity\Reward', 'r')
             ->where('r.isDeleted = 0')
             ->orderBy('r.remainingSum', 'desc');
+
+        if ($excludeUsed)
+        {
+            $result->andWhere('r.remainingSum > 0');
+        }
 
         if ($client != null)
         {

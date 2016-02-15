@@ -110,7 +110,7 @@ class ClientsController extends Controller
         $rewardsJson = [];
         $client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
         $rewardsRepository = $this->getDoctrine()->getRepository('AppBundle:Reward'); /** @var $rewardsRepository RewardRepository */
-        $rewards = $rewardsRepository->findNotDeletedByClient($client); /** @var Reward $reward */
+        $rewards = $rewardsRepository->findNotDeletedByClient($client, true); /** @var Reward $reward */
 
         foreach ($rewards as $reward)
         {
