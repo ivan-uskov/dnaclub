@@ -55,9 +55,7 @@
             <td class="sum_container">
               <input readonly class="form-control sum sumHolder" autocomplete="off" value="{{ payment.getSum() }}" spellcheck="false" type="text" data-rewords="" placeholder="Введите сумму платежа" />
               <select class="form-control current_reward" readonly>
-                {% for reward in clientRewards %}
-                  <option value="{{ reward.getRewardId() }}" {% if (reward.getRewardId() == payment.getReward().getRewardId()) %}selected="selected"{% endif %} disabled>{{ reward.getName() }}</option>
-                {% endfor %}
+                  <option value="{{ payment.getReward().getRewardId() }}" selected="selected" disabled>{{ payment.getReward().getName() }}</option>
               </select>
               <div class="clear"></div>
             </td>
