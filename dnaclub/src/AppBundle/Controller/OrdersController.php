@@ -4,9 +4,11 @@ namespace AppBundle\Controller;
 
 use AppBundle\config\OrderStatus;
 use AppBundle\config\PaymentType;
+use AppBundle\Entity\Repository\ClientRepository;
 use AppBundle\lib\OrderItemPeer;
 use AppBundle\Entity\OrderItem;
 use AppBundle\Entity\Reward;
+use AppBundle\Entity\Client;
 use AppBundle\Entity\Repository\RewardRepository;
 use AppBundle\Form\OrderSearchForm;
 use AppBundle\Form\PreOrderSearchForm;
@@ -45,9 +47,22 @@ class OrdersController extends Controller
     public function createOrderAction(Request $request)
     {
         $products = $this->prepareProductsList();
-        $clients = $this->getDoctrine()->getRepository('AppBundle:Client')->getSortedClients();
-        $clientId = $request->query->get('clientId');
-        return $this->render('orders/create_order.html.twig', ['clients' => $clients, 'currentClientId'  => $clientId, 'products' => json_encode($products)]);
+        $clientRepo = $this->getDoctrine()->getRepository('AppBundle:Client'); /** @var ClientRepository $clientRepo */
+        $clients = $clientRepo->getSortedClients(); /** @var Client[] $clients */
+        $clientId = (int) $request->query->get('clientId');
+        $preparedClients = [];
+        foreach ($clients as $client)
+        {
+            $preparedClients[$client->getClientId()] = $client;
+        }
+        $client = array_key_exists($clientId, $clients) ? $clients[$clientId] : count($clients) > 0 ? $clients[0] : null;
+        $rewardsRepository = $this->getDoctrine()->getRepository('AppBundle:Reward'); /** @var $rewardsRepository RewardRepository */
+        return $this->render('orders/create_order.html.twig', [
+            'clients'         => $clients,
+            'currentClientId' => $clientId,
+            'products'        => json_encode($products),
+            'hasRewards'      => !is_null($client) ? count($rewardsRepository->findNotDeletedByClient($client, true)) : false
+        ]);
     }
 
     /**
@@ -65,30 +80,32 @@ class OrdersController extends Controller
      */
     public function editOrderAction(Request $request, $orderId)
     {
-        $doctrine   = $this->getDoctrine();
+        $doctrine = $this->getDoctrine();
         /** @var Order $order */
-        $order      = $doctrine->getRepository("AppBundle:Order")->find($orderId);
+        $order = $doctrine->getRepository("AppBundle:Order")->find($orderId);
         $orderItems = $doctrine->getRepository("AppBundle:OrderItem")->findBy(['order' => $orderId]);
         $orderPayment = $this->getOrderPayment($order);
         $products = $this->prepareProductsList();
         $payments = $this->getOrderPayments($order);
         $clients = $doctrine->getRepository('AppBundle:Client')->getSortedClients();
-        $rewardsRepository = $this->getDoctrine()->getRepository('AppBundle:Reward'); /** @var $rewardsRepository RewardRepository */
+        $rewardsRepository = $this->getDoctrine()->getRepository('AppBundle:Reward');
+        /** @var $rewardsRepository RewardRepository */
         $rewards = $rewardsRepository->findNotDeletedByClient($order->getClient(), true);
 
         $params = [
-            'order'            => $order,
-            'clients'          => $clients,
-            'orderPayment'     => $orderPayment,
+            'order' => $order,
+            'clients' => $clients,
+            'orderPayment' => $orderPayment,
             'productBlockVars' => [
-                'id'         => 'productsSelection',
+                'id' => 'productsSelection',
                 'orderItems' => $orderItems,
-                'products'   => json_encode($products)
+                'products' => json_encode($products)
             ],
             'paymentBlockVars' => [
                 'clientRewards' => $rewards,
-                'id'            => 'paidByCash',
-                'payments'      => $payments
+                'id' => 'paidByCash',
+                'payments' => $payments,
+                'hasRewards' => count($rewards)
             ]
         ];
 
@@ -109,12 +126,9 @@ class OrdersController extends Controller
     private function saveOrder(Order $order, $isNew)
     {
         $em = $this->getDoctrine()->getManager();
-        if ($isNew)
-        {
+        if ($isNew) {
             $em->persist($order);
-        }
-        else
-        {
+        } else {
             $em->merge($order);
         }
 
@@ -130,8 +144,7 @@ class OrdersController extends Controller
         $order->setDiscount((float)$post->get('discount'));
         $order->setSum((float)$post->get('cost'));
 
-        if ($post->get('is_pre_order') || $order->getIsPreOrder())
-        {
+        if ($post->get('is_pre_order') || $order->getIsPreOrder()) {
             $order->setIsPreOrder(true);
             $plannedDate = $post->get('planned_product_date') ? new \DateTime($post->get('planned_product_date')) : null;
             $actualDate = $post->get('actual_product_date') ? new \DateTime($post->get('actual_product_date')) : null;
@@ -139,36 +152,28 @@ class OrdersController extends Controller
             $order->setActualProductDate($actualDate);
         }
 
-        if (!$isNew)
-        {
-            if ($order->getStatus() == OrderStatus::OPEN)
-            {
+        if (!$isNew) {
+            if ($order->getStatus() == OrderStatus::OPEN) {
                 $this->deleteOrderItems($order);
             }
-        }
-        else
-        {
+        } else {
             $order->setClient($client);
             $order->setStatus(OrderStatus::OPEN);
             $order->setCreatedAt(new \DateTime($post->get('orderCreatedDate')));
         }
 
-        if ($order->getStatus() == OrderStatus::OPEN)
-        {
-            if ($client->getClientId() != $order->getClient()->getClientId())
-            {
+        if ($order->getStatus() == OrderStatus::OPEN) {
+            if ($client->getClientId() != $order->getClient()->getClientId()) {
                 $order->setClient($client);
             }
             $date = new \DateTime($post->get('orderCreatedDate'));
-            if ($order->getCreatedAt() != $date)
-            {
+            if ($order->getCreatedAt() != $date) {
                 $order->setCreatedAt($date);
             }
         }
 
         $this->saveOrder($order, $isNew);
-        if ($order->getStatus() == OrderStatus::OPEN)
-        {
+        if ($order->getStatus() == OrderStatus::OPEN) {
             $this->fillOrderItems($order, $post);
         }
         $this->updateOrderPaymentInfo($order, $post->get('payment_info'));
@@ -180,19 +185,16 @@ class OrdersController extends Controller
         $em = $this->getDoctrine()->getManager();
         $productsInfo = explode(',', $post->get('products_info', ''));
 
-        foreach($productsInfo as $productInfo)
-        {
+        foreach ($productsInfo as $productInfo) {
             $result = explode(':', $productInfo);
-            if (count($result) == 2)
-            {
-                $productId    = (int)$result[0];
+            if (count($result) == 2) {
+                $productId = (int)$result[0];
                 $productCount = (int)$result[1];
 
                 /** @var Product $product */
                 $product = $this->getDoctrine()->getRepository('AppBundle:Product')->find($productId);
 
-                if ($product)
-                {
+                if ($product) {
                     $orderItem = new OrderItem();
                     $orderItem->setOrder($order);
                     $orderItem->setProduct($product);
@@ -212,8 +214,7 @@ class OrdersController extends Controller
         $em = $doctrine->getManager();
 
         $orderItems = $doctrine->getRepository("AppBundle:OrderItem")->findBy(['order' => $order->getOrderId()]);
-        foreach ($orderItems as $orderItem)
-        {
+        foreach ($orderItems as $orderItem) {
             $em->remove($orderItem);
         }
 
@@ -224,11 +225,10 @@ class OrdersController extends Controller
     {
         $products = [];
         /** @var Product $product */
-        foreach ($this->getDoctrine()->getRepository('AppBundle:Product')->getActiveProducts() as $product)
-        {
+        foreach ($this->getDoctrine()->getRepository('AppBundle:Product')->getActiveProducts() as $product) {
             $products[$product->getName()] = [
-                'id'    => $product->getProductId(),
-                'name'  => $product->getName(),
+                'id' => $product->getProductId(),
+                'name' => $product->getName(),
                 'price' => $product->getPrice()
             ];
         }
@@ -243,11 +243,9 @@ class OrdersController extends Controller
         $cashPayments = ArrayUtils::getParameter($paymentInfo, 'cash');
         $rewardPayments = ArrayUtils::getParameter($paymentInfo, 'reward');
 
-        if (is_array($cashPayments))
-        {
-            foreach ($cashPayments as $cashPaymentInfo)
-            {
-                $sum = (float) $cashPaymentInfo['sum'];
+        if (is_array($cashPayments)) {
+            foreach ($cashPayments as $cashPaymentInfo) {
+                $sum = (float)$cashPaymentInfo['sum'];
                 if ($sum <= 0) continue;
 
                 $orderPayment = new OrderPayment();
@@ -259,16 +257,15 @@ class OrdersController extends Controller
             }
         }
 
-        if (is_array($rewardPayments))
-        {
-            foreach ($rewardPayments as $rewardPaymentInfo)
-            {
+        if (is_array($rewardPayments)) {
+            foreach ($rewardPayments as $rewardPaymentInfo) {
                 $sum = (float)$rewardPaymentInfo['sum'];
                 $rewardId = (int)$rewardPaymentInfo['reward_id'];
 
                 if ($rewardId <= 0) continue;
 
-                $reward = $this->getDoctrine()->getRepository("AppBundle:Reward")->find($rewardId); /** @var Reward $reward */
+                $reward = $this->getDoctrine()->getRepository("AppBundle:Reward")->find($rewardId);
+                /** @var Reward $reward */
 
                 if (!$reward) continue;
 
@@ -296,15 +293,13 @@ class OrdersController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
         $sum = $this->getOrderPaymentSum($order);
-        if ($sum > 0)
-        {
+        if ($sum > 0) {
             $order->setStatus(OrderStatus::PROCESSING);
             $em->merge($order);
         }
 
         $fullSum = ($sum + (float)$order->getDiscount());
-        if ($fullSum > 0 && $order->getSum() <= $fullSum)
-        {
+        if ($fullSum > 0 && $order->getSum() <= $fullSum) {
             $order->setStatus(OrderStatus::PAID);
             $em->merge($order);
         }
@@ -317,8 +312,7 @@ class OrdersController extends Controller
         $payments = [];
         $orderPayments = $this->getDoctrine()->getRepository('AppBundle:OrderPayment')->findBy(['order' => $order->getOrderId()]);
         /** @var OrderPayment $payment */
-        foreach ($orderPayments as $payment)
-        {
+        foreach ($orderPayments as $payment) {
             $payments[$payment->getOrderPaymentId()] = $payment;
         }
 
@@ -336,9 +330,8 @@ class OrdersController extends Controller
         $sum = 0;
         $orderPayments = $this->getDoctrine()->getRepository('AppBundle:OrderPayment')->findBy(['order' => $order->getOrderId()]);
         /** @var OrderPayment $orderPayment */
-        foreach ($orderPayments as $orderPayment)
-        {
-            $sum += (float) $orderPayment->getSum();
+        foreach ($orderPayments as $orderPayment) {
+            $sum += (float)$orderPayment->getSum();
         }
 
         return $sum;
@@ -356,21 +349,18 @@ class OrdersController extends Controller
         $orderItems = $doctrine->getRepository("AppBundle:OrderItem")->findBy(['order' => $orderId]);
         $orderPayments = $this->getDoctrine()->getRepository('AppBundle:OrderPayment')->findBy(['order' => $orderId]);
 
-        foreach ($orderItems as $orderItem)
-        {
+        foreach ($orderItems as $orderItem) {
             $em->remove($orderItem);
         }
 
         /**
          * @var OrderPayment $orderPayment
          */
-        foreach ($orderPayments as $orderPayment)
-        {
+        foreach ($orderPayments as $orderPayment) {
             $reward = $orderPayment->getReward();
             $em->remove($orderPayment);
             $em->flush();
-            if ($reward)
-            {
+            if ($reward) {
                 $reward->actualizeRemainingSum();
                 $em->persist($reward);
             }
@@ -378,8 +368,7 @@ class OrdersController extends Controller
 
         $em->flush();
 
-        if ($order)
-        {
+        if ($order) {
             $em->remove($order);
             $em->flush();
             $this->get('session')->getFlashBag()->add('success', 'Данные о покупке удалены');
@@ -396,7 +385,7 @@ class OrdersController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         $searchForm = $this->createForm(new PreOrderSearchForm(), array(
-            PreOrderSearchForm::IS_RELEASED_SEARCH_FIELD     => false,
+            PreOrderSearchForm::IS_RELEASED_SEARCH_FIELD => false,
             PreOrderSearchForm::IS_NOT_RELEASED_SEARCH_FIELD => true
         ));
 
@@ -416,17 +405,13 @@ class OrdersController extends Controller
         $order = $em->getRepository("AppBundle:Order")->find($orderId);
 
         $flashBag = $this->get('session')->getFlashBag();
-        if ($order)
-        {
-            try
-            {
+        if ($order) {
+            try {
                 $order->setActualProductDate(new \DateTime());
                 $em->merge($order);
                 $em->flush();
                 $flashBag->add('success', 'Предзаказ выдан сегодняшним днем');
-            }
-            catch(\Exception $e)
-            {
+            } catch (\Exception $e) {
                 $flashBag->add('error', 'Произошла ошибка!');
             }
         }
@@ -442,8 +427,7 @@ class OrdersController extends Controller
     private function ordersListImpl(Request $request, $clientId = null)
     {
         $client = null;
-        if ($clientId != null)
-        {
+        if ($clientId != null) {
             $client = $this->getDoctrine()->getRepository("AppBundle:Client")->find($clientId);
         }
 
@@ -455,13 +439,10 @@ class OrdersController extends Controller
 
         $orderRepository = $this->getDoctrine()->getRepository('AppBundle:Order');
         $isClientPredefined = (($clientId != null) && ($client != null));
-        if ($isClientPredefined)
-        {
+        if ($isClientPredefined) {
             $templateMode = 'clientsOrders';
             $orders = $orderRepository->getOrdersByClient($client);
-        }
-        else
-        {
+        } else {
             $templateMode = 'orders';
             $searchForm->handleRequest($request);
             $orders = $orderRepository->getOrders($searchForm->getData());
@@ -470,8 +451,7 @@ class OrdersController extends Controller
         $orderInfo = [];
 
         /** @var Order $order */
-        foreach ($orders as $order)
-        {
+        foreach ($orders as $order) {
             $order->setStatus(OrderStatus::getName($order->getStatus()));
             $orderInfo[] = [
                 'order' => $order,

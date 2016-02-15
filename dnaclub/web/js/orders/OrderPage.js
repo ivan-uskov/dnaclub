@@ -17,7 +17,14 @@ $(function()
     update();
 
     $('#submit').click(function(){
-        $('#productsInfo').val(productsBlock.getValue());
+        var productInfoValue = productsBlock.getValue();
+        if (productInfoValue == '')
+        {
+            alert('Добавьте продукты!');
+            return false;
+        }
+
+        $('#productsInfo').val(productInfoValue);
         $('#paymentInfo').val(paymentBlock.getValue());
         $('#cost').val(productsBlock.getCoast());
         $('#debtField').val($('#debt').text());

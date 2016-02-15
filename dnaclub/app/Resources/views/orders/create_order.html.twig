@@ -44,7 +44,7 @@
         <input class="form-control" type="text" name="discount" id="discount" placeholder="Введите скидку" />
       </div>
       <div class="form-group">
-        {% include 'include/payment_selection_block.html.twig' with {'id': 'paidByCash', 'payments': [], 'order': null} %}
+        {% include 'include/payment_selection_block.html.twig' with {'id': 'paidByCash', 'payments': [], 'order': null, 'hasRewards': hasRewards} %}
       </div>
       <input type="hidden" id="paymentInfo" name="payment_info" value="" />
       <input type="hidden" id="productsInfo" name="products_info" value="" />

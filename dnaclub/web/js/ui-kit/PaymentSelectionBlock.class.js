@@ -75,11 +75,20 @@ var PaymentSelectionBlock = function(id, updateHandler)
     this.updateRewardsList = function(clientId)
     {
         removeNewRewardPayments();
-        var url = clientRewardsAjaxUrlPattern.replace('ORDER_ID', clientId);
+        var url = clientRewardsAjaxUrlPattern.replace('CLIENT_ID', clientId);
         addByRewardButtonDisabled = true;
         $.post(url).done(function(response) {
             addByRewardButtonDisabled = false;
             rewards = response.rewards;
+            var button = $('#paidByCashAddByReword');
+            if (rewards.length)
+            {
+                button.css('display', 'inline-block');
+            }
+            else
+            {
+                button.hide();
+            }
         }).fail(function() {
             alert('Произошла ошибка, перезагрузите страницу!');
         });
