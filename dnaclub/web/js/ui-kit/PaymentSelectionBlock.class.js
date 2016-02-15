@@ -32,6 +32,10 @@ var PaymentSelectionBlock = function(id, updateHandler)
                 select.append('<option value="' + rewardInfo.id +'" data-remainig="' + rewardInfo.remaining + '" data-sum="' + rewardInfo.sum + '">' + rewardInfo.name +  '</option>');
             });
         }
+        var uniqId = 'id' + (new Date()).getTime();
+        var input = newItem.find('input.sumHolder').attr('id', uniqId);
+        var field = new NumberFormField(uniqId, updateHandler);
+        rewordItemInputs.push(field);
     });
 
     function insertClone(item)
@@ -154,6 +158,12 @@ var PaymentSelectionBlock = function(id, updateHandler)
     function deleteNumberField(id)
     {
         $.each(cashItemInputs, function(i, field) {
+            if (field.getId() == id)
+            {
+                delete cashItemInputs[i];
+            }
+        });
+        $.each(rewordItemInputs, function(i, field) {
             if (field.getId() == id)
             {
                 delete cashItemInputs[i];
