@@ -13,7 +13,7 @@
           {% for client in clients %}
             <option value="{{ client.getClientId() }}"
                 {% if client.getClientId() == currentClientId %} selected="selected"{% endif %}>
-              {{ client.getFullName() }}
+              {{ client.getFullName() }} {% if client.getIsSubscribed() %} (возн.){% endif %}
             </option>
           {% endfor %}
         </select>
