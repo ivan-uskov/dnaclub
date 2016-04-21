@@ -2,11 +2,11 @@ $(function()
 {
     function update()
     {
-        var cost = productsBlock.getCoast();
-        $('#coast').text(cost);
+        var cost = productsBlock.getCost();
+        $('#cost').text(cost);
 
         var debt = cost - discount.getValue() - paymentBlock.getSum();
-        $('#debt').text(debt <= 0 ? 0 : debt);
+        $('#debt').text(debt <= 0 ? 0 : debt.toFixed(2));
     }
 
     var clientSelect = $('#userName');
@@ -29,7 +29,7 @@ $(function()
 
         $('#productsInfo').val(productInfoValue);
         $('#paymentInfo').val(paymentBlock.getValue());
-        $('#cost').val(productsBlock.getCoast());
+        $('#cost').val(productsBlock.getCost());
         $('#debtField').val($('#debt').text());
 
         $('#createOrderForm').submit();

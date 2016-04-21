@@ -17,17 +17,19 @@ var ProductSelectionBlock = function(id, updateHandler)
         return ids.join(',');
     };
 
-    function getCoast()
+    function getCost()
     {
-        var coast = 0;
+        var orderSum = 0;
 
         list.find('.product').each(function()
         {
             var item = $(this);
-            coast += (parseInt(item.find('.price').first().text())) * parseInt(item.find('.count').first().val());
+            itemCost = ((parseFloat(item.find('.price').first().text())) * parseInt(item.find('.count').first().val()));
+            item.find('.item_cost').first().text(itemCost);
+            orderSum += itemCost;
         });
 
-        return + coast;
+        return orderSum.toFixed(2);
     }
 
     function getItem(id)
@@ -48,6 +50,7 @@ var ProductSelectionBlock = function(id, updateHandler)
             var newItem = stubItem.clone();
             newItem.attr('data-product-id', id);
             newItem.find('.price').first().text(price);
+            newItem.find('.item_cost').first().text(price);
             newItem.html(name + newItem.html());
             newItem.removeClass('hidden');
             newItem.removeClass('stub_product');
@@ -81,7 +84,7 @@ var ProductSelectionBlock = function(id, updateHandler)
 
         list.on('click', '.remove_product', function(){
             $(this).parent().remove();
-            updateHandler(getCoast());
+            updateHandler(getCost());
         });
 
         list.on('change', '.count', function(){
@@ -90,7 +93,7 @@ var ProductSelectionBlock = function(id, updateHandler)
             {
                 obj.val(1);
             }
-            updateHandler(getCoast());
+            updateHandler(getCost());
         });
 
         list.on('keypress', '.count', function(e){
@@ -107,12 +110,12 @@ var ProductSelectionBlock = function(id, updateHandler)
     }
 
 
-    this.getCoast = getCoast;
+    this.getCost = getCost;
 
     (function()
     {
         initializeHandlers();
         initializeAutoComplete();
-        $('#coast').text(getCoast());
+        $('#Cost').text(getCost());
     })();
 };

@@ -148,11 +148,11 @@ var PaymentSelectionBlock = function(id, updateHandler)
         return $.toJSON({cash: cashValue, reward: rewardValue});
     };
 
-    function getCoast()
+    function getCost()
     {
-        var coast = 0;
+        var cost = 0;
 
-        return + coast;
+        return + cost;
     }
 
     function deleteNumberField(id)
@@ -180,7 +180,7 @@ var PaymentSelectionBlock = function(id, updateHandler)
         });
     }
 
-    this.getCoast = getCoast;
+    this.getCost = getCost;
 
     (function()
     {
