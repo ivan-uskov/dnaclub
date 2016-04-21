@@ -1,6 +1,7 @@
 {% extends 'layout.html.twig' %}
 {% block pageH1 %}
   Редактирование {% if order.getIsPreOrder() %}предзаказа{% else %}продажи{% endif %}
+  <a class="btn btn-success btn-add-top" href="{{ path('createOrder') }}">Добавить новую</a>
 {% endblock %}
 {% block content %}
   <form action="{{ path('editOrderAjax', {'orderId': order.getOrderId()}) }}" method="post" id="createOrderForm" style="margin-top: 15px;">
@@ -89,6 +90,7 @@
   {{ parent() }}
   <link href="{{ asset('bundles/app/plugins/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css') }}" type="text/css" rel="stylesheet" />
   <link rel="stylesheet" type="text/css" href="{{ asset('css/orders/manage.css') }}" />
+  <link rel="stylesheet" type="text/css" href="{{ asset('css/common/lists_common.css') }}" />
   <link rel="stylesheet" type="text/css" href="{{ asset('css/ui-kit/product_selection_block.css') }}" />
   <link rel="stylesheet" type="text/css" href="{{ asset('css/ui-kit/payment_selection_block.css') }}" />
 {% endblock %}

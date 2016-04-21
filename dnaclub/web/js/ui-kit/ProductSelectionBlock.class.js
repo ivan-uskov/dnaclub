@@ -55,7 +55,6 @@ var ProductSelectionBlock = function(id, updateHandler)
             list.append(newItem);
         }
 
-        $('#coast').text(getCoast());
         updateHandler();
     }
 
@@ -91,7 +90,6 @@ var ProductSelectionBlock = function(id, updateHandler)
             {
                 obj.val(1);
             }
-            $('#coast').text(getCoast());
             updateHandler(getCoast());
         });
 

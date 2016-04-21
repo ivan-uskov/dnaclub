@@ -2,8 +2,11 @@ $(function()
 {
     function update()
     {
-        var result = productsBlock.getCoast() - discount.getValue() - paymentBlock.getSum();
-        $('#debt').text(result <= 0 ? 0 : result);
+        var cost = productsBlock.getCoast();
+        $('#coast').text(cost);
+
+        var debt = cost - discount.getValue() - paymentBlock.getSum();
+        $('#debt').text(debt <= 0 ? 0 : debt);
     }
 
     var clientSelect = $('#userName');
