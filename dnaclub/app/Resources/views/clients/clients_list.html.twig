@@ -1,7 +1,7 @@
 {% extends 'layout.html.twig' %}
 {% block pageH1 %}
   Клиенты
-  <a class="btn btn-success btn-add-top" target="_blank" href="{{ path('createClient') }}">Добавить</a>
+  <a class="btn btn-success btn-add-top" href="{{ path('createClient') }}">Добавить</a>
 {% endblock %}
 {% block stylesheets %}
   <link href="{{ asset('css/common/lists_common.css') }}" type="text/css" rel="stylesheet"/>
@@ -83,7 +83,11 @@
             <td>{{ client.getEmail() }}</td>
             {% set lastOrderDate = client.getLastOrderDate() %}
             {% if lastOrderDate %}
-              <td>{{ lastOrderDate|date('d.m.Y') }}</td>
+              <td>
+                <a href="{{ path('clientsOrdersList', {'clientId': client.getClientId()}) }}" title="Перейти к покупкам клиента">
+                  {{ lastOrderDate|date('d.m.Y') }}
+                </a>
+              </td>
             {% else %}
               <td></td>
             {% endif %}
