@@ -16,6 +16,7 @@
   {% if not isNew %}
     {% include 'clients/client_navbar.html.twig' with {'client': client, 'mode': 'editClient'} %}
   {% endif %}
+  {% include 'include/flash_messages.html.twig' %}
   <div class="panel-body">
     <form action="" method="post" class="row">
       <div class="col-md-6">
@@ -119,7 +120,7 @@
           <div class="col-md-8">
             <input class="form-control datepicker" type="text" name="subscription_date" id="subscriptionDate"
                 {% if not isNew and (not client.getSubscriptionDate() == null) %}
-                  value="{{ client.getSubscriptionDate().format("Y-m-d H:i:s") }}"
+                  value="{{ client.getSubscriptionDate().format("d.m.Y") }}"
                 {% endif %}
             />
           </div>

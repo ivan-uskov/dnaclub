@@ -693,7 +693,7 @@ class Client
         $this->setIsOnlineLearner(($post->get('is_online_learner') === 'on') ? 1 : 0);
         $this->setPhone($post->get('phone'));
         $this->setEmail($post->get('email'));
-        $this->setSubscriptionDate($post->get('subscriptionDate'));
+        $this->setSubscriptionDate(new \DateTime($post->get('subscription_date')));
 
         $oldNotes = $this->getNotes();
         $itNotes = $oldNotes->getIterator();

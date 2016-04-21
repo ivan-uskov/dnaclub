@@ -97,8 +97,8 @@ class ClientsController extends Controller
         else
         {
             $this->handleClientPost($request->request, false, $clientId);
-
-            return $this->redirectToRoute('clientsList');
+            $this->get('session')->getFlashBag()->add('success', 'Изменения успешно сохранены');
+            return $this->redirectToRoute('editClient', ['clientId' => $clientId]);
         }
     }
 
